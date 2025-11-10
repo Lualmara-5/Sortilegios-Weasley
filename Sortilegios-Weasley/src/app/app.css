@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* ====== Reset mínimo */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  color: #f0e6e6;
+  background: radial-gradient(1200px 600px at 50% -10%, #3d0058 0%, #230035 60%, #160022 100%);
+  font-family: "Crimson Text", serif;
+}
+
+/* ====== Contenedor */
+.sw-container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+/* ====== Header / Navbar */
+.sw-header {
+  position: sticky; top: 0; z-index: 50;
+  background: linear-gradient(180deg, #29003f, #260038 60%, #230035);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+}
+.sw-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 72px; }
+
+.sw-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.sw-logo { width: 40px; height: 40px; object-fit: cover; border-radius: 50%; }
+.sw-brand span {
+  font-family: "Cinzel Decorative", serif; font-weight: 700;
+  color: #ff8c1a; letter-spacing: .3px; white-space: nowrap;
+  text-shadow: 0 2px 0 rgba(0,0,0,.35);
+}
+
+/* Nav */
+.sw-nav { display: flex; align-items: center; gap: 24px; }
+.sw-nav a {
+  position: relative; text-decoration: none; color: #f6e8ff; opacity: .9;
+  padding: 8px 6px; border-radius: 8px; transition: .15s ease;
+  font-weight: 600; letter-spacing: .2px;
+}
+.sw-nav a:hover { background: rgba(255,255,255,.06); }
+.sw-nav a.active { color: #ffcc8a; }
+.sw-nav .sw-cta {
+  color: #2a0c0c; background: #ff8c1a; padding: 10px 14px; border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(255,140,26,.35); border: 2px solid transparent;
+}
+.sw-nav .sw-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 24px rgba(255,140,26,.45); }
+
+/* ====== Main */
+.sw-main { padding: 28px 16px 64px; }
+
+/* ====== Footer */
+.sw-footer {
+  margin-top: 48px;
+  background: linear-gradient(180deg, #200030, #160022);
+  border-top: 1px solid rgba(255,255,255,.08);
+  text-align: center;
+  padding: 18px 0 26px;
+}
+.sw-footer p { margin: 0; color: #efe3f9; text-shadow: 0 1px 0 rgba(0,0,0,.3); }
+
+/* ====== Utilidades */
+h1, h2, h3 { font-family: "Cinzel Decorative", serif; margin: 0 0 10px; }
+a { color: inherit; }
+
+/* ====== Responsive */
+@media (max-width: 880px) {
+  .sw-header__inner { height: 68px; }
+  .sw-nav { gap: 12px; }
+  .sw-nav a { font-size: 14px; }
+  .sw-brand span { font-size: 18px; }
+}
+@media (max-width: 640px) {
+  .sw-nav { display: none; } /* simple: ocultar menú en móvil si aún no hay burger */
+}
