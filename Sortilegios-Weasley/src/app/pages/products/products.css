@@ -1,0 +1,12 @@
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.catalog-title {
+  font-family: 'Pacifico', cursive;
+  color: #b02700;
+  text-align: center;
+}
