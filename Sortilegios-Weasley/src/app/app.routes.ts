@@ -1,3 +1,29 @@
 import { Routes } from '@angular/router';
+import { Home } from './pages/home/home';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+
+  { path: 'home', component: Home },
+
+  {
+    path: 'catalogo',
+    loadComponent: () =>
+      import('./pages/products/products').then(
+        (m) => m.Products
+      ),
+  },
+
+  {
+    path: 'caldero-magico',
+    loadComponent: () =>
+      import('./pages/cart/cart').then((m) => m.Cart),
+  },
+
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/login/login').then((m) => m.Login),
+  },
+];

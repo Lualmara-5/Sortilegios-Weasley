@@ -1,1 +1,15 @@
-<p>navbar works!</p>
+<nav class="navbar">
+  <div class="logo" routerLink="/home">
+    <img src="/assets/logo.png" alt="Logo" />
+    <span>Sortilegios Weasley</span>
+  </div>
+
+  <ul class="nav-links">
+    <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
+    <li><a routerLink="/catalogo" routerLinkActive="active">Catálogo</a></li>
+    <li><a routerLink="/caldero-magico" routerLinkActive="active">Caldero Mágico</a></li>
+    <li><a routerLink="/resenas" routerLinkActive="active">Reseñas</a></li>
+  </ul>
+
+  <button class="btn-muggle" routerLink="/login">¡Ya soy Muggle!</button>
+</nav>

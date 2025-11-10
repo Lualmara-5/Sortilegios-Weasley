@@ -1,26 +1,2 @@
-<header class="sw-header">
-  <div class="sw-container sw-header__inner">
-    <a class="sw-brand" href="/" aria-label="Sortilegios Weasley">
-      <img class="sw-logo" src="assets/logo.png" alt="Logo" />
-      <span>Sortilegios Weasley</span>
-    </a>
-
-    <nav class="sw-nav" aria-label="Principal">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
-      <a routerLink="/products" routerLinkActive="active">Catálogo</a>
-      <a routerLink="/cart" routerLinkActive="active">Caldero Mágico</a>
-      <a routerLink="/reviews" routerLinkActive="active">Reseñas</a>
-      <a routerLink="/login" class="sw-cta">¡Ya soy Muggle!</a>
-    </nav>
-  </div>
-</header>
-
-<main class="sw-main sw-container">
-  <router-outlet></router-outlet>
-</main>
-
-<footer class="sw-footer">
-  <div class="sw-container">
-    <p>©2025 Sortilegios Weasley. Lo prometemos solemnemente: no prometemos nada bueno.</p>
-  </div>
-</footer>
+<app-navbar></app-navbar>
+<router-outlet></router-outlet>

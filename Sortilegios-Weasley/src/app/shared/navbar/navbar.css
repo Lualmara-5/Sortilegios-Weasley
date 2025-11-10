@@ -1,0 +1,73 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 40px;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-shadow: 0 0 6px rgba(255, 211, 105, 0.6);
+  transition: 0.3s ease;
+}
+
+.logo:hover {
+  color: var(--color-primary);
+  text-shadow: 0 0 10px rgba(255, 107, 0, 0.8);
+}
+
+.logo img {
+  width: 45px;
+  height: 45px;
+  filter: drop-shadow(0 0 5px rgba(255, 107, 0, 0.5));
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--color-primary);
+  text-shadow: 0 0 8px rgba(255, 107, 0, 0.8);
+}
+
+.btn-muggle {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 0 6px rgba(255, 107, 0, 0.6);
+}
+
+.btn-muggle:hover {
+  background-color: var(--color-accent);
+  box-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
+  transform: scale(1.05);
+}
