@@ -1,11 +1,11 @@
+// src/app/pages/products/product-detail/product-detail.ts
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Observable, BehaviorSubject, combineLatest, map, switchMap, shareReplay } from 'rxjs';
-
 import { ProductsService, Product } from '../../../services/products.service';
 import { ReviewsService, Review } from '../../../services/reviews.service';
+import { Observable, map, shareReplay, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-product-detail',
@@ -15,45 +15,35 @@ import { ReviewsService, Review } from '../../../services/reviews.service';
   styleUrl: './product-detail.css',
 })
 export class ProductDetail {
-  // inyecciones
+  Math = Math; // para usar Math en el template si lo necesitas
+
   private route = inject(ActivatedRoute);
   private products = inject(ProductsService);
   private reviewsSvc = inject(ReviewsService);
-  Math = Math;
 
-  // id de producto desde la ruta
-  productId$: Observable<number> = this.route.paramMap.pipe(
-    map(params => Number(params.get('id')))
-  );
-
-  // producto
-  product$: Observable<Product | undefined> = this.productId$.pipe(
+  product$: Observable<Product | undefined> = this.route.paramMap.pipe(
+    map(params => Number(params.get('id'))),
     switchMap(id => this.products.getProductById(id)),
     shareReplay(1)
   );
 
-  // refresco manual para que el async se actualice al añadir reseña
-  private refresh$ = new BehaviorSubject<void>(undefined);
-
-  // reseñas y promedio
-  reviews$: Observable<Review[]> = combineLatest([this.productId$, this.refresh$]).pipe(
-    switchMap(([id]) => this.reviewsSvc.getReviews(id))
+  reviews$: Observable<Review[]> = this.route.paramMap.pipe(
+    map(params => Number(params.get('id'))),
+    switchMap(id => this.reviewsSvc.getReviews(id)),
+    shareReplay(1)
   );
 
   avgRating$: Observable<number> = this.reviews$.pipe(
-    map(list => {
-      if (!list.length) return 0;
-      const sum = list.reduce((acc, r) => acc + (r.rating || 0), 0);
-      return sum / list.length;
-    })
+    map(list => list.length
+      ? list.reduce((s, r) => s + (r.rating || 0), 0) / list.length
+      : 0)
   );
 
-  // UI form
   showForm = false;
-  form: { author: string; rating: number; text: string } = {
+  form = {
     author: '',
     rating: 5,
-    text: '',
+    text: ''
   };
 
   toggleForm() {
@@ -61,23 +51,19 @@ export class ProductDetail {
   }
 
   submitReview(productId: number) {
-    // validación mínima
-    const author = this.form.author?.trim();
-    const text = this.form.text?.trim();
-    const rating = Number(this.form.rating) || 5;
-
-    if (!author || !text) return;
-
+    if (!this.form.author || !this.form.text) return;
     this.reviewsSvc.addReview(productId, {
-      author,
-      text,
-      rating,
-      avatar: 'assets/img/avatars/default.png',
+      author: this.form.author,
+      text: this.form.text,
+      rating: Number(this.form.rating),
+      avatar: 'assets/img/avatars/default.png'
     });
-
-    // limpiar y refrescar
     this.form = { author: '', rating: 5, text: '' };
     this.showForm = false;
-    this.refresh$.next(); // fuerza actualización del async pipe
+  }
+
+  // opcional, útil en desarrollo
+  resetReviewsDemo() {
+    this.reviewsSvc.resetDemo();
   }
 }

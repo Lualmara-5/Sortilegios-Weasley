@@ -1,11 +1,12 @@
+// src/app/services/reviews.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, filter, switchMap, take } from 'rxjs';
 
 export interface Review {
   author: string;
   text: string;
-  rating: number;   // 1..5
+  rating: number;    // 1..5
   avatar?: string;
   createdAt: string; // ISO
 }
@@ -21,24 +22,24 @@ export class ReviewsService {
   private cache: ReviewMap = {};
   private subjects = new Map<number, BehaviorSubject<Review[]>>();
 
-  // Señal interna para saber cuándo los datos están listos
+  // bandera de “datos listos”
   private ready$ = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.init();
   }
 
-  /** Carga desde localStorage o siembra desde el seed */
   private init() {
     try {
       const raw = localStorage.getItem(LS_KEY);
-      if (!raw || raw.trim() === '' || raw.trim() === '{}') {
-        // No hay nada útil → traer seed
+
+      if (!raw || raw.trim() === '' || raw.trim() === '{}' ) {
+        // No hay datos → cargar seed
         this.http.get<ReviewMap>(SEED_URL).subscribe({
           next: (data) => {
             this.cache = data || {};
             this.persist();
-            // notificar a observadores existentes (por si ya hay suscriptores)
+            // empujar a observadores ya creados (si los hubiera)
             for (const [pid, subj] of this.subjects) {
               subj.next([...(this.cache[pid] ?? [])]);
             }
@@ -61,7 +62,12 @@ export class ReviewsService {
     }
   }
 
-  /** Observa reseñas del producto. No emite hasta que ready$ sea true. */
+  /** Espera a que el seed esté listo */
+  private ensureReady(): Observable<boolean> {
+    return this.ready$.pipe(filter(Boolean), take(1));
+  }
+
+  /** Observable de reseñas por producto */
   getReviews(productId: number): Observable<Review[]> {
     if (!this.subjects.has(productId)) {
       const initial = this.cache[productId] ?? [];
@@ -69,17 +75,16 @@ export class ReviewsService {
     }
     const subj = this.subjects.get(productId)!;
 
-    return this.ready$.pipe(
-      switchMap((ready) => {
-        if (!ready) return subj.asObservable(); // no debería pasar, pero por seguridad
-        // al estar listo, asegurar estado actualizado desde cache
+    // Espera a ready, luego garantiza que el sujeto tenga lo último del cache
+    return this.ensureReady().pipe(
+      switchMap(() => {
         subj.next([...(this.cache[productId] ?? [])]);
         return subj.asObservable();
       })
     );
   }
 
-  /** Agrega una reseña y persiste */
+  /** Agregar reseña y persistir */
   addReview(productId: number, review: Omit<Review, 'createdAt'>): void {
     const withDate: Review = { ...review, createdAt: new Date().toISOString() };
     const list = this.cache[productId] ?? [];
@@ -90,7 +95,7 @@ export class ReviewsService {
     if (subj) subj.next([...(this.cache[productId] ?? [])]);
   }
 
-  /** (Opcional) Botón de desarrollo para limpiar y re-sembrar */
+  /** Útil en desarrollo para re-sembrar */
   resetDemo(): void {
     localStorage.removeItem(LS_KEY);
     this.cache = {};
