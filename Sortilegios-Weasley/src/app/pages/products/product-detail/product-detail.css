@@ -1,3 +1,6 @@
+/* ====== Importar tipografía Cinzel Decorative desde Google Fonts ====== */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
+
 :host {
   display: block;
   background-color: var(--color-bg);
@@ -27,7 +30,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  align-items: start
+  align-items: start;
 }
 
 /* Imagen del producto */
@@ -107,9 +110,97 @@
   line-height: 1.4;
 }
 
-/* ========== RESPONSIVE DESIGN ========== */
+/* ===== Reseñas ===== */
+.pd-reviews {
+  margin-top: 36px;
+  background: #1f0a32;
+  border: 1px solid #3a2156;
+  border-radius: 16px;
+  padding: 20px;
+}
 
-/* Pantallas medianas (tablets) */
+.rv-title {
+  font-family: 'Harry P', 'Cinzel Decorative', serif;
+  color: var(--color-primary);
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+}
+
+.rv-summary {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #3a2156;
+  margin-bottom: 12px;
+}
+
+.rv-score-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+.star {
+  color: #6a4c9d;
+  font-size: 1.1rem;
+}
+.star.filled {
+  color: var(--color-primary);
+}
+
+.rv-count {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.rv-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.rv-item {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  background: #210c35;
+  border: 1px solid #3a2156;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.rv-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #130723;
+}
+
+.rv-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.rv-author {
+  color: #fff;
+}
+.rv-text {
+  color: #eaeaea;
+  opacity: 0.95;
+}
+
+.rv-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
 @media (max-width: 1024px) {
   .pd-wrap {
     padding: 32px 5vw;
@@ -138,7 +229,6 @@
   }
 }
 
-/* Pantallas pequeñas (celulares grandes) */
 @media (max-width: 768px) {
   .pd-wrap {
     padding: 24px 6vw;
@@ -159,14 +249,6 @@
     margin: 0 auto;
   }
 
-  .pd-desc {
-    font-size: 1rem;
-  }
-
-  .pd-meta p {
-    font-size: 0.95rem;
-  }
-
   .btn {
     width: 100%;
     text-align: center;
@@ -180,7 +262,6 @@
   }
 }
 
-/* Pantallas muy pequeñas (teléfonos compactos) */
 @media (max-width: 480px) {
   .pd-wrap {
     padding: 20px 5vw;
@@ -193,14 +274,6 @@
 
   .pd-img {
     max-width: 100%;
-  }
-
-  .pd-desc {
-    font-size: 0.95rem;
-  }
-
-  .pd-meta p {
-    font-size: 0.9rem;
   }
 
   .pd-disclaimer {
