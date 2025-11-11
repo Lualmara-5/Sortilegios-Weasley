@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ProductsService, Product } from '../../../services/products.service';
 import { ReviewsService, Review } from '../../../services/reviews.service';
 import { Observable, map, shareReplay, switchMap } from 'rxjs';
+import { WishlistService } from '../../../services/wishlist.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -20,6 +21,7 @@ export class ProductDetail {
   private route = inject(ActivatedRoute);
   private products = inject(ProductsService);
   private reviewsSvc = inject(ReviewsService);
+  private wishlistSvc = inject(WishlistService)
 
   product$: Observable<Product | undefined> = this.route.paramMap.pipe(
     map(params => Number(params.get('id'))),
@@ -60,6 +62,12 @@ export class ProductDetail {
     });
     this.form = { author: '', rating: 5, text: '' };
     this.showForm = false;
+  }
+
+  // ✅ CORRECTO: ahora agrega el producto completo
+  addToWishlist(product: Product) {
+    this.wishlistSvc.agregarDeseo(product);
+    alert(`¡${product.name} añadido a tu lista de deseos! ✨`);
   }
 
   // opcional, útil en desarrollo

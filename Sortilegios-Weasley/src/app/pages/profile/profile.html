@@ -16,8 +16,10 @@
       <input type="text" id="direccion" [(ngModel)]="direccionMagica" />
     </div>
 
-    <button class="btn-primario" (click)="editarInfo()">Editar información</button>
-    <button class="btn-salir" (click)="salir()">Salir</button>
+    <div class="acciones">
+      <button class="btn-primario" (click)="editarInfo()">Editar información</button>
+      <button class="btn-salir" (click)="salir()">Salir</button>
+    </div>
   </section>
 
   <!-- Mis pedidos -->
@@ -53,15 +55,22 @@
   <section class="lista-deseos">
     <h2>Mi lista de deseos</h2>
 
+    <div *ngIf="listaDeseos.length === 0" class="sin-deseos">
+      <p>No tienes productos en tu lista de deseos todavía 🧞‍♂️</p>
+    </div>
+
     <div class="producto-deseo" *ngFor="let deseo of listaDeseos">
-      <img [src]="deseo.image" [alt]="deseo.name" />
+      <img [src]="deseo.image" [alt]="deseo.name" class="imagen-deseo" />
       <div class="info">
         <h3>{{ deseo.name }}</h3>
-        <p>{{ deseo.description }}</p>
-        <p><strong>{{ deseo.price }} galeones</strong></p>
-
-        <button (click)="agregarAlCaldero(deseo)">Agregar al caldero mágico</button>
-        <button class="eliminar" (click)="eliminarDeseo(deseo)">Eliminar producto</button>
+        <div class="acciones">
+          <button class="btn-caldero" (click)="agregarAlCaldero(deseo)">
+            🪄 Agregar al caldero
+          </button>
+          <button class="btn-eliminar" (click)="eliminarDeseo(deseo)">
+            ❌ Eliminar
+          </button>
+        </div>
       </div>
     </div>
   </section>
