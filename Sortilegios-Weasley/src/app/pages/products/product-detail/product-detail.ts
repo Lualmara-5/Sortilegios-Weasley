@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { ProductsService, Product } from '../products.service';
+import { ProductsService, Product } from '../../../services/products.service';
 import { Observable, map, switchMap, shareReplay } from 'rxjs';
 
 @Component({

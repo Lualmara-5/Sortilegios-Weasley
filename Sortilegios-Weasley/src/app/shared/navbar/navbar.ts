@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CauldronService } from '../../pages/products/product-card/cualdron.service';
+import { CauldronService } from '../../services/cualdron.service';
 
 @Component({
   selector: 'app-navbar',
