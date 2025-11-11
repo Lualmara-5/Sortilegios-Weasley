@@ -1,0 +1,414 @@
+/* login.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=MedievalSharp&display=swap');
+
+/* --- Animaciones mágicas --- */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 157, 61, 0.3), 0 0 40px rgba(255, 157, 61, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 157, 61, 0.5), 0 0 60px rgba(255, 157, 61, 0.2);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Fondo mágico general --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(180deg, #1a0f2e 0%, #130a24 50%, #0a0515 100%);
+  color: #fff4e6;
+  font-family: 'Cinzel Decorative', cursive;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* --- Fondo animado --- */
+.magic-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1a0f2e 0%, #130a24 50%, #0a0515 100%);
+  background-image:
+    radial-gradient(2px 2px at 15% 25%, rgba(255, 215, 0, 0.15), transparent),
+    radial-gradient(2px 2px at 85% 15%, rgba(255, 157, 61, 0.12), transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(255, 255, 255, 0.15), transparent),
+    radial-gradient(2px 2px at 25% 75%, rgba(212, 122, 0, 0.12), transparent),
+    radial-gradient(1px 1px at 75% 85%, rgba(255, 215, 0, 0.15), transparent);
+  background-size: 300% 300%;
+  animation: float 25s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+/* --- Contenedor principal --- */
+.login-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.8s ease-out;
+  min-height: calc(100vh - 130px);
+}
+
+/* --- Tarjeta de Login --- */
+.login-card {
+  background: linear-gradient(145deg, rgba(101, 67, 87, 0.95) 0%, rgba(101, 67, 87, 0.98) 100%);
+  border: 2px solid rgba(212, 122, 0, 0.6);
+  border-radius: 18px;
+  padding: 1.3rem 1.8rem;
+  max-width: 390px;
+  width: 100%;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 80px rgba(212, 122, 0, 0.1);
+  position: relative;
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Efecto de brillo en los bordes */
+.login-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  background: linear-gradient(45deg, #d47a00, #ff9d3d, #d47a00);
+  background-size: 300% 300%;
+  animation: shimmer 4s linear infinite;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+/* --- Icono mágico --- */
+.magic-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.2rem;
+  background: linear-gradient(135deg, rgba(212, 122, 0, 0.3) 0%, rgba(255, 157, 61, 0.2) 100%);
+  border: 2px solid #ff9d3d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sparkle 3s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(255, 157, 61, 0.4), inset 0 0 20px rgba(255, 157, 61, 0.1);
+}
+
+.magic-icon svg {
+  width: 45px;
+  height: 45px;
+  stroke: #ff9d3d;
+  filter: drop-shadow(0 0 10px rgba(255, 157, 61, 0.6));
+}
+
+/* --- Título --- */
+.login-title {
+  text-align: center;
+  color: #ffb347;
+  font-size: clamp(1.3rem, 4vw, 1.65rem);
+  margin-bottom: 0.5rem;
+  font-family: 'MedievalSharp', cursive;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-shadow: 0 0 20px rgba(255, 157, 61, 0.4);
+}
+
+.login-subtitle {
+  text-align: center;
+  font-size: clamp(0.72rem, 1.8vw, 0.82rem);
+  color: #e4d2ff;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+/* --- Formulario --- */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group label {
+  color: #ffb347;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* --- Inputs mágicos --- */
+.magic-input {
+  background: rgba(26, 0, 51, 0.6);
+  border: 2px solid rgba(212, 122, 0, 0.4);
+  border-radius: 9px;
+  padding: 0.65rem 0.95rem;
+  color: #fff4e6;
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 0.78rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.magic-input::placeholder {
+  color: rgba(228, 210, 255, 0.4);
+}
+
+.magic-input:focus {
+  border-color: #ff9d3d;
+  background: rgba(26, 0, 51, 0.8);
+  box-shadow: 0 0 20px rgba(255, 157, 61, 0.3), inset 0 0 10px rgba(255, 157, 61, 0.1);
+  transform: translateY(-2px);
+}
+
+/* --- Botón mágico --- */
+.magic-button {
+  background: linear-gradient(135deg, #d47a00 0%, #ff9d3d 100%);
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1.8rem;
+  color: #fff4e6;
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(212, 122, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.magic-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.magic-button:hover::before {
+  width: 400px;
+  height: 400px;
+}
+
+.magic-button:hover {
+  box-shadow: 0 6px 30px rgba(255, 157, 61, 0.6);
+  transform: translateY(-3px);
+}
+
+.magic-button:active {
+  transform: translateY(-1px);
+}
+
+.magic-button svg {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Footer del login --- */
+.login-footer {
+  text-align: center;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(212, 122, 0, 0.3);
+}
+
+.login-footer p {
+  color: #e4d2ff;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.magic-link {
+  color: #ff9d3d;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.magic-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #ff9d3d;
+  transition: width 0.3s ease;
+}
+
+.magic-link:hover {
+  color: #ffb347;
+  text-shadow: 0 0 10px rgba(255, 157, 61, 0.5);
+}
+
+.magic-link:hover::after {
+  width: 100%;
+}
+
+/* --- Footer --- */
+.footer {
+  background: linear-gradient(135deg, #1a0033 0%, #2d0a3d 50%, #0d0221 100%);
+  text-align: center;
+  padding: 1.2rem 1rem;
+  color: #fff4e6;
+  font-size: 0.85rem;
+  border-top: 2px solid #d47a00;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+}
+
+.footer p {
+  margin: 0;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .login-container {
+    min-height: calc(100vh - 100px);
+    padding: 0.5rem;
+  }
+
+  .login-card {
+    padding: 1.8rem 1.6rem;
+    margin: 0.5rem;
+    max-width: 400px;
+  }
+
+  .magic-icon {
+    width: 65px;
+    height: 65px;
+  }
+
+  .magic-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 1.3rem;
+  }
+
+  .login-form {
+    gap: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    min-height: calc(100vh - 90px);
+  }
+
+  .login-card {
+    padding: 1.5rem 1.3rem;
+  }
+
+  .form-group label {
+    font-size: 0.8rem;
+  }
+
+  .magic-input {
+    padding: 0.75rem 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  .magic-button {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .login-footer p {
+    font-size: 0.8rem;
+  }
+}
+/* --- Correcciones generales de fondo y footer --- */
+
+/* Fondo general más oscuro y profundo */
+html, body {
+  background: radial-gradient(circle at top, #1a002b 0%, #0b0015 70%, #000 100%);
+  color: #fff4e6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fondo animado ajustado — tonos oscuros y menos opaco */
+.magic-background {
+  background: radial-gradient(circle at 50% 50%, #150024 0%, #0a0015 100%);
+  background-image:
+    radial-gradient(2px 2px at 20% 20%, rgba(255, 166, 0, 0.1), transparent),
+    radial-gradient(2px 2px at 80% 10%, rgba(255, 140, 0, 0.08), transparent),
+    radial-gradient(1px 1px at 40% 60%, rgba(255, 255, 255, 0.1), transparent);
+  background-size: 250% 250%;
+  animation: float 25s ease-in-out infinite;
+  opacity: 0.6; /* Aumenta un poco para cubrir más el fondo */
+}
+
+/* Elimina el espacio en blanco debajo del footer */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Footer mejor integrado */
+.footer {
+  background: linear-gradient(180deg, #1a002b 0%, #12001a 100%);
+  border-top: 2px solid #d47a00;
+  color: #ffe4b5;
+  margin-top: auto;
+  padding: 1rem;
+  font-size: 0.85rem;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+}
