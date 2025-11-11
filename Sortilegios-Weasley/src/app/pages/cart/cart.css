@@ -115,9 +115,10 @@ h2 {
 
 /* Controles de cantidad */
 .qty-controls {
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 3px;
 }
 
 .qty-controls button {
