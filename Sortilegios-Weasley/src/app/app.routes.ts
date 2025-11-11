@@ -38,9 +38,9 @@ export const routes: Routes = [
     import('./pages/register/register').then((m) => m.Register),
   },
   {
-  path: 'checkout',
-  loadComponent: () =>
-    import('./pages/checkout/checkout').then(m => m.Checkout),
+    path: 'checkout',
+    loadComponent: () =>
+      import('./pages/checkout/checkout').then(m => m.Checkout),
   },
   {
   path: 'catalogo/:id/resenas',
