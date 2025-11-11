@@ -13,7 +13,7 @@
   ],
   "4": [
     { "author": "Coleccionista", "text": "La versión deluxe es una locura.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-07T16:00:00.000Z" },
-    { "author": "Vecino", "text": "Demasiado ruido, pero brillan increíble.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-08T17:00:00.000Z" }
+    { "author": "Vecino", "text": "Demasiado ruido, pero brillan increíble.", "rating": 4, "avatar": "assets/img/avatars/", "createdAt": "2025-01-08T17:00:00.000Z" }
   ],
   "5": [
     { "author": "Curiosa", "text": "Escuché TODO. Shhh…", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-09T10:00:00.000Z" },
