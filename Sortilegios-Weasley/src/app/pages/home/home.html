@@ -1,104 +1,123 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sortilegios Weasley - Inicio</title>
-  <link rel="stylesheet" href="home.css">
-</head>
-<body>
-  <!-- Fondo animado mágico -->
-  <div class="magic-background" id="magicBg"></div>
+<!-- Fondo animado mágico -->
+<div class="magic-background" id="magicBg"></div>
 
-  <div class="home-container">
-    <section class="hero">
-      <h1>¡Bienvenido a Sortilegios Weasley!</h1>
-      <p>
-        La tienda de bromas mágicas más traviesa del Callejón Diagon,<br />
-        ahora disponible para muggles
-      </p>
-      <div class="buttons">
-        <button class="primary">Consigue tu tarjeta de Bromista</button>
-        <button class="secondary">Explora nuestro catálogo</button>
+<div class="home-container">
+  <section class="hero">
+    <h1>¡Bienvenido a Sortilegios Weasley!</h1>
+    <p>
+      La tienda de bromas mágicas más traviesa del Callejón Diagon,<br />
+      ahora disponible para muggles
+    </p>
+    <div class="buttons">
+      <button class="primary" routerLink="/login">Consigue tu tarjeta de Bromista</button>
+      <button class="secondary" routerLink="/catalogo">Explora nuestro catálogo</button>
+    </div>
+  </section>
+
+  <section class="productos">
+    <h2>Anímate a descubrir nuestros divertidos productos mágicos</h2>
+
+    <div class="cards">
+      <div class="card">
+        <div class="icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 1 0 6 0V5a3 3 0 0 0-3-3z" />
+            <path d="M12 12c-3.5 0-6 2-6 5 0 3 2.5 5 6 5s6-2 6-5c0-3-2.5-5-6-5z" />
+            <circle cx="9" cy="9" r="1" />
+            <circle cx="15" cy="9" r="1" />
+          </svg>
+        </div>
+        <h3>Dulces Mágicos</h3>
+        <p>
+          Descubre las ranas de chocolate saltarinas, los caramelos vomitivos y muchos dulces con
+          increíbles efectos mágicos más!
+        </p>
       </div>
-    </section>
 
-    <section class="productos">
-      <h2>Anímate a descubrir nuestros divertidos productos mágicos</h2>
-      <div class="cards">
-        <div class="card">
-          <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 1 0 6 0V5a3 3 0 0 0-3-3z"/>
-              <path d="M12 12c-3.5 0-6 2-6 5 0 3 2.5 5 6 5s6-2 6-5c0-3-2.5-5-6-5z"/>
-              <circle cx="9" cy="9" r="1"/>
-              <circle cx="15" cy="9" r="1"/>
-            </svg>
-          </div>
-          <h3>Dulces Mágicos</h3>
-          <p>
-            Descubre las ranas de chocolate saltarinas, los caramelos vomitivos y muchos dulces con increíbles efectos mágicos más!
-          </p>
+      <div class="card">
+        <div class="icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            <path d="M8 7h8" />
+            <path d="M8 11h8" />
+            <path d="M8 15h6" />
+          </svg>
         </div>
-        <div class="card">
-          <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-              <path d="M8 7h8"/>
-              <path d="M8 11h8"/>
-              <path d="M8 15h6"/>
-            </svg>
-          </div>
-          <h3>Libros Encantados</h3>
-          <p>
-            Manuales que intentan morderte los dedos y grimorios que cambian de contenido cada vez que los abres, cada ejemplar es una experiencia única.
-          </p>
-        </div>
-        <div class="card">
-          <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M10 2v7.31"/>
-              <path d="M14 9.3V1.99"/>
-              <path d="M8.5 2h7"/>
-              <path d="M14 9.3a6.5 6.5 0 1 1-4 0"/>
-              <path d="M5.58 16.5h12.85"/>
-              <path d="M6 20h12"/>
-              <circle cx="12" cy="16" r="1"/>
-            </svg>
-          </div>
-          <h3>Pociones</h3>
-          <p>
-            Pociones de amor, filtros de suerte, brebajes efervescentes y muchas pociones más que puedes descubrir.
-          </p>
-        </div>
-        <div class="card">
-          <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2v4"/>
-              <path d="M12 18v4"/>
-              <path d="m4.93 4.93 2.83 2.83"/>
-              <path d="m16.24 16.24 2.83 2.83"/>
-              <path d="M2 12h4"/>
-              <path d="M18 12h4"/>
-              <path d="m4.93 19.07 2.83-2.83"/>
-              <path d="m16.24 7.76 2.83-2.83"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-          </div>
-          <h3>Bromas Explosivas</h3>
-          <p>
-            Mejora la calidad de tus bromas con distintos objetos como las orejas extensibles o las varitas defectuosas, ¡anímate a improvisar!
-          </p>
-        </div>
+        <h3>Libros Encantados</h3>
+        <p>
+          Manuales que intentan morderte los dedos y grimorios que cambian de contenido cada vez que
+          los abres, cada ejemplar es una experiencia única.
+        </p>
       </div>
-    </section>
-  </div>
 
-  <footer class="footer">
-    <p>©2025 Sortilegios Weasley. ¡Lo prometemos solemnemente: no prometemos nada bueno!</p>
-  </footer>
+      <div class="card">
+        <div class="icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M10 2v7.31" />
+            <path d="M14 9.3V1.99" />
+            <path d="M8.5 2h7" />
+            <path d="M14 9.3a6.5 6.5 0 1 1-4 0" />
+            <path d="M5.58 16.5h12.85" />
+            <path d="M6 20h12" />
+            <circle cx="12" cy="16" r="1" />
+          </svg>
+        </div>
+        <h3>Pociones</h3>
+        <p>
+          Pociones de amor, filtros de suerte, brebajes efervescentes y muchas pociones más que
+          puedes descubrir.
+        </p>
+      </div>
 
-  <script src="home.js"></script>
-</body>
-</html>
+      <div class="card">
+        <div class="icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 2v4" />
+            <path d="M12 18v4" />
+            <path d="m4.93 4.93 2.83 2.83" />
+            <path d="m16.24 16.24 2.83 2.83" />
+            <path d="M2 12h4" />
+            <path d="M18 12h4" />
+            <path d="m4.93 19.07 2.83-2.83" />
+            <path d="m16.24 7.76 2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <h3>Bromas Explosivas</h3>
+        <p>
+          Mejora la calidad de tus bromas con distintos objetos como las orejas extensibles o las
+          varitas defectuosas, ¡anímate a improvisar!
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="footer">
+  <p>©2025 Sortilegios Weasley. ¡Lo prometemos solemnemente: no prometemos nada bueno!</p>
+</footer>

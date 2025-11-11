@@ -1,92 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=MedievalSharp&display=swap');
 
-/* --- Animaciones de fuegos artificiales y explosiones --- */
-@keyframes firework {
-  0% { 
-    transform: translate(0, 0) scale(0);
-    opacity: 1;
-  }
-  50% { 
-    opacity: 1;
-  }
-  100% { 
-    transform: translate(var(--tx), var(--ty)) scale(1);
-    opacity: 0;
-  }
-}
-
-@keyframes explosion {
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-@keyframes sparkMove {
-  0% {
-    transform: translateY(0) translateX(0) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-100vh) translateX(var(--drift)) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-@keyframes colorPulse {
-  0%, 100% { filter: hue-rotate(0deg) brightness(1); }
-  25% { filter: hue-rotate(90deg) brightness(1.2); }
-  50% { filter: hue-rotate(180deg) brightness(1); }
-  75% { filter: hue-rotate(270deg) brightness(1.2); }
-}
-
-@keyframes smokeRise {
-  0% {
-    transform: translateY(0) scale(0.5);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(-200px) scale(1.5);
-    opacity: 0;
-  }
-}
-
-@keyframes magicPop {
-  0% {
-    transform: scale(0) rotate(0deg);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2) rotate(180deg);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(0.5) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* --- Animaciones mágicas originales --- */
-@keyframes sparkle {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
-
+/* --- Animaciones esenciales --- */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
+  0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
 
@@ -100,25 +16,26 @@
   100% { background-position: 200% 0; }
 }
 
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.8; }
-}
-
-/* --- Fondo general con gradiente mejorado --- */
+/* --- Fondo mágico general --- */
 html, body {
   margin: 0;
   padding: 0;
   background: linear-gradient(180deg, #1a0033 0%, #2b0032 30%, #1e1847 70%, #0d0221 100%);
-  background-attachment: fixed;
   color: #fff4e6;
   font-family: 'Cinzel Decorative', cursive;
   min-height: 100vh;
   overflow-x: hidden;
-  position: relative;
 }
 
-/* Contenedor de efectos mágicos de fondo */
+/* --- Contenedor principal --- */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Fondo animado --- */
 .magic-background {
   position: fixed;
   top: 0;
@@ -130,149 +47,27 @@ html, body {
   overflow: hidden;
 }
 
-/* Fuegos artificiales */
-.firework {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  animation: firework 2s ease-out infinite;
-}
-
-.firework::before,
-.firework::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: inherit;
-}
-
-.firework::before {
-  animation: explosion 2s ease-out infinite;
-}
-
-/* Chispas flotantes */
-.spark {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  background: radial-gradient(circle, #ffd700, #ff9d3d);
-  border-radius: 50%;
-  box-shadow: 0 0 10px currentColor;
-  animation: sparkMove 8s linear infinite;
-  --drift: 0px;
-}
-
-/* Explosiones de colores */
-.color-burst {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 157, 61, 0.6), transparent);
-  animation: explosion 3s ease-out infinite, colorPulse 3s ease-in-out infinite;
-}
-
-/* Humo mágico */
-.magic-smoke {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  background: radial-gradient(circle, rgba(147, 51, 234, 0.3), transparent);
-  border-radius: 50%;
-  animation: smokeRise 6s ease-out infinite;
-  filter: blur(10px);
-}
-
-/* Destellos pop */
-.magic-pop {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle, #ffd700, #ff9d3d, transparent);
-  border-radius: 50%;
-  animation: magicPop 2s ease-out infinite;
-}
-
-/* Estrellas mágicas en el fondo */
-html::before,
-html::after {
-  content: '';
-  position: fixed;
-  width: 3px;
-  height: 3px;
-  background: #fff;
-  border-radius: 50%;
-  animation: twinkle 3s ease-in-out infinite;
-  z-index: 0;
-}
-
-html::before {
-  top: 20%;
-  left: 15%;
-  animation-delay: 0.5s;
-  box-shadow: 
-    100px 50px 0 #fff,
-    200px 150px 0 #fff,
-    -50px 100px 0 #fff,
-    150px -20px 0 #fff,
-    300px 80px 0 #fff;
-}
-
-html::after {
-  top: 60%;
-  right: 20%;
-  animation-delay: 1.5s;
-  box-shadow: 
-    -80px 30px 0 #fff,
-    120px -60px 0 #fff,
-    -150px -40px 0 #fff,
-    80px 100px 0 #fff;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-/* --- Contenedor principal --- */
-.home-container {
-  background: transparent;
-  color: #fff4e6;
-  padding-bottom: 0;
-  min-height: calc(100vh - 60px);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 1;
-}
-
-/* --- Sección Hero con nuevo gradiente --- */
+/* --- Sección Hero --- */
 .hero {
   background: linear-gradient(135deg, #4a0e4e 0%, #2d0a3d 50%, #1a0033 100%);
   text-align: center;
   padding: 6rem 1rem 7rem;
   border-bottom: 3px solid #d47a00;
-  position: relative;
-  margin-bottom: 0;
   min-height: 70vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
   overflow: hidden;
 }
 
-/* Efecto de partículas mágicas flotantes */
+/* Partículas mágicas en el fondo */
 .hero::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
+  inset: 0;
+  background-image:
     radial-gradient(2px 2px at 20% 30%, rgba(255, 215, 0, 0.4), transparent),
     radial-gradient(2px 2px at 60% 70%, rgba(255, 157, 61, 0.3), transparent),
     radial-gradient(1px 1px at 50% 50%, rgba(255, 255, 255, 0.4), transparent),
@@ -280,17 +75,14 @@ html::after {
     radial-gradient(1px 1px at 90% 60%, rgba(255, 215, 0, 0.4), transparent);
   background-size: 200% 200%;
   animation: float 20s ease-in-out infinite;
-  pointer-events: none;
   opacity: 0.6;
 }
 
+/* Efecto de luz central */
 .hero::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: radial-gradient(circle at 50% 50%, rgba(255, 157, 61, 0.1) 0%, transparent 70%);
   pointer-events: none;
 }
@@ -302,35 +94,26 @@ html::after {
   font-family: 'MedievalSharp', cursive;
   font-weight: 700;
   letter-spacing: 3px;
-  position: relative;
-  z-index: 1;
-  animation: glow 3s ease-in-out infinite;
+  animation: shimmer 3s linear infinite, glow 3s ease-in-out infinite;
   background: linear-gradient(90deg, #ffb347 0%, #ffd700 50%, #ffb347 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 3s linear infinite, glow 3s ease-in-out infinite;
 }
 
 .hero p {
   font-size: clamp(1rem, 2vw, 1.15rem);
   margin-bottom: 2.5rem;
   line-height: 1.6;
-  font-weight: 300;
-  position: relative;
-  z-index: 1;
   color: #e4d2ff;
 }
 
-/* --- Botones mejorados --- */
+/* --- Botones mágicos --- */
 .buttons {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   align-items: center;
-  position: relative;
-  z-index: 1;
 }
 
 button {
@@ -344,7 +127,6 @@ button {
   font-weight: 600;
   min-width: 280px;
   text-transform: capitalize;
-  letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
 }
@@ -391,26 +173,11 @@ button.secondary:hover {
   transform: translateY(-2px);
 }
 
-/* --- Productos con nuevo gradiente --- */
+/* --- Sección de productos --- */
 .productos {
   text-align: center;
   background: linear-gradient(180deg, #1e1847 0%, #2d1b4e 50%, #1a0033 100%);
   padding: 5rem 1rem 8rem;
-  position: relative;
-  margin: 0;
-  min-height: 80vh;
-}
-
-.productos::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: linear-gradient(180deg, #4a0e4e 0%, #2d1b4e 50%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
 }
 
 .productos h2 {
@@ -419,9 +186,6 @@ button.secondary:hover {
   font-size: clamp(1.5rem, 3.5vw, 2rem);
   font-family: 'MedievalSharp', cursive;
   font-weight: 400;
-  letter-spacing: 1px;
-  position: relative;
-  z-index: 1;
 }
 
 .cards {
@@ -431,8 +195,6 @@ button.secondary:hover {
   padding: 0 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  position: relative;
-  z-index: 1;
 }
 
 .card {
@@ -443,36 +205,17 @@ button.secondary:hover {
   transition: all 0.4s ease;
   backdrop-filter: blur(10px);
   position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 157, 61, 0.15) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.card:hover::before {
-  opacity: 1;
 }
 
 .card:hover {
   transform: translateY(-8px);
   box-shadow: 0 8px 30px rgba(255, 157, 61, 0.4);
   border-color: #ff9d3d;
-  background: linear-gradient(145deg, rgba(74, 14, 78, 0.8) 0%, rgba(45, 10, 61, 0.9) 100%);
 }
 
 .icon {
   font-size: 3.5rem;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, rgba(212, 122, 0, 0.3) 0%, rgba(255, 157, 61, 0.2) 100%);
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -481,7 +224,6 @@ button.secondary:hover {
   justify-content: center;
   margin: 0 auto 1.5rem;
   border: 2px solid rgba(212, 122, 0, 0.5);
-  transition: all 0.3s ease;
   color: #ff9d3d;
   animation: float 4s ease-in-out infinite;
 }
@@ -491,17 +233,6 @@ button.secondary:hover {
   height: 40px;
   stroke: #ff9d3d;
   filter: drop-shadow(0 0 8px rgba(255, 157, 61, 0.5));
-}
-
-.card:nth-child(1) .icon { animation-delay: 0s; }
-.card:nth-child(2) .icon { animation-delay: 0.5s; }
-.card:nth-child(3) .icon { animation-delay: 1s; }
-.card:nth-child(4) .icon { animation-delay: 1.5s; }
-
-.card:hover .icon {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 0 20px rgba(255, 157, 61, 0.6);
-  animation: sparkle 1s ease-in-out infinite;
 }
 
 .card h3 {
@@ -519,24 +250,18 @@ button.secondary:hover {
   font-weight: 300;
 }
 
-/* --- Footer con animaciones mágicas --- */
+/* --- Footer --- */
 .footer {
   background: linear-gradient(135deg, #1a0033 0%, #2d0a3d 50%, #0d0221 100%);
   text-align: center;
   padding: 1.5rem 1rem;
   color: #fff4e6;
   font-size: 0.9rem;
-  width: 100%;
-  position: relative;
   border-top: 2px solid #d47a00;
-  margin-top: 0;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
 }
 
 .footer p {
-  position: relative;
-  z-index: 1;
   margin: 0;
 }
 
@@ -546,27 +271,12 @@ button.secondary:hover {
     padding: 3rem 1rem 4rem;
     min-height: 60vh;
   }
-  
   .cards {
     grid-template-columns: 1fr;
     padding: 0 1rem;
   }
-  
   button {
     min-width: 240px;
     padding: 0.9rem 2rem;
-  }
-  
-  .productos {
-    padding: 3rem 1rem 5rem;
-    min-height: auto;
-  }
-  
-  .footer::before {
-    left: 5%;
-  }
-  
-  .footer::after {
-    right: 5%;
   }
 }

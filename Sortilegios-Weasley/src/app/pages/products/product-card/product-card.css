@@ -53,6 +53,10 @@
   box-shadow: 0 0 6px rgba(255, 107, 0, 0.6);
 }
 
+.details-btn {
+  font-size: 0.9rem;
+}
+
 .details-btn:hover,
 .add-btn:hover {
   background-color: var(--color-accent);
