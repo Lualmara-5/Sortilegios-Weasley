@@ -1,1 +1,66 @@
-<p>profile works!</p>
+<div class="perfil-container">
+  <!-- Identidad mágica -->
+  <section class="identidad-magica">
+    <h2>Mi identidad mágica</h2>
+    <div class="avatar-container">
+      <img src="assets/img/wizard-icon.svg" alt="Avatar mágico" class="avatar-icon" />
+    </div>
+    <div class="input-group">
+      <label for="alias">Mi alias mágico</label>
+      <input type="text" id="alias" [(ngModel)]="aliasMagico" />
+    </div>
+    <div class="input-group">
+      <label for="direccion">Mi dirección mágica</label>
+      <input type="text" id="direccion" [(ngModel)]="direccionMagica" />
+    </div>
+    <button class="btn-primario" (click)="editarInfo()">Editar información</button>
+    <button class="btn-salir" (click)="salir()">Salir</button>
+  </section>
+
+  <!-- Mis pedidos -->
+  <section class="mis-pedidos">
+    <h2>Mis pedidos</h2>
+    <table class="tabla-pedidos">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Productos</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pedido of pedidos">
+          <td>{{ pedido.fecha }}</td>
+          <td>{{ pedido.producto }}</td>
+          <td
+            class="estado"
+            [ngClass]="{
+              entregado: pedido.estado === 'Entregado',
+              camino: pedido.estado === 'En camino'
+            }"
+          >
+            {{ pedido.estado }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Lista de deseos -->
+  <section class="lista-deseos">
+    <h2>Mi lista de deseos</h2>
+
+    <div class="producto-deseo" *ngFor="let deseo of listaDeseos">
+      <img [src]="deseo.imagen" [alt]="deseo.nombre" />
+      <div class="info">
+        <h3>{{ deseo.nombre }}</h3>
+        <button (click)="agregarAlCaldero(deseo.nombre)">Agregar al caldero mágico</button>
+        <button class="eliminar" (click)="eliminarDeseo(deseo.nombre)">Eliminar producto</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="footer">
+  <p>©2025 Sortilegios Weasley. Hecho con polvos Flu y un toque de caos Weasley.</p>
+</footer>

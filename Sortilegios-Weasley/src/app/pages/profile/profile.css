@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=MedievalSharp&display=swap');
+
+.perfil-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  background: linear-gradient(180deg, #1a0033 0%, #2b0032 50%, #0d0221 100%);
+  color: #fff4e6;
+  font-family: 'Cinzel Decorative', cursive;
+  min-height: 100vh;
+}
+
+/* SECCIONES */
+section {
+  background: linear-gradient(145deg, rgba(74, 14, 78, 0.6), rgba(45, 10, 61, 0.8));
+  border: 2px solid rgba(212, 122, 0, 0.6);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 0 15px rgba(255, 157, 61, 0.4);
+}
+
+h2 {
+  text-align: center;
+  font-family: 'MedievalSharp', cursive;
+  color: #ff9d3d;
+  margin-bottom: 1.5rem;
+}
+
+/* IDENTIDAD */
+.identidad-magica {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  width: 90%;
+  margin: 0.5rem 0;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: #ffb347;
+  margin-bottom: 0.3rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #0d0221;
+  color: #fff4e6;
+  text-align: center;
+}
+
+/* BOTONES */
+button {
+  font-family: 'Cinzel Decorative', cursive;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  transition: 0.3s ease;
+}
+
+.btn-primario {
+  background: linear-gradient(135deg, #d47a00 0%, #ff9d3d 100%);
+  color: #fff4e6;
+  box-shadow: 0 4px 15px rgba(212, 122, 0, 0.4);
+}
+
+.btn-primario:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255, 157, 61, 0.6);
+}
+
+.btn-salir {
+  background: transparent;
+  border: 2px solid #ff9d3d;
+  color: #ff9d3d;
+  margin-top: 0.8rem;
+}
+
+.btn-salir:hover {
+  background: #ff9d3d;
+  color: #1a0033;
+}
+
+/* TABLA DE PEDIDOS */
+.tabla-pedidos {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.tabla-pedidos th {
+  color: #ff9d3d;
+  border-bottom: 2px solid #ff9d3d;
+  padding: 0.5rem;
+}
+
+.tabla-pedidos td {
+  padding: 0.6rem;
+  border-bottom: 1px solid rgba(255, 157, 61, 0.2);
+}
+
+.estado.entregado {
+  color: #5ce65c;
+}
+
+.estado.camino {
+  color: #8fa5ff;
+}
+
+/* LISTA DE DESEOS */
+.producto-deseo {
+  display: flex;
+  align-items: center;
+  background-color: rgba(74, 14, 78, 0.6);
+  border-radius: 12px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.producto-deseo img {
+  width: 90px;
+  border-radius: 8px;
+  margin-right: 1rem;
+}
+
+.info h3 {
+  color: #ffb347;
+  margin: 0;
+}
+
+.info button {
+  display: block;
+  margin-top: 0.4rem;
+  padding: 0.4rem 1rem;
+  background-color: #ff7a00;
+  color: #fff4e6;
+}
+
+.info button:hover {
+  background-color: #ff9d3d;
+}
+
+.info .eliminar {
+  background-color: #3b002f;
+  border: 1px solid #ff7a00;
+}
+
+/* FOOTER */
+.footer {
+  grid-column: 1 / 4;
+  text-align: center;
+  padding: 1rem;
+  color: #fff4e6;
+  border-top: 2px solid #d47a00;
+  margin-top: 2rem;
+  background: #0d0221;
+}
