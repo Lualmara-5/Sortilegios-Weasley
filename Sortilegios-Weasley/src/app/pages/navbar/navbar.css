@@ -1,15 +1,14 @@
+/* =============================== */
+/* ESTRUCTURA GENERAL DE NAVBAR */
+/* =============================== */
 .navbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 12px 40px;
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  align-items: center;
+  background-color: #18092b;
+  color: #fff;
+  padding: 10px 40px;
   font-family: 'Poppins', sans-serif;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  position: sticky;
-  top: 0;
-  z-index: 100;
 }
 
 .logo {
@@ -17,46 +16,88 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  color: var(--color-accent);
-  font-weight: 600;
-  font-size: 1.1rem;
-  text-shadow: 0 0 6px rgba(255, 211, 105, 0.6);
-  transition: 0.3s ease;
-}
-
-.logo:hover {
-  color: var(--color-accent);
-  text-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
 }
 
 .logo img {
   width: 45px;
   height: 45px;
-  filter: drop-shadow(0 0 5px rgba(255, 107, 0, 0.5));
+}
+
+.logo span {
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 6px #ff8800;
 }
 
 .nav-links {
   list-style: none;
   display: flex;
   gap: 25px;
+  align-items: center;
 }
 
 .nav-links a {
-  color: var(--color-text);
   text-decoration: none;
+  color: #fff;
   font-weight: 600;
-  transition: color 0.3s, text-shadow 0.3s;
+  transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
-  color: var(--color-accent);
-  text-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
-}
-.nav-links a.active{
-  color: var(--color-accent);
-  text-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
+.nav-links a:hover,
+.nav-links a.active {
+  color: #ffb84d;
 }
 
+/* =============================== */
+/* SECCIÓN DE USUARIO */
+/* =============================== */
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Botón del usuario (nombre) */
+.btn-user {
+  background: linear-gradient(90deg, #ff8a00, #ff3c00);
+  color: #fff8dc;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(255, 120, 0, 0.5);
+}
+
+.btn-user:hover {
+  background: linear-gradient(90deg, #ff3c00, #ff8a00);
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(255, 120, 0, 0.8);
+}
+
+/* Botón de cerrar sesión */
+.btn-logout {
+  background-color: #c62828;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #a11515;
+  transform: scale(1.05);
+}
+
+/* =============================== */
+/* BOTÓN "¡Ya soy Muggle!" */
+/* =============================== */
 .btn-muggle {
   background-color: var(--color-primary);
   color: var(--color-bg);
@@ -73,16 +114,4 @@
   background-color: var(--color-accent);
   box-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
   transform: scale(1.05);
-}
-
-.counter {
-  background-color: var(--color-accent);
-  color: var(--color-bg);
-  box-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 0.8rem;
-  position: relative;
-  left: -5px;
-  top: -10px;
 }
