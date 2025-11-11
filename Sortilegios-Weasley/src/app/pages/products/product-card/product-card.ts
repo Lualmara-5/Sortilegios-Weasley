@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router'; 
+import { RouterModule } from '@angular/router';
 import { Product } from '../../../services/products.service';
 import { CauldronService } from '../../../services/cualdron.service';
 
@@ -13,10 +13,15 @@ import { CauldronService } from '../../../services/cualdron.service';
 })
 export class ProductCard {
   @Input() product!: Product;
+  isFlipped = false;
 
   constructor(private cauldronService: CauldronService) {}
 
   addToCauldron(product: Product) {
     this.cauldronService.addItem(product);
+  }
+
+  flipCard() {
+    this.isFlipped = !this.isFlipped;
   }
 }
