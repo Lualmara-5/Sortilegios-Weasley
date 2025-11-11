@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Product } from '../../services/products.service';
 import { CauldronService } from '../../services/cualdron.service';
+import { WishlistService, Deseo } from '../../services/wishlist.service';
+import { Product } from '../../services/products.service';
 
 @Component({
   selector: 'app-profile',
@@ -11,7 +12,7 @@ import { CauldronService } from '../../services/cualdron.service';
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   aliasMagico = 'Mago Anónimo';
   direccionMagica = 'Callejón Diagon Nº93';
 
@@ -20,28 +21,19 @@ export class ProfileComponent {
     { fecha: '07/11/2025', producto: 'Libro Mordedor', estado: 'En camino' }
   ];
 
-  listaDeseos: Product[] = [
-    {
-      id: 1,
-      name: 'Pluma Invisible',
-      price: '25',
-      unit: 'unidad',
-      description: 'Una pluma mágica que escribe sin ser vista.',
-      category: 'Artículos mágicos',
-      image: 'assets/img/products/pluma-invisible.png'
-    },
-    {
-      id: 2,
-      name: 'Libro Mordedor',
-      price: '60',
-      unit: 'unidad',
-      description: 'Un libro encantado que muerde a quien lo abre sin permiso.',
-      category: 'Libros encantados',
-      image: 'assets/img/products/libro-mordedor.png'
-    }
-  ];
+  listaDeseos: Deseo[] = [];
 
-  constructor(private cauldronService: CauldronService) {}
+  constructor(
+    private cauldronService: CauldronService,
+    private wishlistService: WishlistService
+  ) {}
+
+  ngOnInit() {
+    // Suscribirse a los cambios de la lista de deseos
+    this.wishlistService.deseos$.subscribe((items: Deseo[]) => {
+      this.listaDeseos = items;
+    });
+  }
 
   editarInfo() {
     alert(`Alias: ${this.aliasMagico}\nDirección: ${this.direccionMagica}`);
@@ -51,13 +43,22 @@ export class ProfileComponent {
     alert('Has salido del perfil mágico.');
   }
 
-  agregarAlCaldero(product: Product) {
-    this.cauldronService.addItem(product);
-    alert(`${product.name} ha sido agregado al caldero mágico 🧙‍♂️`);
+  agregarAlCaldero(deseo: Deseo) {
+    // Buscar el producto real por nombre en los productos del servicio
+    const productoReal = this.wishlistService['products'].find(
+      (p: Product) => p.name.toLowerCase() === deseo.name.toLowerCase()
+    );
+
+    if (productoReal) {
+      this.cauldronService.addItem(productoReal);
+      alert(`${productoReal.name} ha sido agregado al caldero mágico 🧙‍♂️`);
+    } else {
+      alert(`No se encontró el producto ${deseo.name} en el inventario 🕵️‍♀️`);
+    }
   }
 
-  eliminarDeseo(product: Product) {
-    this.listaDeseos = this.listaDeseos.filter(d => d.id !== product.id);
-    alert(`${product.name} ha sido eliminado de tu lista de deseos 💨`);
+  eliminarDeseo(deseo: Deseo) {
+    this.wishlistService.eliminarDeseo(deseo.id);
+    alert(`${deseo.name} ha sido eliminado de tu lista de deseos 💨`);
   }
 }
