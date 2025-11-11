@@ -37,4 +37,14 @@ export const routes: Routes = [
   loadComponent: () =>
     import('./pages/register/register').then((m) => m.Register),
   },
+  {
+  path: 'checkout',
+  loadComponent: () =>
+    import('./pages/checkout/checkout').then(m => m.Checkout),
+  },
+  {
+  path: 'catalogo/:id/resenas',
+  loadComponent: () =>
+    import('./pages/products/reviews/reviews').then(m => m.ProductReviews),
+},
 ];
