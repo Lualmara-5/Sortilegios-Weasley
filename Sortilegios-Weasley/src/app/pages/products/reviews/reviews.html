@@ -6,16 +6,25 @@
 
     <div class="rv-list">
       <article class="rv-item" *ngFor="let r of reviews">
-        <img class="rv-avatar" [src]="r?.avatar || 'assets/img/avatars/user.png'" [alt]="r?.author" />
+        <img
+          class="rv-avatar"
+          [src]="r?.avatar || 'assets/img/avatars/user.png'"
+          [alt]="r?.author"
+        />
         <div class="rv-content">
           <div class="rv-head">
             <strong class="rv-author">{{ r?.author }}</strong>
             <span class="rv-stars-line">
-              <span *ngFor="let s of [1,2,3,4,5]" class="star" [class.filled]="s <= (r?.rating || 0)">★</span>
+              <span
+                *ngFor="let s of [1, 2, 3, 4, 5]"
+                class="star"
+                [class.filled]="s <= (r?.rating || 0)"
+                >★</span
+              >
             </span>
           </div>
           <p class="rv-text">{{ r?.text }}</p>
-          <small class="rv-date">{{ r?.createdAt | date:'medium' }}</small>
+          <small class="rv-date">{{ r?.createdAt | date : 'medium' }}</small>
         </div>
       </article>
     </div>

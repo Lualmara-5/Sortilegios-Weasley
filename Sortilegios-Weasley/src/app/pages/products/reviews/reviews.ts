@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map, switchMap, filter } from 'rxjs/operators';
 import { ReviewsService, Review } from '../../../services/reviews.service';
 
 @Component({
@@ -12,14 +13,12 @@ import { ReviewsService, Review } from '../../../services/reviews.service';
   styleUrl: './reviews.css',
 })
 export class ProductReviews {
-  private route: ActivatedRoute = inject(ActivatedRoute);
-  private reviewsSvc: ReviewsService = inject(ReviewsService);
+  private route = inject(ActivatedRoute);
+  private reviewsSvc = inject(ReviewsService);
 
-  productId$: Observable<number> = this.route.paramMap.pipe(
-    map(params => Number(params.get('id')))
-  );
-
-  reviews$: Observable<Review[]> = this.productId$.pipe(
+  reviews$: Observable<Review[]> = this.route.paramMap.pipe(
+    map(params => Number(params.get('id'))),
+    filter(id => !!id), // ⬅ evita id = null o 0
     switchMap(id => this.reviewsSvc.getReviews(id))
   );
 }
