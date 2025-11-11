@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { CauldronService } from '../../pages/products/product-card/cualdron.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,4 +10,14 @@ import { CommonModule } from '@angular/common';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {}
+export class Navbar implements OnInit {
+  itemCount = 0;
+
+  constructor(private cauldronService: CauldronService) {}
+
+  ngOnInit(): void {
+    this.cauldronService.items$.subscribe(items => {
+      this.itemCount = items.length;
+    });
+  }
+}

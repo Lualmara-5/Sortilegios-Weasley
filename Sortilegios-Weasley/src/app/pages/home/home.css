@@ -363,8 +363,8 @@ button::before {
 }
 
 button:hover::before {
-  width: 300px;
-  height: 300px;
+  width: 420px;
+  height: 420px;
 }
 
 button.primary {
@@ -374,7 +374,6 @@ button.primary {
 }
 
 button.primary:hover {
-  background: linear-gradient(135deg, #ff9d3d 0%, #ffb366 100%);
   box-shadow: 0 6px 25px rgba(255, 157, 61, 0.6);
   transform: translateY(-2px);
 }
@@ -387,7 +386,6 @@ button.secondary {
 }
 
 button.secondary:hover {
-  background-color: rgba(212, 122, 0, 0.15);
   border-color: #ff9d3d;
   box-shadow: 0 6px 25px rgba(255, 157, 61, 0.4);
   transform: translateY(-2px);

@@ -1,12 +1,20 @@
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
   margin-top: 20px;
 }
 
 .catalog-title {
   font-family: 'Pacifico', cursive;
-  color: #b02700;
+  color: var(--color-primary);
   text-align: center;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a0033 0%, #2b0032 30%, #1e1847 70%, #0d0221 100%);
+  padding: 15px 20px;
+  color: white;
 }

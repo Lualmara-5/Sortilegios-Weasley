@@ -25,8 +25,8 @@
 }
 
 .logo:hover {
-  color: var(--color-primary);
-  text-shadow: 0 0 10px rgba(255, 107, 0, 0.8);
+  color: var(--color-accent);
+  text-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
 }
 
 .logo img {
@@ -44,14 +44,17 @@
 .nav-links a {
   color: var(--color-text);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   transition: color 0.3s, text-shadow 0.3s;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
-  color: var(--color-primary);
-  text-shadow: 0 0 8px rgba(255, 107, 0, 0.8);
+.nav-links a:hover {
+  color: var(--color-accent);
+  text-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
+}
+.nav-links a.active{
+  color: var(--color-accent);
+  text-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
 }
 
 .btn-muggle {
@@ -70,4 +73,16 @@
   background-color: var(--color-accent);
   box-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
   transform: scale(1.05);
+}
+
+.counter {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  box-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  position: relative;
+  left: -5px;
+  top: -10px;
 }

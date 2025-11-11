@@ -3,5 +3,8 @@
   <h3>{{ product.name }}</h3>
   <p class="price">{{ product.price }} / {{ product.unit }}</p>
   <p class="desc">{{ product.description }}</p>
-  <a class="details-btn" [routerLink]="['/catalogo', product.id]"></a>
+  <div class="btn-group">
+    <button class="add-btn" (click)="addToCauldron(product)">Añadir al caldero</button>
+    <a class="details-btn" [routerLink]="['/catalogo', product.id]">Ver detalles</a>
+  </div>
 </div>

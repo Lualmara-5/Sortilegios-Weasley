@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router'; 
 import { Product } from '../products.service';
+import { CauldronService } from './cualdron.service';
 
 @Component({
   selector: 'app-product-card',
@@ -12,4 +13,10 @@ import { Product } from '../products.service';
 })
 export class ProductCard {
   @Input() product!: Product;
+
+  constructor(private cauldronService: CauldronService) {}
+
+  addToCauldron(product: Product) {
+    this.cauldronService.addItem(product);
+  }
 }

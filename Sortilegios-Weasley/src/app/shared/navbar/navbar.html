@@ -7,8 +7,11 @@
   <ul class="nav-links">
     <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
     <li><a routerLink="/catalogo" routerLinkActive="active">Catálogo</a></li>
-    <li><a routerLink="/caldero-magico" routerLinkActive="active">Caldero Mágico</a></li>
-    <li><a routerLink="/resenas" routerLinkActive="active">Reseñas</a></li>
+    <li>
+      <a routerLink="/caldero-magico" routerLinkActive="active" class="nav-link"
+        >Caldero Mágico <span class="counter" *ngIf="itemCount > 0">{{ itemCount }}</span></a
+      >
+    </li>
   </ul>
 
   <button class="btn-muggle" routerLink="/login">¡Ya soy Muggle!</button>
