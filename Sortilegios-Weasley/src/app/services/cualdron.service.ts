@@ -64,12 +64,12 @@ export class CauldronService {
     const amount = Number(amountStr);
 
     const rates: Record<string, number> = {
-      galleon: 10000,
-      galleons: 10000,
-      sickle: 600,
-      sickles: 600,
-      knut: 20,
-      knuts: 20
+      galleon: 50000,
+      galleons: 50000,
+      sickle: 3000, 
+      sickles: 3000,
+      knut: 100,
+      knuts: 100
     };
 
     return amount * (rates[type.toLowerCase()] || 0);
