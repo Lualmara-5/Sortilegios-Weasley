@@ -26,10 +26,12 @@
 
   <!-- Usuario logueado -->
   <div class="user-section" *ngIf="currentUser; else guest">
-    <button class="btn-user" (click)="goToProfile()">
-      {{ currentUser.alias }}
+    <button class="icon-btn profile" (click)="goToProfile()" title="Perfil">
+      <i class="ri-user-line"></i>
     </button>
-    <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    <button class="icon-btn logout" (click)="logout()" title="Cerrar sesión">
+      <i class="ri-login-box-line"></i>
+    </button>
   </div>
 
   <!-- Invitado -->
