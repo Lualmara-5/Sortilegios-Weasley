@@ -6,7 +6,7 @@
     "unit": "unidad",
     "description": "Inocentes caramelos que hacen que, al comerlos, la lengua se alargue diez veces más de su estado normal.",
     "category": "Dulces mágicos",
-    "image": "assets/img/products/longuilinguo.png"
+    "image": "assets/img/logo/products/longuilinguo.png"
   },
   {
     "id": 2,
@@ -15,7 +15,7 @@
     "unit": "unidad",
     "description": "Parecen galletas normales, pero quien las come se convierte en un enorme canario por un rato.",
     "category": "Dulces mágicos",
-    "image": "assets/img/products/galletas-canario.png"
+    "image": "assets/img/logo/products/galletas-canario.png"
   },
   {
     "id": 3,
@@ -24,7 +24,7 @@
     "unit": "unidad",
     "description": "Selección básica de fuegos artificiales mágicos. Precaución: si se golpean, causan grandes explosiones.",
     "category": "Fuegos artificiales",
-    "image": "assets/img/products/magicaja.png"
+    "image": "assets/img/logo/products/magicaja.png"
   },
   {
     "id": 4,
@@ -33,7 +33,7 @@
     "unit": "unidad",
     "description": "Selección de lujo de fuegos artificiales mágicos. Peligrosos al contacto o al usar hechizos desvanecedores.",
     "category": "Fuegos artificiales",
-    "image": "assets/img/products/deflagracion.png"
+    "image": "assets/img/logo/products/deflagracion.png"
   },
   {
     "id": 5,
@@ -42,7 +42,7 @@
     "unit": "unidad",
     "description": "Escucha conversaciones ajenas con total discreción. No funciona si hay Encantamientos de Impasibilidad.",
     "category": "Artículos de espionaje",
-    "image": "assets/img/products/orejas.png"
+    "image": "assets/img/logo/products/orejas.png"
   },
   {
     "id": 6,
@@ -51,7 +51,7 @@
     "unit": "unidad",
     "description": "Ideal para decorar exteriores o interiores y molestar a profesores. Altamente pegajoso y persistente.",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/pantano.png"
+    "image": "assets/img/logo/products/pantano.png"
   },
   {
     "id": 7,
@@ -60,7 +60,7 @@
     "unit": "unidad",
     "description": "Vuelve tu cabeza invisible para dar un buen susto a tus amigos.",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/sombrero-acefalo.png"
+    "image": "assets/img/logo/products/sombrero-acefalo.png"
   },
   {
     "id": 8,
@@ -69,7 +69,7 @@
     "unit": "unidad",
     "description": "Provocan un desmayo inmediato. Necesitas a alguien que te dé la otra mitad para curarte.",
     "category": "Surtidos Saltaclases",
-    "image": "assets/img/products/bombones-desmayo.png"
+    "image": "assets/img/logo/products/bombones-desmayo.png"
   },
   {
     "id": 9,
@@ -78,7 +78,7 @@
     "unit": "unidad",
     "description": "Causan vómitos al instante. Perfectas para librarte de clases indeseadas.",
     "category": "Surtidos Saltaclases",
-    "image": "assets/img/products/pastillas-vomitivas.png"
+    "image": "assets/img/logo/products/pastillas-vomitivas.png"
   },
   {
     "id": 10,
@@ -87,7 +87,7 @@
     "unit": "unidad",
     "description": "Provoca una considerable hemorragia nasal temporal.",
     "category": "Surtidos Saltaclases",
-    "image": "assets/img/products/turron-sangranarices.png"
+    "image": "assets/img/logo/products/turron-sangranarices.png"
   },
   {
     "id": 11,
@@ -96,7 +96,7 @@
     "unit": "unidad",
     "description": "Aumenta la temperatura corporal causando fiebre temporal.",
     "category": "Surtidos Saltaclases",
-    "image": "assets/img/products/caramelo-fiebre.png"
+    "image": "assets/img/logo/products/caramelo-fiebre.png"
   },
   {
     "id": 12,
@@ -105,7 +105,7 @@
     "unit": "unidad",
     "description": "Caramelos que provocan una gran hemorragia nasal mágica.",
     "category": "Surtidos Saltaclases",
-    "image": "assets/img/products/manantial-sangre.png"
+    "image": "assets/img/logo/products/manantial-sangre.png"
   },
   {
     "id": 13,
@@ -114,7 +114,7 @@
     "unit": "unidad",
     "description": "Parecen varitas reales, pero se transforman en muñecos de goma al usarlas.",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/varita-falsa.png"
+    "image": "assets/img/logo/products/varita-falsa.png"
   },
   {
     "id": 14,
@@ -123,7 +123,7 @@
     "unit": "unidad",
     "description": "Inspirados en el Veritaserum, obligan a decir la verdad durante una hora.",
     "category": "Dulces mágicos",
-    "image": "assets/img/products/caramelo-verdad.png"
+    "image": "assets/img/logo/products/caramelo-verdad.png"
   },
   {
     "id": 15,
@@ -132,7 +132,7 @@
     "unit": "unidad",
     "description": "Chocolate imposible de partir. Provoca gran dolor al intentar morderlo.",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/chocolate-rompedientes.png"
+    "image": "assets/img/logo/products/chocolate-rompedientes.png"
   },
   {
     "id": 16,
@@ -141,7 +141,7 @@
     "unit": "unidad",
     "description": "La letra se encoge hasta obligar al lector a acercarse... ¡y morderle la nariz!",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/libro-mordedor.png"
+    "image": "assets/img/logo/products/libro-mordedor.png"
   },
   {
     "id": 17,
@@ -150,7 +150,7 @@
     "unit": "unidad",
     "description": "Todo lo que se escriba en él desaparece al instante. Ideal para jugar bromas en exámenes.",
     "category": "Papelería mágica",
-    "image": "assets/img/products/pergamino.png"
+    "image": "assets/img/logo/products/pergamino.png"
   },
   {
     "id": 18,
@@ -159,7 +159,7 @@
     "unit": "unidad",
     "description": "La tinta desaparece a los 10 minutos. Perfecta para escribir mensajes temporales.",
     "category": "Papelería mágica",
-    "image": "assets/img/products/pluma-invisible.png"
+    "image": "assets/img/logo/products/pluma-invisible.png"
   },
   {
     "id": 19,
@@ -168,7 +168,7 @@
     "unit": "unidad",
     "description": "Rocía y agranda cualquier objeto o persona. Efecto de hasta tres días.",
     "category": "Artículos curiosos",
-    "image": "assets/img/products/spray-aumenta.png"
+    "image": "assets/img/logo/products/spray-aumenta.png"
   },
   {
     "id": 20,
@@ -177,7 +177,7 @@
     "unit": "unidad",
     "description": "Lanzan el contrahechizo del conjuro que realmente se quiere usar.",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/varita-reves.png"
+    "image": "assets/img/logo/products/varita-reves.png"
   },
   {
     "id": 21,
@@ -186,7 +186,7 @@
     "unit": "uso",
     "description": "Con un conjuro accedes a una fantasía de 30 minutos, muy realista. Efectos secundarios: mirada ausente y babeo.",
     "category": "Experiencias mágicas",
-    "image": "assets/img/products/fantasia.png"
+    "image": "assets/img/logo/products/fantasia.png"
   },
   {
     "id": 22,
@@ -195,7 +195,7 @@
     "unit": "unidad",
     "description": "Dulces con forma de Marca Tenebrosa que enferman a quien los come.",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/marca-tenebrosa.png"
+    "image": "assets/img/logo/products/marca-tenebrosa.png"
   },
   {
     "id": 23,
@@ -204,7 +204,7 @@
     "unit": "set",
     "description": "Rebotan maleficios leves a moderados. Usados incluso por el Ministerio de Magia.",
     "category": "Artículos defensivos",
-    "image": "assets/img/products/escudo.png"
+    "image": "assets/img/logo/products/escudo.png"
   },
   {
     "id": 24,
@@ -213,7 +213,7 @@
     "unit": "frasco",
     "description": "Crea oscuridad total al instante. Ideal para escapar o esconderse.",
     "category": "Artículos de defensa",
-    "image": "assets/img/products/polvo-peruano.png"
+    "image": "assets/img/logo/products/polvo-peruano.png"
   },
   {
     "id": 25,
@@ -222,7 +222,7 @@
     "unit": "unidad",
     "description": "Objetos con forma de bocina que explotan con un fuerte ruido para crear distracciones.",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/detonador.png"
+    "image": "assets/img/logo/products/detonador.png"
   },
   {
     "id": 26,
@@ -231,7 +231,7 @@
     "unit": "unidad",
     "description": "Adorables puffskeins en miniatura, perfectos como mascotas mágicas.",
     "category": "Criaturas mágicas",
-    "image": "assets/img/products/puffskein.png"
+    "image": "assets/img/logo/products/puffskein.png"
   },
   {
     "id": 27,
@@ -240,7 +240,7 @@
     "unit": "frasco",
     "description": "Pociones de amor caseras que duran 24 horas. Disfrazadas como perfumes para despistar a Filch.",
     "category": "Pociones mágicas",
-    "image": "assets/img/products/pocion-amor.png"
+    "image": "assets/img/logo/products/pocion-amor.png"
   },
   {
     "id": 28,
@@ -249,6 +249,6 @@
     "unit": "frasco",
     "description": "Producto de broma que causa estreñimiento. Sátira contra el Señor Tenebroso.",
     "category": "Bromas mágicas",
-    "image": "assets/img/products/lord-kakadura.png"
+    "image": "assets/img/logo/products/lord-kakadura.png"
   }
 ]
