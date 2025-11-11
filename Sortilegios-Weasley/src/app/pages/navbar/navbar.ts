@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { CauldronService } from '../../services/cualdron.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,15 +14,17 @@ export class Navbar {
   currentUser: any = null;
   itemCount: number = 0;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private cauldronService: CauldronService) {}
 
   ngOnInit() {
     this.loadCurrentUser();
 
-    // Verifica si cambia el localStorage (por login o logout)
-    window.addEventListener('storage', () => this.loadCurrentUser());
+    // 🔥 Restauramos el contador del carrito
+    this.cauldronService.items$.subscribe((items) => {
+      this.itemCount = items.length;
+    });
 
-    // También verifica cada 1 segundo en caso de cambios locales
+    window.addEventListener('storage', () => this.loadCurrentUser());
     setInterval(() => this.loadCurrentUser(), 1000);
   }
 
@@ -30,7 +33,6 @@ export class Navbar {
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        // Soporte por si la clave es "username", "alias", "name" u otra
         this.currentUser = {
           alias: parsedUser.alias || parsedUser.username || parsedUser.name || 'Usuario',
           role: parsedUser.role || 'user',

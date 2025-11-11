@@ -185,8 +185,7 @@ h2 {
 }
 
 /* Botones del ticket */
-.confirm-btn,
-.clear-btn {
+.confirm-btn {
   background-color: #ff9e28;
   color: #3a2b14;
   border: none;
@@ -199,10 +198,29 @@ h2 {
   transition: 0.3s;
   box-shadow: 0 0 6px rgba(255, 158, 40, 0.6);
 }
-.confirm-btn:hover,
-.clear-btn:hover {
+.confirm-btn:hover {
   background-color: #ffd07a;
   transform: scale(1.05);
+}
+
+.clear-btn {
+  background-color: #f0433d;
+  color: #3a2b14;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: 0.3s;
+  box-shadow: 0 0 8px rgba(255, 111, 111, 0.8);
+}
+
+.clear-btn:hover {
+  background-color: #f82d26;
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(255, 111, 111, 0.8);
 }
 
 /* Responsive: ticket abajo */
