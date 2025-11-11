@@ -47,4 +47,8 @@ export const routes: Routes = [
   loadComponent: () =>
     import('./pages/products/reviews/reviews').then(m => m.ProductReviews),
 },
+{
+  path: 'checkout',
+  loadComponent: () => import('./pages/checkout/checkout').then(m => m.Checkout),
+},
 ];
