@@ -1,18 +1,39 @@
 <nav class="navbar">
+  <!-- Logo -->
   <div class="logo" routerLink="/home">
     <img src="/assets/img/logo/logo.png" alt="Logo" />
     <span>Sortilegios Weasley</span>
   </div>
 
+  <!-- Enlaces -->
   <ul class="nav-links">
     <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
     <li><a routerLink="/catalogo" routerLinkActive="active">Catálogo</a></li>
-    <li>
-      <a routerLink="/caldero-magico" routerLinkActive="active" class="nav-link"
-        >Caldero Mágico <span class="counter" *ngIf="itemCount > 0">{{ itemCount }}</span></a
-      >
+
+    <!-- Usuario normal -->
+    <li *ngIf="!isAdmin()">
+      <a routerLink="/caldero-magico" routerLinkActive="active">
+        Caldero Mágico
+        <span class="counter" *ngIf="itemCount > 0">{{ itemCount }}</span>
+      </a>
+    </li>
+
+    <!-- Admin -->
+    <li *ngIf="isAdmin()">
+      <a routerLink="/agregar-producto" routerLinkActive="active">Agregar producto</a>
     </li>
   </ul>
 
-  <button class="btn-muggle" routerLink="/login">¡Ya soy Muggle!</button>
+  <!-- Usuario logueado -->
+  <div class="user-section" *ngIf="currentUser; else guest">
+    <button class="btn-user" (click)="goToProfile()">
+      {{ currentUser.alias }}
+    </button>
+    <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+  </div>
+
+  <!-- Invitado -->
+  <ng-template #guest>
+    <button class="btn-muggle" routerLink="/login">¡Ya soy Muggle!</button>
+  </ng-template>
 </nav>

@@ -47,4 +47,10 @@ export const routes: Routes = [
   loadComponent: () =>
     import('./pages/products/reviews/reviews').then(m => m.ProductReviews),
 },
+
+  {
+  path: 'agregar-producto',
+  loadComponent: () =>
+    import('./pages/add-product/add-product').then(m => m.AddProduct),
+},
 ];

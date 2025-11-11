@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router'; // 🔥 NUEVO
+import { RouterLink } from '@angular/router';
+import { UserService } from '../../services/user.service'; // 👈 agrega esta línea
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink], // 🔥 Añadido RouterLink
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
@@ -16,7 +17,7 @@ export class Login {
   password: string = '';
   errorMsg: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userService: UserService) {} // 👈 inyecta el servicio
 
   ngOnInit() {
     const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
@@ -40,7 +41,8 @@ export class Login {
       return;
     }
 
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    const currentUser = { username: user.alias, role: user.role };
+    this.userService.setUser(currentUser); // 👈 actualiza el servicio global
     this.router.navigate(['/home']);
   }
 }
