@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CauldronService } from '../../services/cualdron.service';
-import { Product } from '../../services/products.service';
+import { CauldronService, CartItem } from '../../services/cualdron.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -9,14 +8,22 @@ import { Observable } from 'rxjs';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './cart.html',
-  styleUrls: ['./cart.css'],
+  styleUrl: './cart.css',
 })
 export class Cart {
 
-  items$!: Observable<Product[]>; // ✅ Declarar, no asignar aún
+  items$!: Observable<CartItem[]>;
 
-  constructor(private cauldronService: CauldronService) {
-    this.items$ = this.cauldronService.items$; // ✅ Ahora se puede usar this.cauldronService
+  constructor(public cauldronService: CauldronService) {
+    this.items$ = this.cauldronService.items$;
+  }
+
+  increase(id: number) {
+    this.cauldronService.increase(id);
+  }
+
+  decrease(id: number) {
+    this.cauldronService.decrease(id);
   }
 
   remove(id: number) {

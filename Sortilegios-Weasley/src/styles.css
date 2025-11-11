@@ -17,7 +17,6 @@ html{
   overflow-x: hidden;
   overflow-y: auto;
 }
-
 /* === Estilos globales del fondo mágico === */
 html, body {
   margin: 0;
@@ -26,7 +25,7 @@ html, body {
   height: 100%;
   background: radial-gradient(circle at 30% 20%, #150024 0%, #0b0015 60%, #000 100%);
   color: #fff4e6;
-  font-family: 'Cinzel Decorative', cursive;
+  font-family: 'Harry P', 'Cinzel Decorative', serif;
   overflow-x: hidden;
 }
 

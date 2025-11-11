@@ -1,18 +1,45 @@
 <h2>Tu Caldero Mágico</h2>
 
 <div *ngIf="items$ | async as items">
-  <p *ngIf="items.length === 0">Tu caldero está vacío... ¡Agrega algunos encantos!</p>
+  <p class="p-vacio" *ngIf="items.length === 0">
+    Tu caldero está vacío... ¡Agrega algunos encantos!
+  </p>
 
-  <div class="cauldron-list" *ngIf="items.length > 0">
-    <div class="cauldron-item" *ngFor="let item of items">
-      <img [src]="item.image" [alt]="item.name" />
-      <div>
-        <h3>{{ item.name }}</h3>
-        <p>{{ item.price }} / {{ item.unit }}</p>
+  <div class="cart-wrapper" *ngIf="items.length > 0">
+    <!-- LISTA DE PRODUCTOS -->
+    <div class="cauldron-list">
+      <div class="cauldron-item" *ngFor="let item of items">
+        <img [src]="item.product.image" [alt]="item.product.name" />
+
+        <div class="item-info">
+          <div class="top-row">
+            <h3>{{ item.product.name }}</h3>
+
+            <div class="qty-controls">
+              <button (click)="decrease(item.product.id)">-</button>
+              <span>{{ item.quantity }}</span>
+              <button (click)="increase(item.product.id)">+</button>
+            </div>
+          </div>
+
+          <div class="bottom-row">
+            <p>{{ item.product.price }} / {{ item.product.unit }}</p>
+
+            <button class="remove-btn" (click)="remove(item.product.id)">Remover</button>
+          </div>
+        </div>
       </div>
-      <button class="remove-btn" (click)="remove(item.id)">Remover</button>
     </div>
 
-    <button class="clear-btn" (click)="clear()">Vaciar caldero</button>
+    <!-- PANEL RESUMEN / TICKET -->
+    <aside class="ticket-box">
+      <h3>Resumen de la compra</h3>
+      <p class="ticket-total">
+        Total: {{ cauldronService.getTotalCOP() | currency : 'COP' : 'symbol' }}
+      </p>
+
+      <button class="clear-btn" (click)="clear()">Vaciar caldero</button>
+      <button class="confirm-btn">Confirmar compra</button>
+    </aside>
   </div>
 </div>
