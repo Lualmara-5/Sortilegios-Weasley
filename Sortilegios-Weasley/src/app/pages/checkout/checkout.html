@@ -1,14 +1,69 @@
-<div class="checkout-container">
-  <h2 class="magic-title">Confirmar Orden</h2>
+<section class="checkout">
+  <header class="ck-header">
+    <h1>Confirmar compra</h1>
+    <p>Revisa tu pedido y procede al pago seguro con PayPal (sandbox).</p>
+  </header>
 
-  <div class="order-summary">
-    <p><strong>Producto:</strong> {{ productName }}</p>
-    <p><strong>Total:</strong> {{ total | currency:'COP' }}</p>
+  <!-- Carrito vacío -->
+  <div *ngIf="items.length === 0" class="ck-empty">
+    <p>Tu caldero está vacío. Vuelve al catálogo para agregar productos.</p>
+    <a routerLink="/catalogo" class="btn btn-secondary">← Volver al catálogo</a>
   </div>
 
-  <div id="paypal-button-container"></div>
+  <!-- Contenido -->
+  <div *ngIf="items.length > 0" class="ck-grid">
+    <!-- Columna izquierda: listado -->
+    <div class="ck-left">
+      <h2>Tu pedido</h2>
 
-  <div *ngIf="paymentStatus" class="result">
-    {{ paymentStatus }}
+      <div class="ck-list">
+        <article class="ck-item" *ngFor="let it of items">
+          <img class="ck-thumb" [src]="it.image" [alt]="it.name" />
+          <div class="ck-info">
+            <h3 class="ck-name">{{ it.name }}</h3>
+            <p class="ck-meta">
+              {{ it.price }} / {{ it.unit }} &nbsp;•&nbsp; Cantidad: <strong>{{ it.qty }}</strong>
+            </p>
+          </div>
+          <div class="ck-line-total">
+            <!-- Muestra total por línea en USD (conversión ya la hace TS al calcular totales) -->
+            ≈ {{ ( ( (it.qty || 0) * (priceToUSD(it.price)) ) | number:'1.2-2') }} USD
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Columna derecha: resumen y pago -->
+    <aside class="ck-right">
+      <div class="ck-card">
+        <h2>Resumen</h2>
+
+        <div class="ck-row">
+          <span>Subtotal</span>
+          <strong>{{ subtotalUSD | currency:'USD':'symbol' }}</strong>
+        </div>
+
+        <div class="ck-row">
+          <span>Envío</span>
+          <strong>{{ (items.length ? shippingUSD : 0) | currency:'USD':'symbol' }}</strong>
+        </div>
+
+        <div class="ck-divider"></div>
+
+        <div class="ck-row ck-total">
+          <span>Total</span>
+          <strong>{{ totalUSD | currency:'USD':'symbol' }}</strong>
+        </div>
+        <small class="ck-hint">≈ {{ totalCOP | currency:'COP':'symbol' }}</small>
+
+        <div class="ck-actions">
+          <a routerLink="/catalogo" class="btn btn-secondary">← Seguir comprando</a>
+          <button class="btn btn-primary" type="button" (click)="renderPayPal()">Proceder con el pago</button>
+        </div>
+
+        <!-- Aquí se renderiza el botón de PayPal -->
+        <div id="paypal-container" class="ck-paypal"></div>
+      </div>
+    </aside>
   </div>
-</div>
+</section>

@@ -1,0 +1,114 @@
+{
+  "1": [
+    { "author": "Cliente Muggle", "text": "La lengua me creció ¡y fue divertidísimo!", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-01T10:00:00.000Z" },
+    { "author": "Hechicera Anónima", "text": "Ideal para bromas sanas.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-02T11:00:00.000Z" }
+  ],
+  "2": [
+    { "author": "Harry P.", "text": "Sí, te conviertes en canario. Confirmado.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-03T12:00:00.000Z" },
+    { "author": "Prefecto", "text": "Efecto temporal, pero inolvidable.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-04T13:00:00.000Z" }
+  ],
+  "3": [
+    { "author": "Gemelo Weasley", "text": "Explosivos y hermosos.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-05T14:00:00.000Z" },
+    { "author": "Conserje", "text": "Mucho desorden, pero valen la pena.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-06T15:00:00.000Z" }
+  ],
+  "4": [
+    { "author": "Coleccionista", "text": "La versión deluxe es una locura.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-07T16:00:00.000Z" },
+    { "author": "Vecino", "text": "Demasiado ruido, pero brillan increíble.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-08T17:00:00.000Z" }
+  ],
+  "5": [
+    { "author": "Curiosa", "text": "Escuché TODO. Shhh…", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-09T10:00:00.000Z" },
+    { "author": "Hermano Menor", "text": "No pasa hechizos anti-impasibilidad, ojo.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-10T11:00:00.000Z" }
+  ],
+  "6": [
+    { "author": "Bromista", "text": "Pegajoso y perfecto para molestar.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-11T12:00:00.000Z" },
+    { "author": "Decano", "text": "No lo usen en clase, por favor.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-12T13:00:00.000Z" }
+  ],
+  "7": [
+    { "author": "Asustador", "text": "Cabeza invisible: sustos garantizados.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-13T14:00:00.000Z" },
+    { "author": "Víctima Feliz", "text": "Me reí de mí mismo cuando lo vi.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-14T15:00:00.000Z" }
+  ],
+  "8": [
+    { "author": "Dramático", "text": "Desmayé al toque. La cura funcionó.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-15T16:00:00.000Z" },
+    { "author": "Actor Escolar", "text": "Útil para salirse de clase… dicen.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-16T17:00:00.000Z" }
+  ],
+  "9": [
+    { "author": "Excusas S.A.", "text": "Funciona para evitar reuniones.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-17T10:00:00.000Z" },
+    { "author": "Enfermero", "text": "Solo para bromas controladas.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-18T11:00:00.000Z" }
+  ],
+  "10": [
+    { "author": "Practicante", "text": "La nariz… sí sangra. Mucho.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-19T12:00:00.000Z" },
+    { "author": "Amigo Cruel", "text": "Lo usé en un duelo. Risas y caos.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-20T13:00:00.000Z" }
+  ],
+  "11": [
+    { "author": "Fiebrudo", "text": "Sube la temperatura de verdad.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-21T14:00:00.000Z" },
+    { "author": "Prefecta", "text": "Con responsabilidad, por favor.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-22T15:00:00.000Z" }
+  ],
+  "12": [
+    { "author": "Gótico", "text": "Nombre épico, efecto real.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-23T16:00:00.000Z" },
+    { "author": "Prudente", "text": "Sorprende más de lo esperado.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-24T17:00:00.000Z" }
+  ],
+  "13": [
+    { "author": "Coleccionista", "text": "La mejor broma clásica.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-25T10:00:00.000Z" },
+    { "author": "Ilusionista", "text": "Se transformó ante mis ojos.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-26T11:00:00.000Z" }
+  ],
+  "14": [
+    { "author": "Sincero", "text": "¿Dije la verdad? Demasiada quizá.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-27T12:00:00.000Z" },
+    { "author": "Curiosa", "text": "Una hora de honestidad brutal.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-28T13:00:00.000Z" }
+  ],
+  "15": [
+    { "author": "Dentista", "text": "No lo muerdas… en serio.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-29T14:00:00.000Z" },
+    { "author": "Bromista", "text": "Duele pero qué risa.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-30T15:00:00.000Z" }
+  ],
+  "16": [
+    { "author": "Lector", "text": "Me mordió la nariz. Libro agresivo.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-01-31T16:00:00.000Z" },
+    { "author": "Bibliotecaria", "text": "No apto para bibliotecas serias.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-01T17:00:00.000Z" }
+  ],
+  "17": [
+    { "author": "Profesor", "text": "Mis notas desaparecieron… ¡otra vez!", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-02T10:00:00.000Z" },
+    { "author": "Estudiante", "text": "Perfecto para bromas sutiles.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-03T11:00:00.000Z" }
+  ],
+  "18": [
+    { "author": "Poeta", "text": "Mensajes que se desvanecen… bello.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-04T12:00:00.000Z" },
+    { "author": "Práctico", "text": "Útil para notas temporales.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-05T13:00:00.000Z" }
+  ],
+  "19": [
+    { "author": "Gigantón", "text": "¡Todo más grande por días!", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-06T14:00:00.000Z" },
+    { "author": "Cauto", "text": "Úsalo con responsabilidad.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-07T15:00:00.000Z" }
+  ],
+  "20": [
+    { "author": "Hechicero", "text": "Contrahechizo automático, curioso.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-08T16:00:00.000Z" },
+    { "author": "Aprendiz", "text": "Confunde pero funciona.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-09T17:00:00.000Z" }
+  ],
+  "21": [
+    { "author": "Soñador", "text": "30 minutos de fantasía real.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-10T10:00:00.000Z" },
+    { "author": "Realista", "text": "Efectos secundarios raros.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-11T11:00:00.000Z" }
+  ],
+  "22": [
+    { "author": "Aventurero", "text": "No para sensibles, aviso.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-12T12:00:00.000Z" },
+    { "author": "Bromista", "text": "Oscuro humor, literal.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-13T13:00:00.000Z" }
+  ],
+  "23": [
+    { "author": "Auror", "text": "Rebota maleficios leves, ok.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-14T14:00:00.000Z" },
+    { "author": "Practicante", "text": "El set rinde bastante.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-15T15:00:00.000Z" }
+  ],
+  "24": [
+    { "author": "Fugitivo", "text": "Oscuridad instantánea útil.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-16T16:00:00.000Z" },
+    { "author": "Estratega", "text": "Gran herramienta de escape.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-17T17:00:00.000Z" }
+  ],
+  "25": [
+    { "author": "Distractor", "text": "Bocina + explosión = éxito.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-18T10:00:00.000Z" },
+    { "author": "Guardia", "text": "Hace mucho ruido. Mucho.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-19T11:00:00.000Z" }
+  ],
+  "26": [
+    { "author": "Criatura-lover", "text": "Puffskeins pigmeos adorables.", "rating": 5, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-20T12:00:00.000Z" },
+    { "author": "Cuidandero", "text": "Fáciles de cuidar.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-21T13:00:00.000Z" }
+  ],
+  "27": [
+    { "author": "Romántica", "text": "Perfume con truco… intenso.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-22T14:00:00.000Z" },
+    { "author": "Cauto", "text": "Úsese con consentimiento.", "rating": 2, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-23T15:00:00.000Z" }
+  ],
+  "28": [
+    { "author": "Satírico", "text": "Nombre grosero, efecto real.", "rating": 3, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-24T16:00:00.000Z" },
+    { "author": "Comediante", "text": "Para bromas muy muy pesadas.", "rating": 4, "avatar": "assets/img/avatars/default.png", "createdAt": "2025-02-25T17:00:00.000Z" }
+  ]
+}
