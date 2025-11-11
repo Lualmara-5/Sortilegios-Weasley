@@ -5,14 +5,17 @@
     <div class="avatar-container">
       <img src="assets/img/wizard-icon.svg" alt="Avatar mágico" class="avatar-icon" />
     </div>
+
     <div class="input-group">
       <label for="alias">Mi alias mágico</label>
       <input type="text" id="alias" [(ngModel)]="aliasMagico" />
     </div>
+
     <div class="input-group">
       <label for="direccion">Mi dirección mágica</label>
       <input type="text" id="direccion" [(ngModel)]="direccionMagica" />
     </div>
+
     <button class="btn-primario" (click)="editarInfo()">Editar información</button>
     <button class="btn-salir" (click)="salir()">Salir</button>
   </section>
@@ -51,11 +54,14 @@
     <h2>Mi lista de deseos</h2>
 
     <div class="producto-deseo" *ngFor="let deseo of listaDeseos">
-      <img [src]="deseo.imagen" [alt]="deseo.nombre" />
+      <img [src]="deseo.image" [alt]="deseo.name" />
       <div class="info">
-        <h3>{{ deseo.nombre }}</h3>
-        <button (click)="agregarAlCaldero(deseo.nombre)">Agregar al caldero mágico</button>
-        <button class="eliminar" (click)="eliminarDeseo(deseo.nombre)">Eliminar producto</button>
+        <h3>{{ deseo.name }}</h3>
+        <p>{{ deseo.description }}</p>
+        <p><strong>{{ deseo.price }} galeones</strong></p>
+
+        <button (click)="agregarAlCaldero(deseo)">Agregar al caldero mágico</button>
+        <button class="eliminar" (click)="eliminarDeseo(deseo)">Eliminar producto</button>
       </div>
     </div>
   </section>

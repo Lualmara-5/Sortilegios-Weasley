@@ -1,19 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CauldronService } from '../../services/cualdron.service';
 import { Product } from '../../services/products.service';
-
-interface Pedido {
-  fecha: string;
-  producto: string;
-  estado: string;
-}
-
-interface Deseo {
-  nombre: string;
-  imagen: string;
-}
+import { CauldronService } from '../../services/cualdron.service';
 
 @Component({
   selector: 'app-profile',
@@ -22,41 +11,53 @@ interface Deseo {
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
-export class Profile {
-  aliasMagico = 'Brujo_123';
-  direccionMagica = 'Callejón Diagon #7¾';
+export class ProfileComponent {
+  aliasMagico = 'Mago Anónimo';
+  direccionMagica = 'Callejón Diagon Nº93';
+
+  pedidos = [
+    { fecha: '01/11/2025', producto: 'Galletas Canario', estado: 'Entregado' },
+    { fecha: '07/11/2025', producto: 'Libro Mordedor', estado: 'En camino' }
+  ];
+
+  listaDeseos: Product[] = [
+    {
+      id: 1,
+      name: 'Pluma Invisible',
+      price: '25',
+      unit: 'unidad',
+      description: 'Una pluma mágica que escribe sin ser vista.',
+      category: 'Artículos mágicos',
+      image: 'assets/img/products/pluma-invisible.png'
+    },
+    {
+      id: 2,
+      name: 'Libro Mordedor',
+      price: '60',
+      unit: 'unidad',
+      description: 'Un libro encantado que muerde a quien lo abre sin permiso.',
+      category: 'Libros encantados',
+      image: 'assets/img/products/libro-mordedor.png'
+    }
+  ];
 
   constructor(private cauldronService: CauldronService) {}
 
-
-
-  pedidos: Pedido[] = [
-    { fecha: 'Septiembre 13, 2025', producto: 'Libro de Hechizos', estado: 'En camino' },
-    { fecha: 'Agosto 26, 2025', producto: 'Pluma Invisible', estado: 'Entregado' },
-    { fecha: 'Agosto 3, 2025', producto: 'Capa de Invisibilidad', estado: 'Entregado' },
-    { fecha: 'Julio 12, 2025', producto: 'Lord Kakadura', estado: 'Entregado' }
-  ];
-
-  listaDeseos: Deseo[] = [
-    { nombre: 'Pluma Invisible', imagen: 'assets/img/pluma.png' },
-    { nombre: 'Varitas falsas', imagen: 'assets/img/varitas.png' },
-    { nombre: 'Capa burlona', imagen: 'assets/img/capa.png' }
-  ];
-
   editarInfo() {
-    console.log('Editar información mágica...');
+    alert(`Alias: ${this.aliasMagico}\nDirección: ${this.direccionMagica}`);
   }
 
   salir() {
-    console.log('Cerrando sesión...');
+    alert('Has salido del perfil mágico.');
   }
 
-  agregarAlCaldero(producto: Deseo) {
-    console.log(`Agregado ${producto} al caldero mágico 🪄`);
-    this.cauldronService.addItem(producto)
+  agregarAlCaldero(product: Product) {
+    this.cauldronService.addItem(product);
+    alert(`${product.name} ha sido agregado al caldero mágico 🧙‍♂️`);
   }
 
-  eliminarDeseo(nombre: string) {
-    this.listaDeseos = this.listaDeseos.filter(d => d.nombre !== nombre);
+  eliminarDeseo(product: Product) {
+    this.listaDeseos = this.listaDeseos.filter(d => d.id !== product.id);
+    alert(`${product.name} ha sido eliminado de tu lista de deseos 💨`);
   }
 }

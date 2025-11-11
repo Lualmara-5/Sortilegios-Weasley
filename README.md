@@ -155,7 +155,7 @@ font-family: 'Harry P', 'Cinzel Decorative', serif;
 
 | Integrante | Rol |
 |-------------|------|
-| **Juan Andrés Miranda Arciniegas** | Lógica principal, integración de PayPal y reseñas |
+| **Juan Felipe Miranda Arciniegas** | Lógica principal, integración de PayPal y reseñas |
 | **Compañeros de equipo** | Catálogo, carrito y diseño visual |
 
 ---
