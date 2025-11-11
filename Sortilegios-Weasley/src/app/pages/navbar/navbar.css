@@ -5,7 +5,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #18092b;
+  background-color: #0d031b;
   color: #fff;
   padding: 10px 40px;
   font-family: 'Poppins', sans-serif;
@@ -45,8 +45,10 @@
 
 .nav-links a:hover,
 .nav-links a.active {
-  color: #ffb84d;
+  color: var(--color-accent);
+  text-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
 }
+
 
 /* =============================== */
 /* SECCIÓN DE USUARIO */
