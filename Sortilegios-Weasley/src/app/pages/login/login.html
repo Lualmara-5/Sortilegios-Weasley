@@ -28,7 +28,7 @@
     </p>
 
     <!-- Formulario -->
-    <form class="login-form">
+    <form class="login-form" (ngSubmit)="onLogin()" #form="ngForm">
       <div class="form-group">
         <label for="username">Ingresa tu alias mágico muggle</label>
         <input 
@@ -36,6 +36,8 @@
           id="username" 
           class="magic-input" 
           placeholder="Ejemplo: HarryPotter_007"
+          [(ngModel)]="alias"
+          name="alias"
           required
         />
       </div>
@@ -47,6 +49,8 @@
           id="password" 
           class="magic-input" 
           placeholder="Ejemplo: ••••••••"
+          [(ngModel)]="password"
+          name="password"
           required
         />
       </div>
@@ -59,8 +63,13 @@
         Desbloquear Magia
       </button>
 
+      <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+
       <div class="login-footer">
-        <p>Recibe tu carta y <a href="#" class="magic-link">Únete a la madriguera</a></p>
+        <p>
+          ¿Aún no tienes identidad mágica?
+          <a routerLink="/register" class="magic-link">Únete a la madriguera</a>
+        </p>
       </div>
     </form>
   </div>
