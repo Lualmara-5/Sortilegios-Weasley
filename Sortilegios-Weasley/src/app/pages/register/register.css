@@ -1,0 +1,377 @@
+/* register.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=MedievalSharp&display=swap');
+
+/* --- Animaciones mágicas --- */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 157, 61, 0.3), 0 0 40px rgba(255, 157, 61, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 157, 61, 0.5), 0 0 60px rgba(255, 157, 61, 0.2);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Fondo mágico general --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top, #1a002b 0%, #0b0015 70%, #000 100%);
+  color: #fff4e6;
+  font-family: 'Cinzel Decorative', cursive;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+
+
+/* --- Contenedor principal --- */
+.register-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.8s ease-out;
+  min-height: calc(100vh - 130px);
+}
+
+/* --- Tarjeta de Registro --- */
+.register-card {
+  background: linear-gradient(145deg, rgba(40, 40, 35, 0.95) 0%, rgba(35, 35, 30, 0.98) 100%);
+  border: 2px solid rgba(212, 122, 0, 0.6);
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 80px rgba(212, 122, 0, 0.1);
+  position: relative;
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Efecto de brillo en los bordes */
+.register-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 16px;
+  background: linear-gradient(45deg, #d47a00, #ff9d3d, #d47a00);
+  background-size: 300% 300%;
+  animation: shimmer 4s linear infinite;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+/* --- Icono mágico --- */
+.magic-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 0.6rem;
+  background: linear-gradient(135deg, rgba(212, 122, 0, 0.3) 0%, rgba(255, 157, 61, 0.2) 100%);
+  border: 2px solid #ff9d3d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sparkle 3s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(255, 157, 61, 0.4), inset 0 0 20px rgba(255, 157, 61, 0.1);
+}
+
+.magic-icon svg {
+  width: 30px;
+  height: 30px;
+  stroke: #ff9d3d;
+  filter: drop-shadow(0 0 8px rgba(255, 157, 61, 0.5));
+}
+
+/* --- Título --- */
+.register-title {
+  text-align: center;
+  color: #ffb347;
+  font-size: clamp(1.25rem, 4vw, 1.55rem);
+  margin-bottom: 0.4rem;
+  font-family: 'MedievalSharp', cursive;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 0 20px rgba(255, 157, 61, 0.4);
+}
+
+.register-subtitle {
+  text-align: center;
+  font-size: clamp(0.7rem, 1.8vw, 0.78rem);
+  color: #e4d2ff;
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
+  font-weight: 300;
+}
+
+/* --- Formulario --- */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-group label {
+  color: #ffb347;
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* --- Inputs mágicos --- */
+.magic-input {
+  background: rgba(26, 0, 51, 0.6);
+  border: 2px solid rgba(212, 122, 0, 0.4);
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  color: #fff4e6;
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 0.73rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.magic-input::placeholder {
+  color: rgba(228, 210, 255, 0.4);
+}
+
+.magic-input:focus {
+  border-color: #ff9d3d;
+  background: rgba(26, 0, 51, 0.8);
+  box-shadow: 0 0 20px rgba(255, 157, 61, 0.3), inset 0 0 10px rgba(255, 157, 61, 0.1);
+  transform: translateY(-2px);
+}
+
+/* --- Hints de input --- */
+.input-hint {
+  font-size: 0.67rem;
+  color: rgba(228, 210, 255, 0.6);
+  font-style: italic;
+  margin-top: -0.15rem;
+}
+
+/* --- Botón mágico --- */
+.magic-button {
+  background: linear-gradient(135deg, #d47a00 0%, #ff9d3d 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.5rem;
+  color: #fff4e6;
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(212, 122, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.05rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.magic-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.magic-button:hover::before {
+  width: 400px;
+  height: 400px;
+}
+
+.magic-button:hover {
+  box-shadow: 0 6px 30px rgba(255, 157, 61, 0.6);
+  transform: translateY(-3px);
+}
+
+.magic-button:active {
+  transform: translateY(-1px);
+}
+
+.magic-button svg {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Footer del registro --- */
+.register-footer {
+  text-align: center;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(212, 122, 0, 0.3);
+}
+
+.register-footer p {
+  color: #e4d2ff;
+  font-size: 0.73rem;
+  margin: 0;
+}
+
+.magic-link {
+  color: #ff9d3d;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.magic-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #ff9d3d;
+  transition: width 0.3s ease;
+}
+
+.magic-link:hover {
+  color: #ffb347;
+  text-shadow: 0 0 10px rgba(255, 157, 61, 0.5);
+}
+
+.magic-link:hover::after {
+  width: 100%;
+}
+
+/* --- Footer --- */
+.footer {
+  background: linear-gradient(180deg, #1a002b 0%, #12001a 100%);
+  text-align: center;
+  padding: 1rem;
+  color: #ffe4b5;
+  font-size: 0.82rem;
+  border-top: 2px solid #d47a00;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+}
+
+.footer p {
+  margin: 0;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .register-container {
+    min-height: calc(100vh - 110px);
+    padding: 0.3rem;
+  }
+
+  .register-card {
+    padding: 0.95rem 1.3rem;
+    margin: 0.3rem;
+    max-width: 390px;
+  }
+
+  .magic-icon {
+    width: 58px;
+    height: 58px;
+  }
+
+  .magic-icon svg {
+    width: 29px;
+    height: 29px;
+  }
+
+  .register-title {
+    font-size: 1.3rem;
+  }
+
+  .register-subtitle {
+    font-size: 0.72rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .register-form {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-container {
+    min-height: calc(100vh - 100px);
+    padding: 0.25rem;
+  }
+
+  .register-card {
+    padding: 0.9rem 1.1rem;
+  }
+
+  .form-group label {
+    font-size: 0.7rem;
+  }
+
+  .magic-input {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .input-hint {
+    font-size: 0.65rem;
+  }
+
+  .magic-button {
+    padding: 0.65rem 1.3rem;
+    font-size: 0.78rem;
+  }
+
+  .register-footer p {
+    font-size: 0.7rem;
+  }
+
+  .footer {
+    padding: 0.85rem 0.75rem;
+    font-size: 0.76rem;
+  }
+}
+/* --- Fix de fondo bloqueando clics --- */
+.magic-background {
+  pointer-events: none !important; /* no bloquear clics */
+  z-index: -1 !important; /* garantizar que esté detrás de todo */
+}
