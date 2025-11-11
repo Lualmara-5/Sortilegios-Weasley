@@ -1,69 +1,129 @@
-<section class="checkout">
-  <header class="ck-header">
-    <h1>Confirmar compra</h1>
-    <p>Revisa tu pedido y procede al pago seguro con PayPal (sandbox).</p>
-  </header>
+<h1 class="co-header">Completar orden</h1>
 
-  <!-- Carrito vacío -->
-  <div *ngIf="items.length === 0" class="ck-empty">
-    <p>Tu caldero está vacío. Vuelve al catálogo para agregar productos.</p>
-    <a routerLink="/catalogo" class="btn btn-secondary">← Volver al catálogo</a>
-  </div>
-
-  <!-- Contenido -->
-  <div *ngIf="items.length > 0" class="ck-grid">
-    <!-- Columna izquierda: listado -->
-    <div class="ck-left">
-      <h2>Tu pedido</h2>
-
-      <div class="ck-list">
-        <article class="ck-item" *ngFor="let it of items">
-          <img class="ck-thumb" [src]="it.image" [alt]="it.name" />
-          <div class="ck-info">
-            <h3 class="ck-name">{{ it.name }}</h3>
-            <p class="ck-meta">
-              {{ it.price }} / {{ it.unit }} &nbsp;•&nbsp; Cantidad: <strong>{{ it.qty }}</strong>
-            </p>
-          </div>
-          <div class="ck-line-total">
-            <!-- Muestra total por línea en USD (conversión ya la hace TS al calcular totales) -->
-            ≈ {{ ( ( (it.qty || 0) * (priceToUSD(it.price)) ) | number:'1.2-2') }} USD
-          </div>
-        </article>
+<section class="co-grid" *ngIf="items$ | async as items">
+  <!-- ================== COLUMNA IZQUIERDA: FORM ================== -->
+  <div class="co-form-card">
+    <h2 class="co-block-title">Detalles Personales</h2>
+    <div class="co-row">
+      <div class="co-field">
+        <label>Primer nombre</label>
+        <input type="text" placeholder="Enter Your First Name..." />
+      </div>
+      <div class="co-field">
+        <label>Segundo</label>
+        <input type="text" placeholder="Enter Your Last Name..." />
       </div>
     </div>
 
-    <!-- Columna derecha: resumen y pago -->
-    <aside class="ck-right">
-      <div class="ck-card">
-        <h2>Resumen</h2>
-
-        <div class="ck-row">
-          <span>Subtotal</span>
-          <strong>{{ subtotalUSD | currency:'USD':'symbol' }}</strong>
-        </div>
-
-        <div class="ck-row">
-          <span>Envío</span>
-          <strong>{{ (items.length ? shippingUSD : 0) | currency:'USD':'symbol' }}</strong>
-        </div>
-
-        <div class="ck-divider"></div>
-
-        <div class="ck-row ck-total">
-          <span>Total</span>
-          <strong>{{ totalUSD | currency:'USD':'symbol' }}</strong>
-        </div>
-        <small class="ck-hint">≈ {{ totalCOP | currency:'COP':'symbol' }}</small>
-
-        <div class="ck-actions">
-          <a routerLink="/catalogo" class="btn btn-secondary">← Seguir comprando</a>
-          <button class="btn btn-primary" type="button" (click)="renderPayPal()">Proceder con el pago</button>
-        </div>
-
-        <!-- Aquí se renderiza el botón de PayPal -->
-        <div id="paypal-container" class="ck-paypal"></div>
+    <div class="co-row">
+      <div class="co-field">
+        <label>Email</label>
+        <input type="email" placeholder="Enter Your Email..." />
       </div>
-    </aside>
+      <div class="co-field">
+        <label>Número teléfono</label>
+        <input type="tel" placeholder="Enter Your Phone Number..." />
+      </div>
+    </div>
+
+    <h2 class="co-block-title">Detalles Pago</h2>
+    <div class="co-pay-logos">
+      <img src="assets/img/payment/visa.svg" alt="VISA" />
+      <img src="assets/img/payment/stripe.svg" alt="Stripe" />
+      <img src="assets/img/payment/paypal.svg" alt="PayPal" />
+      <img src="assets/img/payment/gpay.svg" alt="GPay" />
+    </div>
+
+    <div class="co-row">
+      <div class="co-field">
+        <label>Dueño/portador tarjeta</label>
+        <input type="text" placeholder="Enter Your First Name..." />
+      </div>
+      <div class="co-field">
+        <label>Número tarjeta</label>
+        <input type="text" placeholder="Enter Your Card Number..." />
+      </div>
+    </div>
+
+    <div class="co-row">
+      <div class="co-field">
+        <label>CVV</label>
+        <input type="text" placeholder="Example: 4567" />
+      </div>
+      <div class="co-field">
+        <label>Fecha expiración</label>
+        <input type="text" placeholder="MM/YY" />
+      </div>
+    </div>
+
+    <h2 class="co-block-title">Direccion entrega</h2>
+    <div class="co-field">
+      <label>Dirección</label>
+      <input type="text" placeholder="Your Complete Address..." />
+    </div>
+
+    <div class="co-row">
+      <div class="co-field">
+        <label>Ciudad</label>
+        <input type="text" placeholder="Your City..." />
+      </div>
+      <div class="co-field">
+        <label>Estado</label>
+        <input type="text" placeholder="Your State..." />
+      </div>
+    </div>
+
+    <div class="co-row">
+      <div class="co-field">
+        <label>Punto referencia</label>
+        <input type="text" placeholder="Any Landmark (Famous Place Or Mall)" />
+      </div>
+      <div class="co-field">
+        <label>Codigo Postal</label>
+        <input type="text" placeholder="ZIP Code (123116)" />
+      </div>
+    </div>
+
+    <div class="co-actions">
+      <button type="button" class="co-btn co-btn-outline" routerLink="/caldero-magico">Cancelar</button>
+      <button type="button" class="co-btn co-btn-primary" (click)="scrollToPay()">Completar Compra</button>
+    </div>
   </div>
+
+  <!-- ================== COLUMNA DERECHA: RESUMEN ================== -->
+  <aside class="co-summary-card" *ngIf="items.length > 0">
+    <h3 class="co-brand">Sortilegios Weasley</h3>
+    <h2 class="co-summary-title">Resumen compra</h2>
+
+    <ul class="co-sum-list">
+      <li class="co-sum-item" *ngFor="let it of items">
+        <img class="co-sum-thumb" [src]="it.image" [alt]="it.name" />
+        <div class="co-sum-info">
+          <div class="co-sum-name">{{ it.name }}</div>
+          <div class="co-sum-meta"><span>Cantidad</span><span>{{ it.qty }}</span></div>
+          <div class="co-sum-meta">
+            <span>Precio Total</span>
+            <span>{{ (priceToUSD(it.price) * it.qty) | currency : 'USD' : 'symbol' }}</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="co-totals">
+      <div class="co-total-row">
+        <span>Envío</span><strong>12</strong>
+      </div>
+      <div class="co-total-row co-total-strong">
+        <span>Total pago</span>
+        <strong>\${{ totalUSD$ | async | number:'1.0-0' }}</strong>
+      </div>
+    </div>
+
+    <div id="paypal-button-container" class="co-paypal"></div>
+  </aside>
+</section>
+
+<section class="co-empty" *ngIf="(items$ | async)?.length === 0">
+  <p>Tu caldero está vacío. Agrega productos desde el catálogo.</p>
+  <a class="co-link" routerLink="/catalogo">← Ir al catálogo</a>
 </section>

@@ -1,15 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { Observable, of, map } from 'rxjs';
 
-// El SDK de PayPal lo cargas en index.html:
-// <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
-declare const paypal: any;
-
-type CheckoutItem = {
+type SnapshotItem = {
   id: number;
   name: string;
-  price: string;  // "5 galeones", "11 sickles", "120000 COP", "38 USD"
+  price: string;
   unit: string;
   qty: number;
   image: string;
@@ -20,156 +17,152 @@ type CheckoutItem = {
   standalone: true,
   imports: [CommonModule, RouterModule, CurrencyPipe],
   templateUrl: './checkout.html',
-  styleUrl: './checkout.css',
+  styleUrls: ['./checkout.css'],
 })
-export class Checkout implements OnInit {
-  private router = inject(Router);
+export class Checkout implements OnInit, AfterViewInit {
 
-  // Snapshot del carrito
-  items: CheckoutItem[] = [];
+  /** Items como observable para plantillas con | async */
+  items$!: Observable<SnapshotItem[]>;
 
-  // Totales (USD para PayPal)
-  subtotalUSD = 0;
-  shippingUSD = 12;          // demo fijo
-  totalUSD = 0;
+  /** Totales como streams (para usar en la vista) */
+  totalCOP$!: Observable<number>;
+  totalUSD$!: Observable<number>;
 
-  // Si quieres mostrar el total en COP en la UI
-  readonly USD_TO_COP = 4000;
+  /** Totales numéricos para la lógica de PayPal */
+  private totalCOP = 0;
+  private totalUSD = 0;
 
-  ngOnInit(): void {
-    this.loadSnapshot();
-    this.recomputeTotals();
+  /** Tasas DEMO (ajusta si tu equipo definió otras) */
+  private USD_TO_COP = 5000;      // 1 USD ≈ 5000 COP
+  private GALLEON_TO_USD = 7;     // 1 galeón ≈ 7 USD
+  private SICKLE_TO_USD = 0.5;    // 1 sickle ≈ 0.5 USD
+
+  ngOnInit() {
+    const items = this.readSnapshot();
+    this.items$ = of(items);
+
+    // Streams de totales
+    this.totalCOP$ = this.items$.pipe(
+      map(list => list.reduce((acc, it) => acc + this.priceToCOP(it.price) * (it.qty || 0), 0))
+    );
+    this.totalUSD$ = this.items$.pipe(
+      map(list => list.reduce((acc, it) => acc + this.priceToUSD(it.price) * (it.qty || 0), 0))
+    );
+
+    // Mantener totales sincronizados
+    this.totalCOP$.subscribe(v => this.totalCOP = v);
+    this.totalUSD$.subscribe(v => this.totalUSD = parseFloat(v.toFixed(2)));
   }
 
-  /** Lee el carrito guardado por el caldero */
-  private loadSnapshot() {
+  ngAfterViewInit() {
+    this.initPayPalButton();
+  }
+
+  /** Lee snapshot del carrito desde localStorage */
+  private readSnapshot(): SnapshotItem[] {
     try {
       const raw = localStorage.getItem('weasley-cart');
-      this.items = raw ? (JSON.parse(raw) as CheckoutItem[]) : [];
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((x: any) => ({
+        id: Number(x?.id) || 0,
+        name: String(x?.name || ''),
+        price: String(x?.price || ''),
+        unit: String(x?.unit || ''),
+        qty: Number(x?.qty) || 0,
+        image: String(x?.image || ''),
+      })) as SnapshotItem[];
     } catch {
-      this.items = [];
+      return [];
     }
   }
 
-  /** Convierte precio textual a USD (demo) */
+  /** Convierte string de precio a USD numérico */
   priceToUSD(price: string): number {
-    const lower = (price || '').toLowerCase().trim();
-    const num = parseFloat((lower.match(/[\d.]+/) || ['0'])[0]);
+    const p = (price || '').toLowerCase().trim();
 
-    if (Number.isNaN(num)) return 0;
-
-    // USD explícito
-    if (lower.includes('usd')) return num;
-
-    // Moneda del mundo mágico (demos)
-    // 1 galeón ≈ 5 USD, 1 sickle ≈ 1 USD
-    if (lower.includes('galeon')) return num * 5;
-    if (lower.includes('sickle')) return num * 1;
-
-    // COP (asumimos 1 USD = 4000 COP)
-    if (lower.includes('cop') || lower.startsWith('$')) {
-      return +(num / this.USD_TO_COP).toFixed(2);
+    if (p.includes('usd') || p.includes('$')) {
+      const num = parseFloat(p.replace(/[^\d.]/g, ''));
+      return isNaN(num) ? 0 : num;
+    }
+    if (p.includes('cop')) {
+      const cop = parseFloat(p.replace(/[^\d.]/g, ''));
+      return isNaN(cop) ? 0 : cop / this.USD_TO_COP;
+    }
+    if (p.includes('galeon')) {
+      const g = parseFloat(p.replace(/[^\d.]/g, ''));
+      return isNaN(g) ? 0 : g * this.GALLEON_TO_USD;
+    }
+    if (p.includes('sickle')) {
+      const s = parseFloat(p.replace(/[^\d.]/g, ''));
+      return isNaN(s) ? 0 : s * this.SICKLE_TO_USD;
     }
 
-    // fallback: tratar el número como USD
-    return num;
+    const fallback = parseFloat(p.replace(/[^\d.]/g, ''));
+    return isNaN(fallback) ? 0 : fallback / this.USD_TO_COP;
   }
 
-  /** Recalcula subtotal/total en USD */
-  private recomputeTotals() {
-    this.subtotalUSD = this.items.reduce((acc, it) => {
-      const unitUSD = this.priceToUSD(it.price);
-      return acc + unitUSD * (it.qty || 0);
-    }, 0);
-    this.totalUSD = +(this.subtotalUSD + (this.items.length ? this.shippingUSD : 0)).toFixed(2);
+  /** Convierte string de precio a COP numérico */
+  priceToCOP(price: string): number {
+    const p = (price || '').toLowerCase().trim();
+
+    if (p.includes('cop')) {
+      const cop = parseFloat(p.replace(/[^\d.]/g, ''));
+      return isNaN(cop) ? 0 : cop;
+    }
+    if (p.includes('usd') || p.includes('$')) {
+      const usd = parseFloat(p.replace(/[^\d.]/g, ''));
+      return isNaN(usd) ? 0 : usd * this.USD_TO_COP;
+    }
+    if (p.includes('galeon')) {
+      const g = parseFloat(p.replace(/[^\d.]/g, ''));
+      return isNaN(g) ? 0 : g * this.GALLEON_TO_USD * this.USD_TO_COP;
+    }
+    if (p.includes('sickle')) {
+      const s = parseFloat(p.replace(/[^\d.]/g, ''));
+      return isNaN(s) ? 0 : s * this.SICKLE_TO_USD * this.USD_TO_COP;
+    }
+
+    const fallback = parseFloat(p.replace(/[^\d.]/g, ''));
+    return isNaN(fallback) ? 0 : fallback;
   }
 
-  /** Total de la UI en COP (opcional) */
-  get totalCOP(): number {
-    return Math.round(this.totalUSD * this.USD_TO_COP);
-  }
-
-  /** Renderiza los botones de PayPal dentro de #paypal-container */
-  renderPayPal() {
-    const containerId = 'paypal-container';
-    const host = document.getElementById(containerId);
-    if (!host) {
-      console.error(`No se encontró #${containerId} en el DOM.`);
+  /** Carga el botón de PayPal sandbox */
+  private initPayPalButton() {
+    const scriptId = 'paypal-sdk';
+    if (document.getElementById(scriptId)) {
+      this.renderPaypal();
       return;
     }
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.src = 'https://www.paypal.com/sdk/js?client-id=sb&currency=USD';
+    script.onload = () => this.renderPaypal();
+    document.body.appendChild(script);
+  }
 
-    // Limpia si el usuario vuelve a pulsar
-    host.innerHTML = '';
-
-    if (typeof paypal === 'undefined' || !paypal.Buttons) {
-      alert('PayPal SDK no está disponible. Verifica el <script> en index.html.');
-      return;
-    }
-
-    const itemsForPayPal = this.items.map((it) => ({
-      name: it.name,
-      quantity: String(it.qty || 1),
-      unit_amount: {
-        currency_code: 'USD',
-        value: this.priceToUSD(it.price).toFixed(2),
-      },
-    }));
-
-    paypal.Buttons({
-      style: {
-        layout: 'vertical',
-        color: 'gold',
-        shape: 'rect',
-        label: 'paypal',
-      },
-
-      createOrder: (_data: unknown, actions: any) => {
-        return actions.order.create({
-          purchase_units: [
-            {
-              amount: {
-                currency_code: 'USD',
-                value: this.totalUSD.toFixed(2),
-                breakdown: {
-                  item_total: {
-                    currency_code: 'USD',
-                    value: this.subtotalUSD.toFixed(2),
-                  },
-                  shipping: {
-                    currency_code: 'USD',
-                    value: (this.items.length ? this.shippingUSD : 0).toFixed(2),
-                  },
-                },
-              },
-              items: itemsForPayPal,
-            },
-          ],
-        });
-      },
-
-      onApprove: async (_data: unknown, actions: any) => {
-        try {
-          const details = await actions.order.capture();
-          const orderId: string | undefined = details?.id;
-
-          // Limpia carrito (opcional)
+  private renderPaypal() {
+    // @ts-ignore
+    if (!window.paypal) return;
+    // @ts-ignore
+    window.paypal.Buttons({
+      createOrder: (_: any, actions: any) => actions.order.create({
+        purchase_units: [{
+          amount: { value: this.totalUSD.toString(), currency_code: 'USD' },
+        }]
+      }),
+      onApprove: (_: any, actions: any) =>
+        actions.order.capture().then((details: any) => {
+          alert(`✨ Gracias, ${details.payer?.name?.given_name || 'mago'}! Tu pedido ha sido confirmado.`);
           // localStorage.removeItem('weasley-cart');
+        }),
+    }).render('#paypal-button-container');
+  }
 
-          // Redirige a la pantalla de confirmación
-          this.router.navigate(['/orden-confirmada'], {
-            queryParams: { orderId },
-            state: { order: details },
-          });
-        } catch (e) {
-          console.error('Error al capturar la orden:', e);
-          alert('No se pudo completar el pago.');
-        }
-      },
-
-      onError: (err: unknown) => {
-        console.error('PayPal error:', err);
-        alert('Ocurrió un error con PayPal.');
-      },
-    }).render(`#${containerId}`);
+  /** Scroll hacia el botón PayPal */
+  scrollToPay() {
+    document.getElementById('paypal-button-container')
+      ?.scrollIntoView({ behavior: 'smooth' });
   }
 }
