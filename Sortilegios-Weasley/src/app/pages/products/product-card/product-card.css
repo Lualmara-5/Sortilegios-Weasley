@@ -42,6 +42,7 @@
 
 .details-btn,
 .add-btn {
+  font-family: 'Harry P', 'Cinzel Decorative', serif;
   display: inline-flex;
   align-items: center;
   justify-content: center;

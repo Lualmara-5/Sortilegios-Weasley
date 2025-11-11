@@ -20,7 +20,7 @@
   {
     "id": 3,
     "name": "Salvajes magifuegos Weasley - Magicaja básica",
-    "price": "5 galeones",
+    "price": "5 galleons",
     "unit": "unidad",
     "description": "Selección básica de fuegos artificiales mágicos. Precaución: si se golpean, causan grandes explosiones.",
     "category": "Fuegos artificiales",
@@ -29,7 +29,7 @@
   {
     "id": 4,
     "name": "Salvajes magifuegos Weasley - Deflagración deluxe",
-    "price": "20 galeones",
+    "price": "20 galleons",
     "unit": "unidad",
     "description": "Selección de lujo de fuegos artificiales mágicos. Peligrosos al contacto o al usar hechizos desvanecedores.",
     "category": "Fuegos artificiales",
@@ -38,7 +38,7 @@
   {
     "id": 5,
     "name": "Orejas extensibles",
-    "price": "3 galeones",
+    "price": "3 galleons",
     "unit": "unidad",
     "description": "Escucha conversaciones ajenas con total discreción. No funciona si hay Encantamientos de Impasibilidad.",
     "category": "Artículos de espionaje",
@@ -47,7 +47,7 @@
   {
     "id": 6,
     "name": "Pantano portátil",
-    "price": "15 galeones",
+    "price": "15 galleons",
     "unit": "unidad",
     "description": "Ideal para decorar exteriores o interiores y molestar a profesores. Altamente pegajoso y persistente.",
     "category": "Bromas mágicas",
@@ -56,7 +56,7 @@
   {
     "id": 7,
     "name": "Sombreros acéfalos",
-    "price": "2 galeones",
+    "price": "2 galleons",
     "unit": "unidad",
     "description": "Vuelve tu cabeza invisible para dar un buen susto a tus amigos.",
     "category": "Bromas mágicas",
@@ -65,7 +65,7 @@
   {
     "id": 8,
     "name": "Bombones desmayo",
-    "price": "1 galeón",
+    "price": "1 galleon",
     "unit": "unidad",
     "description": "Provocan un desmayo inmediato. Necesitas a alguien que te dé la otra mitad para curarte.",
     "category": "Surtidos Saltaclases",
@@ -74,7 +74,7 @@
   {
     "id": 9,
     "name": "Pastillas vomitivas",
-    "price": "1 galeón",
+    "price": "1 galleon",
     "unit": "unidad",
     "description": "Causan vómitos al instante. Perfectas para librarte de clases indeseadas.",
     "category": "Surtidos Saltaclases",
@@ -83,7 +83,7 @@
   {
     "id": 10,
     "name": "Turrón sangranarices",
-    "price": "1 galeón",
+    "price": "1 galleon",
     "unit": "unidad",
     "description": "Provoca una considerable hemorragia nasal temporal.",
     "category": "Surtidos Saltaclases",
@@ -92,7 +92,7 @@
   {
     "id": 11,
     "name": "Caramelo de la fiebre",
-    "price": "1 galeón",
+    "price": "1 galleon",
     "unit": "unidad",
     "description": "Aumenta la temperatura corporal causando fiebre temporal.",
     "category": "Surtidos Saltaclases",
@@ -101,7 +101,7 @@
   {
     "id": 12,
     "name": "Manantial de sangre",
-    "price": "1 galeón",
+    "price": "1 galleon",
     "unit": "unidad",
     "description": "Caramelos que provocan una gran hemorragia nasal mágica.",
     "category": "Surtidos Saltaclases",
@@ -110,7 +110,7 @@
   {
     "id": 13,
     "name": "Varitas falsas",
-    "price": "5 galeones",
+    "price": "5 galleons",
     "unit": "unidad",
     "description": "Parecen varitas reales, pero se transforman en muñecos de goma al usarlas.",
     "category": "Bromas mágicas",
@@ -137,7 +137,7 @@
   {
     "id": 16,
     "name": "Libro mordedor",
-    "price": "5 galeones",
+    "price": "5 galleon",
     "unit": "unidad",
     "description": "La letra se encoge hasta obligar al lector a acercarse... ¡y morderle la nariz!",
     "category": "Bromas mágicas",
@@ -146,7 +146,7 @@
   {
     "id": 17,
     "name": "Pergamino inservible",
-    "price": "1 galeón",
+    "price": "1 galleon",
     "unit": "unidad",
     "description": "Todo lo que se escriba en él desaparece al instante. Ideal para jugar bromas en exámenes.",
     "category": "Papelería mágica",
@@ -155,7 +155,7 @@
   {
     "id": 18,
     "name": "Pluma invisible",
-    "price": "1 galeón",
+    "price": "1 galleon",
     "unit": "unidad",
     "description": "La tinta desaparece a los 10 minutos. Perfecta para escribir mensajes temporales.",
     "category": "Papelería mágica",
@@ -164,7 +164,7 @@
   {
     "id": 19,
     "name": "Spray aumenta todo",
-    "price": "3 galeones",
+    "price": "3 galleons",
     "unit": "unidad",
     "description": "Rocía y agranda cualquier objeto o persona. Efecto de hasta tres días.",
     "category": "Artículos curiosos",
@@ -173,7 +173,7 @@
   {
     "id": 20,
     "name": "Varitas del revés",
-    "price": "6 galeones",
+    "price": "6 galleons",
     "unit": "unidad",
     "description": "Lanzan el contrahechizo del conjuro que realmente se quiere usar.",
     "category": "Bromas mágicas",

@@ -1,36 +1,45 @@
-h2 {
-  font-family: "Cinzel", serif;
-  font-size: 2rem;
-  text-align: center;
-  margin: 20px 0px;
-  color: #ff7b00; /* Naranja Weasley */
-  text-shadow: 0 0 8px rgba(255, 140, 0, 0.6);
+h2 { 
+  font-family: "Cinzel", serif; 
+  font-size: 2rem; 
+  text-align: center; 
+  margin: 30px 0; 
+  color: #ff7b00; 
+  text-shadow: 0 0 8px rgba(255, 140, 0, 0.6); 
 }
 
-p {
-  text-align: center;
-  font-style: italic;
-  opacity: 0.8;
+.p-vacio { 
+  text-align: center; 
+  font-style: italic; 
+  opacity: 0.8; 
 }
 
-/* Contenedor del listado */
+/* Nueva estructura global */
+.cart-wrapper {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 30px;       /* bajamos la lista del título */
+  margin-bottom: 60px;    /* respiración abajo */
+  padding: 0 40px;        /* que no toque bordes */
+}
+
+/* La lista de productos ocupa el espacio principal */
 .cauldron-list {
+  flex: 0 1 1000px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 650px;
-  margin: 0 auto;
+  gap: 22px;              /* separación limpia entre items */
 }
 
-
-/* Cada ítem */
+/* Cada item del carrito */
 .cauldron-item {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
   border-radius: 12px;
-  background: #2b2b2b; 
+  background: #2b2b2b;
   border: 1px solid #ff7b00;
   box-shadow: 0 0 10px rgba(255, 123, 0, 0.5);
   transition: transform 0.2s ease;
@@ -40,30 +49,84 @@ p {
   transform: scale(1.02);
 }
 
-/* Imagen del producto */
+/* Imagen fija */
 .cauldron-item img {
-  width: 80px;  
-  height: 80px;
+  width: 75px;
+  height: 75px;
   object-fit: cover;
   border-radius: 8px;
   border: 2px solid #ffb74a;
+  flex-shrink: 0;
 }
 
-/* Textos internos */
-.cauldron-item h3 {
+/* Contenedor del texto */
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+/* fila superior: nombre + contador */
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* fila inferior: precio + remover */
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Evita que el título empuje todo */
+.item-info h3,
+.item-info p {
   margin: 0;
+  white-space: normal;   /* ahora se ajusta bonito */
+  max-width: 75%;        /* para no comerse el espacio del contador */
   color: #ffd99f;
 }
 
 .cauldron-item p {
-  margin: 0;
   color: #ffb74a;
   font-size: 0.9rem;
 }
 
-/* Botón de remover */
+/* Controles de cantidad */
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-controls button {
+  background-color: #ff7b00;
+  border: none;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.qty-controls button:hover {
+  background-color: #ffb347;
+  transform: scale(1.1);
+}
+.qty-controls span {
+  font-size: 1rem;
+  color: #ffd99f;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Botón remover */
 .remove-btn {
-  margin-left: auto;
   background-color: #d9534f;
   color: #fff;
   border: none;
@@ -72,32 +135,60 @@ p {
   cursor: pointer;
   transition: 0.3s ease;
 }
-
 .remove-btn:hover {
   background-color: #ff4f4f;
   transform: scale(1.05);
   box-shadow: 0 0 8px rgba(255, 111, 111, 0.8);
 }
 
-/* Botón para vaciar el caldero */
-.clear-btn {
-  background-color: var(--color-primary, #ff7b00);
-  color: var(--color-bg, #fff);
-  border: none;
-  padding: 10px 20px;
-  margin-top: 10px;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s ease;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 0 6px rgba(255, 107, 0, 0.6);
+/* PANEL / TICKET */
+.ticket-box {
+  flex: 0 0 260px;
+  background: #2b2b2b;
+  border: 1px solid #ff7b00;
+  border-radius: 14px;
+  padding: 20px;
+  height: fit-content;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(255, 136, 0, 0.5);
 }
 
+.ticket-box h3 {
+  color: #ffd99f;
+  margin-bottom: 12px;
+  font-family: "Cinzel", serif;
+}
+
+.ticket-total {
+  font-size: 1.2rem;
+  color: #ffb74a;
+  margin-bottom: 18px;
+}
+
+/* Botones del ticket */
+.confirm-btn,
+.clear-btn {
+  background-color: #ff9e28;
+  color: #3a2b14;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: 0.3s;
+  box-shadow: 0 0 6px rgba(255, 158, 40, 0.6);
+}
+.confirm-btn:hover,
 .clear-btn:hover {
-  background-color: var(--color-accent, #ffb347);
-  box-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
+  background-color: #ffd07a;
   transform: scale(1.05);
+}
+
+/* Responsive: ticket abajo */
+@media (max-width: 800px) {
+  .ticket-box {
+    flex: 1 1 100%;
+  }
 }
