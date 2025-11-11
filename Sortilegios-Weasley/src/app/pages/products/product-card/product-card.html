@@ -3,5 +3,5 @@
   <h3>{{ product.name }}</h3>
   <p class="price">{{ product.price }} / {{ product.unit }}</p>
   <p class="desc">{{ product.description }}</p>
-  <button class="details-btn">Ver detalles</button>
+  <a class="details-btn" [routerLink]="['/catalogo', product.id]"></a>
 </div>

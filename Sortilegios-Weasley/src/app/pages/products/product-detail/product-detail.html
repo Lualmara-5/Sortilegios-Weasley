@@ -1,32 +1,28 @@
-<section class="pd-wrap">
+<!-- Cargando (muy breve la primera vez) -->
+<section class="pd-wrap" *ngIf="(product$ | async) === undefined">
+  <div class="pd-card"><p>Cargando producto…</p></div>
+</section>
+
+<!-- Producto encontrado -->
+<section class="pd-wrap" *ngIf="product$ | async as p">
   <div class="pd-card">
-    <h1 class="pd-title">Poción de Amor</h1>
+    <h1 class="pd-title">{{ p.name }}</h1>
 
     <div class="pd-content">
       <figure class="pd-media">
-        <img
-          src="assets/imagenes/image.png"
-          alt="Poción de amor"
-          class="pd-img"
-        />
+        <img class="pd-img" [src]="p.image" [alt]="p.name" />
       </figure>
 
       <div class="pd-info">
-        <p class="pd-desc">
-          Un hechizo embotellado para los corazones desesperados. Basta con unas gotas
-          y tu objetivo se convertirá en tu mayor admirador… aunque puede que también
-          empiece a recitarte poemas cursis o a mandarte lechuzas cada cinco minutos.
-          Efecto rápido, intenso y absolutamente impredecible.
-        </p>
+        <p class="pd-desc">{{ p.description }}</p>
 
         <div class="pd-meta">
-          <p><strong>Precio:</strong> 25 Galeones | $75.000 muggle pesos</p>
-          <p><strong>Categoría:</strong> Pociones</p>
-          <p><strong>Stock:</strong> 7</p>
+          <p><strong>Precio:</strong> {{ p.price }} / {{ p.unit }}</p>
+          <p><strong>Categoría:</strong> {{ p.category }}</p>
         </div>
 
         <div class="pd-actions">
-          <a class="btn btn-secondary" href="/resenas">Reseñas</a>
+          <a class="btn btn-secondary" routerLink="/catalogo">← Volver al catálogo</a>
           <button class="btn btn-primary" type="button">Añadir a lista de deseos</button>
         </div>
       </div>
@@ -34,14 +30,19 @@
 
     <p class="pd-disclaimer">
       Sortilegios Weasley no se hace responsable por triángulos amorosos, corazones rotos
-      ni compromisos mágicos forzados. Compra bajo tu propio riesgo
+      ni compromisos mágicos forzados. Compra bajo tu propio riesgo.
     </p>
   </div>
 
-  <!-- brillos de base (decorativos) -->
   <div class="glow-row">
-    <span class="glow"></span>
-    <span class="glow"></span>
-    <span class="glow"></span>
+    <span class="glow"></span><span class="glow"></span><span class="glow"></span>
+  </div>
+</section>
+
+<!-- Producto no encontrado -->
+<section class="pd-wrap" *ngIf="(product$ | async) === null">
+  <div class="pd-card">
+    <h2>Producto no encontrado</h2>
+    <a class="btn btn-secondary" routerLink="/catalogo">Volver al catálogo</a>
   </div>
 </section>
