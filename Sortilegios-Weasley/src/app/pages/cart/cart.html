@@ -1,1 +1,18 @@
-<p>cart works!</p>
+<h2>Tu Caldero Mágico</h2>
+
+<div *ngIf="items$ | async as items">
+  <p *ngIf="items.length === 0">Tu caldero está vacío... ¡Agrega algunos encantos!</p>
+
+  <div class="cauldron-list" *ngIf="items.length > 0">
+    <div class="cauldron-item" *ngFor="let item of items">
+      <img [src]="item.image" [alt]="item.name" />
+      <div>
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.price }} / {{ item.unit }}</p>
+      </div>
+      <button class="remove-btn" (click)="remove(item.id)">Remover</button>
+    </div>
+
+    <button class="clear-btn" (click)="clear()">Vaciar caldero</button>
+  </div>
+</div>

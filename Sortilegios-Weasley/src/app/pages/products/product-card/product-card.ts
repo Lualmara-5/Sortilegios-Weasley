@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router'; 
-import { Product } from '../products.service';
-import { CauldronService } from './cualdron.service';
+import { Product } from '../../../services/products.service';
+import { CauldronService } from '../../../services/cualdron.service';
 
 @Component({
   selector: 'app-product-card',

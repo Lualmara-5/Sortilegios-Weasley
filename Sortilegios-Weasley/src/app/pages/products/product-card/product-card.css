@@ -1,9 +1,13 @@
 .product-card {
-  background: #fff8f2;
+  background: linear-gradient(180deg, #1e1847 0%, #2d1b4e 50%, #1a0033 100%);
   border-radius: 10px;
   padding: 15px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   transition: transform 0.2s;
+  display: flex;                 
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;                  
 }
 
 .product-card:hover {
@@ -23,14 +27,17 @@
 
 .desc {
   font-size: 0.9rem;
-  color: #444;
+  color: #c7c7c7;
+  margin-top: 8px;
+  text-overflow: ellipsis;
+  display: -webkit-box;
 }
 
 .btn-group {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  padding: 15px 0px 0px 0px;
+  padding: 15px 0 0 0;
 }
 
 .details-btn,
@@ -51,11 +58,6 @@
   line-height: 1;
   transition: 0.3s ease;
   box-shadow: 0 0 6px rgba(255, 107, 0, 0.6);
-  
-}
-
-.details-btn {
-  font-size: 0.9rem;
 }
 
 .details-btn:hover,

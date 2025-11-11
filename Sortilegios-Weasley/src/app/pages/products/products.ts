@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductsService, Product } from './products.service';
+import { ProductsService, Product } from '../../services/products.service';
 import { ProductCard } from './product-card/product-card';
 
 @Component({

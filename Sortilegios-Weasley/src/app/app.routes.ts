@@ -32,4 +32,9 @@ export const routes: Routes = [
     import('./pages/products/product-detail/product-detail')
       .then(m => m.ProductDetail), 
   },
+  {
+  path: 'register',
+  loadComponent: () =>
+    import('./pages/register/register').then((m) => m.Register),
+  },
 ];
