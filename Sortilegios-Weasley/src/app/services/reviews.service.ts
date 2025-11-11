@@ -93,20 +93,11 @@ export class ReviewsService {
     };
 
     const list = this.cache[productId] ?? [];
-    // Nuevas reseñas primero:
-    this.cache[productId] = [withDate, ...list];
+    this.cache[productId] = [withDate, ...list]; // nueva primero
     this.persist();
 
     const subj = this.subjects.get(productId);
     if (subj) subj.next([...(this.cache[productId] ?? [])]);
-  }
-
-  /** Borrar reseñas y recargar seed (solo desarrollo) */
-  resetDemo(): void {
-    localStorage.removeItem(LS_KEY);
-    this.cache = {};
-    this.ready$.next(false);
-    this.init();
   }
 
   private persist() {

@@ -69,9 +69,4 @@ export class ProductDetail {
     this.wishlistSvc.agregarDeseo(product);
     alert(`¡${product.name} añadido a tu lista de deseos! ✨`);
   }
-
-  // opcional, útil en desarrollo
-  resetReviewsDemo() {
-    this.reviewsSvc.resetDemo();
-  }
 }
