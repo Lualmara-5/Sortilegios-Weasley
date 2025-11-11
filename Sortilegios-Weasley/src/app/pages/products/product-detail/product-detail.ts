@@ -16,7 +16,7 @@ export class ProductDetail {
   private products = inject(ProductsService);
 
   product$: Observable<Product | undefined> = this.route.paramMap.pipe(
-    map(params => Number(params.get('id'))),          // ← asegura número
+    map(params => Number(params.get('id'))),        
     switchMap(id => this.products.getProductById(id)),
     shareReplay(1)
   );
