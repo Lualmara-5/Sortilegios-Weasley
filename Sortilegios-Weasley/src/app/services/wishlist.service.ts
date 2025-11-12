@@ -21,7 +21,7 @@ export class WishlistService {
 
   constructor(private http: HttpClient) {
     // Cargar productos del JSON solo si los vas a usar para validar existencia
-    this.http.get<Product[]>('assets/data/products.json').subscribe(data => {
+    this.http.get<Product[]>('../../assets/data/products.json').subscribe(data => {
       this.products = data;
       this.cargarDesdeLocalStorage();
     });

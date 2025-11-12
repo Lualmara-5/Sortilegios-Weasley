@@ -1,36 +1,44 @@
-<div class="perfil-container">
-  <!-- Identidad mágica -->
+<div class="perfil-container" *ngIf="usuarioActual; else noLogin">
+  <!-- 🪄 Identidad mágica -->
   <section class="identidad-magica">
     <h2>Mi identidad mágica</h2>
     <div class="avatar-container">
       <img src="assets/img/wizard-icon.svg" alt="Avatar mágico" class="avatar-icon" />
     </div>
 
+    <div class="info-usuario">
+      <p><strong>Nombre:</strong> {{ usuarioActual.username }}</p>
+      <p><strong>Alias:</strong> {{ aliasMagico }}</p>
+      <p><strong>Dirección:</strong> {{ direccionMagica }}</p>
+      <p *ngIf="usuarioActual.email"><strong>Email:</strong> {{ usuarioActual.email }}</p>
+      <p *ngIf="usuarioActual.telefono"><strong>Teléfono:</strong> {{ usuarioActual.telefono }}</p>
+    </div>
+
     <div class="input-group">
-      <label for="alias">Mi alias mágico</label>
+      <label for="alias">Editar alias mágico</label>
       <input type="text" id="alias" [(ngModel)]="aliasMagico" />
     </div>
 
     <div class="input-group">
-      <label for="direccion">Mi dirección mágica</label>
+      <label for="direccion">Editar dirección mágica</label>
       <input type="text" id="direccion" [(ngModel)]="direccionMagica" />
     </div>
 
     <div class="acciones">
-      <button class="btn-primario" (click)="editarInfo()">Editar información</button>
-      <button class="btn-salir" (click)="salir()">Salir</button>
+      <button type="button" class="btn-primario" (click)="editarInfo()">Editar información</button>
+      <button type="button" class="btn-salir" (click)="salir()">Salir</button>
     </div>
   </section>
 
-  <!-- Mis pedidos -->
+  <!-- 📜 Mis pedidos -->
   <section class="mis-pedidos">
     <h2>Mis pedidos</h2>
     <table class="tabla-pedidos">
       <thead>
         <tr>
-          <th>Fecha</th>
-          <th>Productos</th>
-          <th>Estado</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Productos</th>
+          <th scope="col">Estado</th>
         </tr>
       </thead>
       <tbody>
@@ -51,31 +59,40 @@
     </table>
   </section>
 
-  <!-- Lista de deseos -->
+  <!-- 💖 Lista de deseos -->
   <section class="lista-deseos">
     <h2>Mi lista de deseos</h2>
 
-    <div *ngIf="listaDeseos.length === 0" class="sin-deseos">
-      <p>No tienes productos en tu lista de deseos todavía 🧞‍♂️</p>
-    </div>
-
-    <div class="producto-deseo" *ngFor="let deseo of listaDeseos">
-      <img [src]="deseo.image" [alt]="deseo.name" class="imagen-deseo" />
-      <div class="info">
-        <h3>{{ deseo.name }}</h3>
-        <div class="acciones">
-          <button class="btn-caldero" (click)="agregarAlCaldero(deseo)">
-            🪄 Agregar al caldero
-          </button>
-          <button class="btn-eliminar" (click)="eliminarDeseo(deseo)">
-            ❌ Eliminar
-          </button>
+    <div *ngIf="listaDeseos && listaDeseos.length > 0; else sinDeseos">
+      <div class="wishlist-grid">
+        <div class="producto-deseo" *ngFor="let item of listaDeseos">
+          <img [src]="item.image" [alt]="item.name" />
+          <div class="info">
+            <h3>{{ item.name }}</h3>
+            <div class="botones">
+              <button class="btn-caldero" (click)="agregarAlCaldero(item)">
+                🧙‍♂️ Añadir al Caldero
+              </button>
+              <button class="btn-eliminar" (click)="eliminarDeseo(item)">
+                ❌ Eliminar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <ng-template #sinDeseos>
+      <p class="vacio">Tu lista de deseos está vacía 🪄</p>
+    </ng-template>
   </section>
 </div>
 
-<footer class="footer">
-  <p>©2025 Sortilegios Weasley. Hecho con polvos Flu y un toque de caos Weasley.</p>
-</footer>
+<!-- 💡 Cuando no hay usuario logueado -->
+<ng-template #noLogin>
+  <div class="no-login">
+    <h2>No has iniciado sesión</h2>
+    <p>Por favor inicia sesión para acceder a tu perfil mágico.</p>
+    <button class="btn-primario" routerLink="/login">Ir al inicio de sesión</button>
+  </div>
+</ng-template>
