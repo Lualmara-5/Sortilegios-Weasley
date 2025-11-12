@@ -137,7 +137,7 @@
   {
     "id": 16,
     "name": "Libro mordedor",
-    "price": "5 galleon",
+    "price": "5 galleons",
     "unit": "unidad",
     "description": "La letra se encoge hasta obligar al lector a acercarse... ¡y morderle la nariz!",
     "category": "Bromas mágicas",
@@ -182,7 +182,7 @@
   {
     "id": 21,
     "name": "Fantasías patentadas",
-    "price": "—",
+    "price": "25 galleons",
     "unit": "uso",
     "description": "Con un conjuro accedes a una fantasía de 30 minutos, muy realista. Efectos secundarios: mirada ausente y babeo.",
     "category": "Experiencias mágicas",
@@ -191,7 +191,7 @@
   {
     "id": 22,
     "name": "Marcas Tenebrosas comestibles",
-    "price": "—",
+    "price": "2 galleons",
     "unit": "unidad",
     "description": "Dulces con forma de Marca Tenebrosa que enferman a quien los come.",
     "category": "Bromas mágicas",
@@ -200,7 +200,7 @@
   {
     "id": 23,
     "name": "Sombreros, capas y guantes escudo",
-    "price": "—",
+    "price": "30 galleons",
     "unit": "set",
     "description": "Rebotan maleficios leves a moderados. Usados incluso por el Ministerio de Magia.",
     "category": "Artículos defensivos",
@@ -209,7 +209,7 @@
   {
     "id": 24,
     "name": "Polvo peruano de oscuridad instantánea",
-    "price": "—",
+    "price": "18 galleons",
     "unit": "frasco",
     "description": "Crea oscuridad total al instante. Ideal para escapar o esconderse.",
     "category": "Artículos de defensa",
@@ -218,7 +218,7 @@
   {
     "id": 25,
     "name": "Detonadores trampa",
-    "price": "—",
+    "price": "5 galleons",
     "unit": "unidad",
     "description": "Objetos con forma de bocina que explotan con un fuerte ruido para crear distracciones.",
     "category": "Bromas mágicas",
@@ -227,7 +227,7 @@
   {
     "id": 26,
     "name": "Puffskeins pigmeos",
-    "price": "—",
+    "price": "8 galleons",
     "unit": "unidad",
     "description": "Adorables puffskeins en miniatura, perfectos como mascotas mágicas.",
     "category": "Criaturas mágicas",
@@ -236,7 +236,7 @@
   {
     "id": 27,
     "name": "Pociones de amor",
-    "price": "—",
+    "price": "4 galleons",
     "unit": "frasco",
     "description": "Pociones de amor caseras que duran 24 horas. Disfrazadas como perfumes para despistar a Filch.",
     "category": "Pociones mágicas",
@@ -245,7 +245,7 @@
   {
     "id": 28,
     "name": "Lord Kakadura",
-    "price": "—",
+    "price": "3 galleons",
     "unit": "frasco",
     "description": "Producto de broma que causa estreñimiento. Sátira contra el Señor Tenebroso.",
     "category": "Bromas mágicas",
