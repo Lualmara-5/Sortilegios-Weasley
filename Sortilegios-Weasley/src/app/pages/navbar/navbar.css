@@ -151,6 +151,38 @@
   cursor: pointer;
 }
 
+
+@media (min-width: 769px) {
+  .navbar {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Ordenamos los elementos en desktop */
+  .logo {
+    order: 1;
+  }
+
+  .nav-links {
+    order: 2;
+    margin-left: 40px; /* separa visualmente del logo */
+    flex: 1; /* ocupa el espacio intermedio */
+    display: flex;
+    justify-content: center; /* centra los enlaces */
+    gap: 25px;
+  }
+
+  .user-section,
+  .btn-muggle {
+    order: 3;
+    margin-left: auto; /* los lleva a la derecha */
+  }
+
+  .menu-toggle {
+    display: none; /* no se muestra en escritorio */
+  }
+}
+
 @media (max-width: 768px) {
   .navbar {
     flex-wrap: nowrap;
