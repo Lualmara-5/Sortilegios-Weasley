@@ -19,7 +19,6 @@ export class Navbar {
   ngOnInit() {
     this.loadCurrentUser();
 
-    // 🔥 Restauramos el contador del carrito
     this.cauldronService.items$.subscribe((items) => {
       this.itemCount = items.length;
     });

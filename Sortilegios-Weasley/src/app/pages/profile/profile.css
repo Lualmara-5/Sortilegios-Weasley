@@ -170,3 +170,134 @@ button {
   margin-top: 2rem;
   background: #0d0221;
 }
+
+/* 📱 RESPONSIVE DESIGN */
+
+/* --- Tablets (<=1024px) --- */
+@media (max-width: 1024px) {
+  .perfil-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  section {
+    padding: 1.2rem;
+  }
+
+  .tabla-pedidos th,
+  .tabla-pedidos td {
+    font-size: 0.9rem;
+  }
+
+  .producto-deseo img {
+    width: 70px;
+  }
+}
+
+/* --- Celulares (<=768px) --- */
+@media (max-width: 768px) {
+  .perfil-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  section {
+    width: 100%;
+    max-width: 450px;
+  }
+
+  .avatar-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .info-usuario p {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .input-group {
+    width: 100%;
+  }
+
+  .acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    align-items: center;
+  }
+
+  .btn-primario,
+  .btn-salir {
+    width: 90%;
+  }
+
+  .tabla-pedidos {
+    font-size: 0.85rem;
+  }
+
+  .tabla-pedidos th,
+  .tabla-pedidos td {
+    padding: 0.4rem;
+  }
+
+  /* Mostrar pedidos como tarjetas en pantallas muy pequeñas */
+  .tabla-pedidos {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Lista de deseos */
+  .producto-deseo {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .producto-deseo img {
+    width: 100px;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .info button {
+    width: 100%;
+  }
+
+  .wishlist-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* --- Celulares pequeños (<=480px) --- */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .perfil-container {
+    padding: 0.5rem;
+  }
+
+  .input-group label {
+    font-size: 0.8rem;
+  }
+
+  .input-group input {
+    font-size: 0.85rem;
+  }
+
+  button {
+    font-size: 0.85rem;
+  }
+
+  .tabla-pedidos {
+    font-size: 0.8rem;
+  }
+}

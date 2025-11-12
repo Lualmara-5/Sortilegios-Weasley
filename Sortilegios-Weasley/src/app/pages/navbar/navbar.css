@@ -1,6 +1,3 @@
-/* =============================== */
-/* ESTRUCTURA GENERAL DE NAVBAR */
-/* =============================== */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -49,19 +46,12 @@
   text-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
 }
 
-
-/* =============================== */
-/* SECCIÓN DE USUARIO */
-/* =============================== */
 .user-section {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* =============================== */
-/* ICONOS DE PERFIL Y LOGOUT */
-/* =============================== */
 .icon-btn {
   width: 40px;
   height: 40px;
@@ -103,9 +93,6 @@
   gap: 12px;
 }
 
-/* =============================== */
-/* BOTÓN "¡Ya soy Muggle!" */
-/* =============================== */
 .btn-muggle {
   background-color: var(--color-primary);
   color: var(--color-bg);
@@ -124,9 +111,6 @@
   transform: scale(1.05);
 }
 
-/* =============================== */
-/* CONTADOR DEL CALDERO (CARRITO) */
-/* =============================== */
 .counter {
   background-color: var(--color-accent);
   color: var(--color-bg);
@@ -139,9 +123,6 @@
   top: -10px;
 }
 
-/* =============================== */
-/* RESPONSIVE NAVBAR (mejorado) */
-/* =============================== */
 .menu-toggle {
   display: none;
   background: none;
@@ -151,35 +132,33 @@
   cursor: pointer;
 }
 
-
 @media (min-width: 769px) {
   .navbar {
     display: flex;
     align-items: center;
   }
 
-  /* Ordenamos los elementos en desktop */
   .logo {
     order: 1;
   }
 
   .nav-links {
     order: 2;
-    margin-left: 40px; /* separa visualmente del logo */
-    flex: 1; /* ocupa el espacio intermedio */
+    margin-left: 40px; 
+    flex: 1; 
     display: flex;
-    justify-content: center; /* centra los enlaces */
+    justify-content: center;
     gap: 25px;
   }
 
   .user-section,
   .btn-muggle {
     order: 3;
-    margin-left: auto; /* los lleva a la derecha */
+    margin-left: auto; 
   }
 
   .menu-toggle {
-    display: none; /* no se muestra en escritorio */
+    display: none; 
   }
 }
 
@@ -188,7 +167,7 @@
     flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
-    position: relative; /* importante para posicionar el menú absoluto */
+    position: relative; 
     padding: 10px 20px;
   }
 
@@ -215,8 +194,8 @@
   .nav-links {
     display: none;
     flex-direction: column;
-    position: absolute; /* lo saca del flujo */
-    top: 100%; /* justo debajo del navbar */
+    position: absolute;
+    top: 100%; 
     left: 0;
     width: 100%;
     background-color: #15032d;
@@ -237,8 +216,8 @@
   }
 
   .btn-muggle {
-    order: 2;              /* lo pone en el mismo lugar que los botones de usuario */
-    margin-left: auto;     /* empuja hacia la derecha como la sección de usuario */
+    order: 2;             
+    margin-left: auto;     
     margin-right: 10px;
     display: flex;
     align-items: center;

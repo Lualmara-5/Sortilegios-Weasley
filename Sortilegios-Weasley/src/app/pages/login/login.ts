@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { UserService } from '../../services/user.service'; // 👈 agrega esta línea
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +17,7 @@ export class Login {
   password: string = '';
   errorMsg: string = '';
 
-  constructor(private router: Router, private userService: UserService) {} // 👈 inyecta el servicio
+  constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit() {
     const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
@@ -42,7 +42,7 @@ export class Login {
     }
 
     const currentUser = { username: user.alias, role: user.role };
-    this.userService.setUser(currentUser); // 👈 actualiza el servicio global
+    this.userService.setUser(currentUser);
     this.router.navigate(['/home']);
   }
 }
