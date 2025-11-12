@@ -1,180 +1,74 @@
-/* === TARJETA MÁGICA DE PRODUCTO === */
 .product-card {
-  background: radial-gradient(circle at top left, #2a1a5e, #130022);
-  border-radius: 18px;
-  padding: 18px;
-  box-shadow: 0 0 20px rgba(120, 0, 255, 0.3);
-  transition: all 0.6s ease;
+  background: linear-gradient(180deg, #1e1847 0%, #2d1b4e 50%, #1a0033 100%);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: relative;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  animation: entradaMagica 1.5s ease-out forwards;
+  height: 100%;
 }
 
-/* 🎬 Entrada con rebote */
-@keyframes entradaMagica {
-  0% { opacity: 0; transform: scale(0.6) rotateX(-20deg); }
-  60% { opacity: 1; transform: scale(1.05) rotateX(10deg); }
-  100% { transform: scale(1) rotateX(0); }
-}
+.product-card:hover { transform: translateY(-4px); }
 
-/* === EFECTO 3D AL MOVER EL CURSOR === */
-.product-card:hover {
-  transform: rotateY(6deg) rotateX(4deg) scale(1.03);
-  box-shadow: 0 0 35px rgba(200, 100, 255, 0.6),
-              0 0 80px rgba(255, 150, 50, 0.3);
-}
+.product-card img { width: 100%; border-radius: 8px; }
 
-/* === IMAGEN DE PRODUCTO === */
-.product-card img {
-  width: 100%;
-  border-radius: 12px;
-  transition: transform 1s ease, filter 0.8s ease;
-  z-index: 2;
-  position: relative;
-  animation: brilloPocion 4s ease-in-out infinite alternate;
-}
-
-/* 💫 Brillo que late */
-@keyframes brilloPocion {
-  0% { filter: brightness(1) drop-shadow(0 0 0 rgba(255, 180, 0, 0)); }
-  50% { filter: brightness(1.2) drop-shadow(0 0 20px rgba(255, 230, 120, 0.8)); }
-  100% { filter: brightness(1.05) drop-shadow(0 0 10px rgba(255, 160, 70, 0.6)); }
-}
-
-/* 🧲 Movimiento flotante con oscilación */
-.product-card:hover img {
-  animation: flotarLocamente 3s ease-in-out infinite, brilloPocion 3s ease-in-out infinite;
-  transform: rotate(-2deg) scale(1.1);
-}
-
-@keyframes flotarLocamente {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50% { transform: translateY(-15px) rotate(2deg); }
-}
-
-/* === DETALLES === */
-.price {
-  color: #ffb700;
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-top: 12px;
-  text-shadow: 0 0 10px rgba(255, 200, 50, 0.8);
-}
+.price { color: #d44a00; font-weight: bold; margin-top: 8px; }
 
 .desc {
-  color: #c9c9c9;
-  font-size: 0.95rem;
-  margin-top: 10px;
-  line-height: 1.4;
-  opacity: 0.9;
+  font-size: 0.9rem;
+  color: #c7c7c7;
+  margin-top: 8px;
+  text-overflow: ellipsis;
+  display: -webkit-box;
 }
 
-/* === BOTONES HECHIZADOS === */
 .btn-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   padding-top: 15px;
 }
 
 .details-btn,
 .add-btn,
 .edit-btn {
-  font-family: 'Cinzel Decorative', serif;
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  border: none;
-  font-size: 0.9rem;
+  font-family: 'Harry P', 'Cinzel Decorative', serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background-color: var(--color-primary);
+  color: var(--color-bg);
   font-weight: bold;
-  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
   cursor: pointer;
-  padding: 10px 20px;
-  background: linear-gradient(90deg, #ff007c, #ff8c00);
-  box-shadow: 0 0 10px rgba(255, 100, 150, 0.6);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1;
+  transition: 0.3s ease;
+  box-shadow: 0 0 6px rgba(255, 107, 0, 0.6);
 }
 
-/* 💥 Hechizo al pasar */
 .details-btn:hover,
 .add-btn:hover,
 .edit-btn:hover {
-  transform: scale(1.1) rotate(1deg);
-  box-shadow: 0 0 20px rgba(255, 200, 100, 0.9),
-              0 0 60px rgba(255, 100, 200, 0.5);
+  background-color: var(--color-accent);
+  box-shadow: 0 0 12px rgba(255, 211, 105, 0.9);
+  transform: scale(1.05);
 }
 
-/* 💫 Efecto de energía corriendo dentro del botón */
-.details-btn::before,
-.add-btn::before,
-.edit-btn::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
-  transition: all 0.6s;
-}
-
-.details-btn:hover::before,
-.add-btn:hover::before,
-.edit-btn:hover::before {
-  left: 100%;
-}
-
-/* === BOTÓN EDITAR DIFERENTE === */
+/* estilo distinto para Editar (opcional) */
 .edit-btn {
   background: transparent;
-  border: 2px solid #ffcc66;
-  color: #ffcc66;
-  box-shadow: 0 0 10px rgba(255, 200, 100, 0.6);
+  color: var(--color-accent);
+  border: 2px solid var(--color-accent);
+  box-shadow: none;
 }
 .edit-btn:hover {
-  background: #ffcc66;
+  background: var(--color-accent);
   color: #1a0b2e;
-}
-
-/* === EFECTOS MÁGICOS FLOTANTES (CHISPAS) === */
-.product-card::before,
-.product-card::after {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.08) 2%, transparent 3%) repeat;
-  background-size: 20px 20px;
-  opacity: 0.4;
-  animation: chispas 10s linear infinite;
-}
-
-.product-card::after {
-  animation-delay: 5s;
-  opacity: 0.2;
-}
-
-@keyframes chispas {
-  from { transform: rotate(0deg) scale(1); }
-  to { transform: rotate(360deg) scale(1.2); }
-}
-
-/* === EFECTO DE RESPLANDOR INTERNO === */
-.product-card .inner-glow {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-.product-card:hover .inner-glow {
-  opacity: 1;
 }
