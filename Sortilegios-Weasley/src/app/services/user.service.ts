@@ -20,4 +20,13 @@ export class UserService {
     localStorage.removeItem('currentUser');
     this.userSubject.next(null);
   }
+  getUser() {
+  const stored = localStorage.getItem('currentUser');
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+}
 }

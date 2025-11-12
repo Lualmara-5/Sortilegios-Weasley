@@ -1,5 +1,10 @@
+<!-- src/app/pages/products/products.html -->
 <h2 class="catalog-title">Catálogo de Sortilegios Weasley</h2>
 
 <div class="products-grid">
-  <app-product-card *ngFor="let product of products" [product]="product"></app-product-card>
+  <app-product-card
+    *ngFor="let product of products"
+    [product]="product"
+    [showEdit]="isAdmin">
+  </app-product-card>
 </div>

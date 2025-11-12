@@ -1,1 +1,72 @@
-<p>add-product works!</p>
+<h1 class="ap-title">Agregar producto</h1>
+
+<section class="ap-card">
+  <form (ngSubmit)="submit()">
+    <div class="ap-grid">
+
+      <!-- Columna izquierda -->
+      <div class="ap-col">
+        <div class="ap-field">
+          <label>Nombre</label>
+          <input type="text" [(ngModel)]="form.name" name="name" placeholder="Poción de Amor" required />
+        </div>
+
+        <div class="ap-field">
+          <label>Categoría</label>
+          <select [(ngModel)]="form.category" name="category">
+            <option>dulces mágicos</option>
+            <option>pociones</option>
+            <option>libros encantados</option>
+            <option>bromas explosivas</option>
+            <option>kits de travesuras</option>
+            <option>criaturas</option>
+          </select>
+        </div>
+
+        <div class="ap-row">
+          <div class="ap-field">
+            <label>Precio</label>
+            <input type="text" [(ngModel)]="form.price" name="price" placeholder="120000 COP / 7 galeones / 12 USD" required />
+            <small class="ap-hint">Puedes escribirlo en COP, USD, galeones o sickles (texto)</small>
+          </div>
+          <div class="ap-field">
+            <label>Unidad</label>
+            <input type="text" [(ngModel)]="form.unit" name="unit" placeholder="unidad / frasco / pack" />
+          </div>
+        </div>
+
+        <div class="ap-row">
+          <div class="ap-field">
+            <label>Stock disponible</label>
+            <input type="number" [(ngModel)]="form.stock" name="stock" min="0" />
+          </div>
+          <div class="ap-field">
+            <label>Advertencia (opcional)</label>
+            <input type="text" [(ngModel)]="form.warning" name="warning" placeholder="No usar sin consentimiento" />
+          </div>
+        </div>
+
+        <div class="ap-field">
+          <label>Descripción</label>
+          <textarea rows="4" [(ngModel)]="form.description" name="description" placeholder="Describe el producto..."></textarea>
+        </div>
+      </div>
+
+      <!-- Columna derecha (imagen) -->
+      <div class="ap-col">
+        <label class="ap-label">Imagen</label>
+        <div class="ap-image">
+          <img [src]="preview" alt="Vista previa" />
+        </div>
+        <input type="file" accept="image/*" (change)="onFileChange($event)" />
+        <small class="ap-hint">Para demo se guarda en base64 en localStorage</small>
+      </div>
+
+    </div>
+
+    <div class="ap-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="saving">Confirmar</button>
+    </div>
+  </form>
+</section>

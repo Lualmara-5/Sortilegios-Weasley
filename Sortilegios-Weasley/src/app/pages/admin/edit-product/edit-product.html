@@ -1,0 +1,76 @@
+<section class="ep-wrap" *ngIf="!loading && product; else loadingTpl">
+  <h1 class="ep-title">Editar producto</h1>
+
+  <form class="ep-form" (ngSubmit)="save()">
+    <!-- Imagen -->
+    <div class="ep-row">
+      <div class="ep-field">
+        <label>URL de imagen</label>
+        <input type="text" [(ngModel)]="product.image" name="image" placeholder="assets/img/products/mi-producto.png" />
+      </div>
+      <div class="ep-preview">
+        <img [src]="product.image" [alt]="product.name" />
+      </div>
+    </div>
+
+    <!-- Básicos -->
+    <div class="ep-row">
+      <div class="ep-field">
+        <label>Nombre</label>
+        <input type="text" [(ngModel)]="product.name" name="name" required />
+      </div>
+      <div class="ep-field">
+        <label>Categoría</label>
+        <input type="text" [(ngModel)]="product.category" name="category" placeholder="pociones / dulces / libros / bromas / kits" />
+      </div>
+    </div>
+
+    <!-- Precio y unidad -->
+    <div class="ep-row">
+      <div class="ep-field">
+        <label>Precio (texto)</label>
+        <input type="text" [(ngModel)]="product.price" name="price" placeholder="120000 COP / 7 galeones / 12 USD / 15 sickles" />
+      </div>
+      <div class="ep-field">
+        <label>Unidad</label>
+        <input type="text" [(ngModel)]="product.unit" name="unit" placeholder="frasco / caja / unidad / set" />
+      </div>
+    </div>
+
+    <!-- Stock y Advertencia -->
+    <div class="ep-row">
+      <div class="ep-field">
+        <label>Stock</label>
+        <input type="number" [(ngModel)]="product.stock" name="stock" min="0" />
+      </div>
+      <div class="ep-field">
+        <label>Advertencia (warning)</label>
+        <input type="text" [(ngModel)]="product.warning" name="warning" placeholder="No usar sin supervisión..." />
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="ep-field">
+      <label>Descripción</label>
+      <textarea rows="4" [(ngModel)]="product.description" name="description"></textarea>
+    </div>
+
+    <!-- Acciones -->
+    <div class="ep-actions">
+      <button type="button" class="btn btn-ghost" (click)="cancel()">Cancelar</button>
+      <button type="button" class="btn btn-danger" (click)="delete()" [disabled]="deleting">
+        {{ deleting ? 'Eliminando...' : 'Eliminar' }}
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="saving">
+        {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </form>
+</section>
+
+<ng-template #loadingTpl>
+  <section class="ep-wrap">
+    <h1 class="ep-title">Editar producto</h1>
+    <p>Cargando información…</p>
+  </section>
+</ng-template>
