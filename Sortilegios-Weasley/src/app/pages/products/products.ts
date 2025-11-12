@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductsService, Product } from '../../services/products.service';
 import { ProductCard } from './product-card/product-card';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-products',
@@ -12,13 +13,17 @@ import { ProductCard } from './product-card/product-card';
 })
 export class Products implements OnInit {
   products: Product[] = [];
+  isAdmin = false;
 
-  constructor(private productService: ProductsService) {}
+  private productService = inject(ProductsService);
+  private userService = inject(UserService);
 
   ngOnInit(): void {
-    console.log('📦 ProductsComponent cargado');
     this.productService.getProducts().subscribe(data => {
       this.products = data;
     });
+
+    const u = this.userService.getUser?.() ?? null;
+    this.isAdmin = u?.role === 'admin';
   }
 }

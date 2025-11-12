@@ -3,8 +3,16 @@
   <h3>{{ product.name }}</h3>
   <p class="price">{{ product.price }} / {{ product.unit }}</p>
   <p class="desc">{{ product.description }}</p>
+
   <div class="btn-group">
     <button class="add-btn" (click)="addToCauldron(product)">Añadir al caldero</button>
     <a class="details-btn" [routerLink]="['/catalogo', product.id]">Ver detalles</a>
+
+    <!-- 👉 Botón extra solo para admin -->
+    <a *ngIf="showEdit"
+       class="edit-btn"
+       [routerLink]="['/admin/editar', product.id]">
+      Editar producto
+    </a>
   </div>
 </div>
