@@ -2,29 +2,9 @@
   <!-- Logo -->
   <div class="logo" routerLink="/home">
     <img src="/assets/img/logo/logo.png" alt="Logo" />
-    <span>Sortilegios Weasley</span>
   </div>
 
-  <!-- Enlaces -->
-  <ul class="nav-links">
-    <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
-    <li><a routerLink="/catalogo" routerLinkActive="active">Catálogo</a></li>
-
-    <!-- Usuario normal -->
-    <li *ngIf="!isAdmin()">
-      <a routerLink="/caldero-magico" routerLinkActive="active">
-        Caldero Mágico
-        <span class="counter" *ngIf="itemCount > 0">{{ itemCount }}</span>
-      </a>
-    </li>
-
-    <!-- Admin -->
-    <li *ngIf="isAdmin()">
-      <a routerLink="/agregar-producto" routerLinkActive="active">Agregar producto</a>
-    </li>
-  </ul>
-
-  <!-- Usuario logueado -->
+  <!-- Sección de usuario -->
   <div class="user-section" *ngIf="currentUser; else guest">
     <button class="icon-btn profile" (click)="goToProfile()" title="Perfil">
       <i class="ri-user-line"></i>
@@ -38,4 +18,30 @@
   <ng-template #guest>
     <button class="btn-muggle" routerLink="/login">¡Ya soy Muggle!</button>
   </ng-template>
+
+  <!-- Botón menú responsive -->
+  <button class="menu-toggle" (click)="toggleMenu()">
+    <i class="ri-menu-line"></i>
+  </button>
+
+  <!-- Enlaces -->
+  <ul class="nav-links" [ngClass]="{ active: menuOpen }">
+    <li><a routerLink="/home" routerLinkActive="active" (click)="closeMenu()">Inicio</a></li>
+    <li><a routerLink="/catalogo" routerLinkActive="active" (click)="closeMenu()">Catálogo</a></li>
+
+    <!-- Usuario normal -->
+    <li *ngIf="!isAdmin()">
+      <a routerLink="/caldero-magico" routerLinkActive="active" (click)="closeMenu()">
+        Caldero Mágico
+        <span class="counter" *ngIf="itemCount > 0">{{ itemCount }}</span>
+      </a>
+    </li>
+
+    <!-- Admin -->
+    <li *ngIf="isAdmin()">
+      <a routerLink="/agregar-producto" routerLinkActive="active" (click)="closeMenu()">
+        Agregar producto
+      </a>
+    </li>
+  </ul>
 </nav>

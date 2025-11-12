@@ -19,3 +19,19 @@ html{
   background: radial-gradient(circle at 30% 20%, #150024 0%, #0b0015 60%, #000 100%);
   font-family: 'Harry P', 'Cinzel Decorative', serif;
 }
+
+/* Transición suave para cuando se abre/cierra el menú */
+.app-container {
+  transition: transform 0.3s ease;
+}
+
+/* Cuando el menú está abierto, desplazamos hacia abajo */
+body.menu-open .app-container {
+  transform: translateY(160px); /* ajusta el valor según el alto del menú */
+}
+
+/* Opcional: evita que se haga scroll mientras el menú está abierto */
+body.menu-open {
+  overflow: hidden;
+}
+

@@ -58,4 +58,16 @@ export class Navbar {
     this.currentUser = null;
     this.router.navigate(['/home']);
   }
+
+  menuOpen = false;
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+    document.body.classList.toggle('menu-open', this.menuOpen);
+  }
+
+  closeMenu() {
+    this.menuOpen = false;
+    document.body.classList.remove('menu-open');
+  }
 }

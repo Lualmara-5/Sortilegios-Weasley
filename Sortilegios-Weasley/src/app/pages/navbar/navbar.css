@@ -138,3 +138,90 @@
   left: -5px;
   top: -10px;
 }
+
+/* =============================== */
+/* RESPONSIVE NAVBAR (mejorado) */
+/* =============================== */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; /* importante para posicionar el menú absoluto */
+    padding: 10px 20px;
+  }
+
+  .logo span {
+    display: none;
+  }
+
+  .logo {
+    order: 1;
+  }
+
+  .user-section {
+    order: 2;
+    margin-left: auto;
+    margin-right: 10px;
+  }
+
+  .menu-toggle {
+    order: 3;
+    display: flex;
+  }
+
+  /* Menú oculto */
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute; /* lo saca del flujo */
+    top: 100%; /* justo debajo del navbar */
+    left: 0;
+    width: 100%;
+    background-color: #15032d;
+    text-align: center;
+    padding: 15px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+  }
+
+  /* Al activarse */
+  .nav-links.active {
+    display: flex;
+    animation: slideDown 0.3s ease;
+  }
+
+  .nav-links li {
+    margin: 12px 0;
+  }
+
+  .btn-muggle {
+    order: 2;              /* lo pone en el mismo lugar que los botones de usuario */
+    margin-left: auto;     /* empuja hacia la derecha como la sección de usuario */
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
