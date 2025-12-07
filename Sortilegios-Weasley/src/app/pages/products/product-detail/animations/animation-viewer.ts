@@ -18,41 +18,79 @@ import { getProductAnimation, ProductAnimation } from './product-animations';
         <!-- Animaciones CSS -->
         <div *ngIf="animation.animationType === 'css'" class="animation-stage">
           <div [class]="animation.cssClass">
-            <!-- Caramelo longuilinguo -->
+            
+            <!-- PRODUCTO 1: Caramelo longuilinguo - PROFESIONAL -->
             <div *ngIf="animation.id === 1">
-              <div class="tongue-base"></div>
-              <div class="tongue-extension"></div>
+              <div class="character-body">
+                <div class="character-head">
+                  <div class="eye left"></div>
+                  <div class="eye right"></div>
+                  <div class="eyebrow left"></div>
+                  <div class="eyebrow right"></div>
+                  <div class="cheek left"></div>
+                  <div class="cheek right"></div>
+                  
+                  <div class="mouth-container">
+                    <div class="mouth-shape">
+                      <div class="tongue-pro">
+                        <div class="tongue-shine-pro"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="saliva-strand"></div>
+              <div class="saliva-strand"></div>
+              <div class="saliva-strand"></div>
             </div>
 
-            <!-- Galletas de canarios -->
+
+            <!-- PRODUCTO 2: Galletas de canarios -->
             <div *ngIf="animation.id === 2">
               <div class="human-silhouette"></div>
-              <div class="canary-bird"></div>
+              
+              <div class="transform-sparkles">
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+                <div class="sparkle"></div>
+              </div>
+              
+              <div class="canary-bird">
+                <div class="canary-eye left"></div>
+                <div class="canary-eye right"></div>
+                <div class="canary-beak"></div>
+              </div>
             </div>
 
-            <!-- Orejas extensibles -->
+            <!-- PRODUCTO 5: Orejas extensibles - PROFESIONAL -->
             <div *ngIf="animation.id === 5">
-              <div class="head-base">
-                <div class="ear ear-left"></div>
-                <div class="ear ear-right"></div>
+              <div class="spy-character">
+                <div class="spy-eye left"></div>
+                <div class="spy-eye right"></div>
+                <div class="spy-eyebrow left"></div>
+                <div class="spy-eyebrow right"></div>
+                <div class="spy-mouth"></div>
+                
+                <div class="ear-base left"></div>
+                <div class="ear-base right"></div>
               </div>
+              
+              <div class="extension-cable left"></div>
+              <div class="extension-cable right"></div>
+              
+              <div class="audio-receiver left"></div>
+              <div class="audio-receiver right"></div>
+              
+              <div class="signal-wave left"></div>
+              <div class="signal-wave left"></div>
+              <div class="signal-wave right"></div>
+              <div class="signal-wave right"></div>
             </div>
 
-            <!-- Bombones desmayo -->
-            <div *ngIf="animation.id === 8">
-              <div class="person-standing">
-                <div class="person-head"></div>
-                <div class="dizzy-stars">⭐💫✨</div>
-              </div>
-            </div>
-
-            <!-- Poción de amor -->
-            <div *ngIf="animation.id === 27">
-              <div class="potion-bottle"></div>
-              <div class="heart">💕</div>
-              <div class="heart">❤️</div>
-              <div class="heart">💖</div>
-            </div>
           </div>
         </div>
 
