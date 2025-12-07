@@ -12,8 +12,8 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
   // 1. Caramelo longuilinguo - Lengua épica
   1: {
     id: 1,
-    animationType: 'css',
-    cssClass: 'animation-tongue-stretch',
+    animationType: 'canvas',
+    componentName: 'tongue-candy',
     description: '¡La lengua se alarga hasta 10 veces con efectos mágicos!'
   },
   
