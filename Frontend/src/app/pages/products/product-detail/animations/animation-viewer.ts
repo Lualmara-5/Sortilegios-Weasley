@@ -894,18 +894,104 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     animate();
   }
 
-  // Animación de fuegos artificiales deluxe (ID 4)
+    // Animación de fuegos artificiales deluxe (ID 4)
   private animateFireworksDeluxe(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-    interface Firework {
+    class DeluxeRocket {
       x: number;
       y: number;
+      targetY: number;
       vx: number;
       vy: number;
       exploded: boolean;
-      particles: Particle[];
+      color: string;
+      type: string;
+      trail: Array<{x: number, y: number, alpha: number}>;
+
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.targetY = 100 + Math.random() * 150;
+        this.vx = (Math.random() - 0.5) * 3;
+        this.vy = -10 - Math.random() * 5;
+        this.exploded = false;
+        this.color = ['#FF00FF', '#00FFFF', '#FFFF00', '#FF0000', '#00FF00', '#FFA500'][Math.floor(Math.random() * 6)];
+        this.type = Math.random() < 0.5 ? 'dragon' : 'burst';
+        this.trail = [];
+      }
+
+      update() {
+        if (!this.exploded) {
+          this.trail.push({ x: this.x, y: this.y, alpha: 1 });
+          if (this.trail.length > 10) this.trail.shift();
+          
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vy += 0.15;
+          
+          if (this.y <= this.targetY || this.vy > 0) {
+            this.exploded = true;
+            this.createExplosion();
+          }
+        }
+      }
+
+      createExplosion() {
+        if (this.type === 'dragon') {
+          const count = 20;
+          for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 * i) / count;
+            const speed = 3 + Math.random() * 2;
+            particles.push(new DragonParticle(this.x, this.y, angle, speed, this.color, i / count));
+          }
+        } else {
+          const count = 25;
+          for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 * i) / count;
+            const speed = 2 + Math.random() * 3;
+            particles.push(new BurstParticle(this.x, this.y, angle, speed, this.color));
+          }
+        }
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        if (!this.exploded) {
+          this.trail.forEach((t, i) => {
+            const alpha = (i / this.trail.length) * 0.8;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            
+            const size = 5;
+            const gradient = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, size);
+            gradient.addColorStop(0, '#FFFFFF');
+            gradient.addColorStop(0.5, this.color);
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(t.x, t.y, size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          });
+          
+          ctx.save();
+          ctx.shadowColor = this.color;
+          ctx.shadowBlur = 20;
+          
+          const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 8);
+          gradient.addColorStop(0, '#FFFFFF');
+          gradient.addColorStop(0.5, this.color);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
     }
 
-    interface Particle {
+    class DragonParticle {
       x: number;
       y: number;
       vx: number;
@@ -913,87 +999,299 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
       life: number;
       color: string;
       size: number;
-    }
+      phase: number;
 
-    const fireworks: Firework[] = [];
-    let time = 0;
-
-    const colors = ['#ff00ff', '#00ffff', '#ffff00', '#ff0000', '#00ff00', '#ffa500'];
-
-    const animate = () => {
-      ctx.fillStyle = 'rgba(26, 10, 46, 0.15)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      if (Math.random() < 0.05) {
-        fireworks.push({
-          x: Math.random() * canvas.width,
-          y: canvas.height,
-          vx: (Math.random() - 0.5) * 2,
-          vy: -8 - Math.random() * 4,
-          exploded: false,
-          particles: []
-        });
+      constructor(x: number, y: number, angle: number, speed: number, color: string, phase: number) {
+        this.x = x;
+        this.y = y;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.life = 1;
+        this.color = color;
+        this.size = 3;
+        this.phase = phase;
       }
 
-      for (let i = fireworks.length - 1; i >= 0; i--) {
-        const fw = fireworks[i];
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        this.vx += Math.sin(this.phase * 8 + time * 4) * 0.2;
+        this.vy += 0.1;
+        this.vx *= 0.98;
+        this.life -= 0.01;
+      }
 
-        if (!fw.exploded) {
-          fw.x += fw.vx;
-          fw.y += fw.vy;
-          fw.vy += 0.15;
+      draw(ctx: CanvasRenderingContext2D) {
+        if (this.life <= 0) return;
 
-          ctx.fillStyle = '#ffffff';
+        ctx.save();
+        ctx.globalAlpha = this.life;
+        
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+        gradient.addColorStop(0, '#FFFFFF');
+        gradient.addColorStop(0.4, this.color);
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+      }
+    }
+
+    class BurstParticle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      life: number;
+      color: string;
+      size: number;
+
+      constructor(x: number, y: number, angle: number, speed: number, color: string) {
+        this.x = x;
+        this.y = y;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.life = 1;
+        this.color = color;
+        this.size = 2.5;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.12;
+        this.vx *= 0.98;
+        this.life -= 0.012;
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        if (this.life <= 0) return;
+
+        ctx.save();
+        ctx.globalAlpha = this.life;
+        
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 4);
+        gradient.addColorStop(0, '#FFFFFF');
+        gradient.addColorStop(0.3, this.color);
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+      }
+    }
+
+    const rockets: DeluxeRocket[] = [];
+    const particles: Array<DragonParticle | BurstParticle> = [];
+    let time = 0;
+
+    const drawDeluxeBox = (ctx: CanvasRenderingContext2D, x: number, y: number, openProgress: number) => {
+      ctx.save();
+      
+      if (openProgress > 0) {
+        const glowSize = 120 + openProgress * 50;
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, glowSize);
+        gradient.addColorStop(0, `rgba(255, 0, 255, ${0.4 * (1 - openProgress)})`);
+        gradient.addColorStop(0.5, `rgba(0, 255, 255, ${0.3 * (1 - openProgress)})`);
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(x, y, glowSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      const boxGradient = ctx.createLinearGradient(x - 50, y - 30, x + 50, y + 30);
+      boxGradient.addColorStop(0, '#8B008B');
+      boxGradient.addColorStop(0.3, '#9370DB');
+      boxGradient.addColorStop(0.5, '#BA55D3');
+      boxGradient.addColorStop(0.7, '#9370DB');
+      boxGradient.addColorStop(1, '#8B008B');
+      
+      ctx.fillStyle = boxGradient;
+      ctx.strokeStyle = '#4B0082';
+      ctx.lineWidth = 4;
+      ctx.shadowColor = '#FF00FF';
+      ctx.shadowBlur = 20;
+      
+      ctx.beginPath();
+      ctx.roundRect(x - 50, y - 30, 100, 70, 5);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 2;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#FFD700';
+      ctx.beginPath();
+      ctx.roundRect(x - 45, y - 25, 90, 60, 3);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#FFD700';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'center';
+      ctx.shadowBlur = 15;
+      ctx.fillText('DELUXE', x, y + 20);
+      
+      const drawDiamond = (dx: number, dy: number, size: number) => {
+        ctx.save();
+        ctx.translate(dx, dy);
+        ctx.rotate(Math.PI / 4);
+        ctx.fillStyle = '#00FFFF';
+        ctx.shadowColor = '#00FFFF';
+        ctx.shadowBlur = 15;
+        ctx.fillRect(-size / 2, -size / 2, size, size);
+        ctx.restore();
+      };
+      
+      drawDiamond(x - 30, y - 10, 6);
+      drawDiamond(x + 30, y - 10, 6);
+      drawDiamond(x, y + 5, 6);
+      
+      const lidOffset = openProgress * -70;
+      const lidAngle = openProgress * -1;
+      
+      ctx.save();
+      ctx.translate(x - 50, y - 30 + lidOffset);
+      ctx.rotate(lidAngle);
+      
+      const lidGradient = ctx.createLinearGradient(0, 0, 100, 0);
+      lidGradient.addColorStop(0, '#4B0082');
+      lidGradient.addColorStop(0.5, '#8B008B');
+      lidGradient.addColorStop(1, '#4B0082');
+      
+      ctx.fillStyle = lidGradient;
+      ctx.strokeStyle = '#2F004F';
+      ctx.lineWidth = 4;
+      ctx.shadowColor = '#FF00FF';
+      ctx.shadowBlur = 20;
+      
+      ctx.beginPath();
+      ctx.roundRect(0, 0, 100, 30, 5);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 3;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(50, 15, 8, 0, Math.PI);
+      ctx.stroke();
+      
+      ctx.restore();
+      
+      if (openProgress > 0.2) {
+        for (let i = 0; i < 8; i++) {
+          const angle = (Math.PI * 2 * i) / 8 + time * 2;
+          const length = 60 + Math.sin(time * 5 + i) * 20;
+          
+          ctx.save();
+          ctx.translate(x, y - 10);
+          ctx.rotate(angle);
+          
+          const rayGradient = ctx.createLinearGradient(0, 0, length, 0);
+          rayGradient.addColorStop(0, `rgba(255, 255, 255, ${openProgress * 0.8})`);
+          rayGradient.addColorStop(0.5, `rgba(255, 215, 0, ${openProgress * 0.5})`);
+          rayGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          
+          ctx.fillStyle = rayGradient;
           ctx.beginPath();
-          ctx.arc(fw.x, fw.y, 3, 0, Math.PI * 2);
+          ctx.moveTo(0, -3);
+          ctx.lineTo(length, -1);
+          ctx.lineTo(length, 1);
+          ctx.lineTo(0, 3);
+          ctx.closePath();
           ctx.fill();
+          
+          ctx.restore();
+        }
+      }
+      
+      ctx.restore();
+    };
 
-          if (fw.vy > 0 || fw.y < canvas.height * 0.3) {
-            fw.exploded = true;
-            const numParticles = 50;
-            const baseColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            for (let j = 0; j < numParticles; j++) {
-              const angle = (Math.PI * 2 * j) / numParticles;
-              const speed = 2 + Math.random() * 3;
-              fw.particles.push({
-                x: fw.x,
-                y: fw.y,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                life: 60 + Math.random() * 40,
-                color: baseColor,
-                size: 2 + Math.random() * 2
-              });
-            }
-          }
-        } else {
-          let allDead = true;
-          for (const p of fw.particles) {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vy += 0.08;
-            p.vx *= 0.99;
-            p.life--;
+    const animate = () => {
+      ctx.fillStyle = 'rgba(5, 0, 15, 0.25)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            if (p.life > 0) {
-              allDead = false;
-              ctx.fillStyle = p.color;
-              ctx.globalAlpha = p.life / 100;
-              ctx.beginPath();
-              ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-              ctx.fill();
-            }
-          }
+      time += 0.016;
 
-          if (allDead) {
-            fireworks.splice(i, 1);
-          }
+      const loopTime = time % 5;
+      let phase = 0;
+      let phaseProgress = 0;
+
+      if (loopTime < 1.2) {
+        phase = 1;
+        phaseProgress = loopTime / 1.2;
+      } else if (loopTime < 1.8) {
+        phase = 2;
+        phaseProgress = (loopTime - 1.2) / 0.6;
+      } else {
+        phase = 3;
+        phaseProgress = (loopTime - 1.8) / 3.2;
+      }
+
+      const boxX = canvas.width / 2;
+      const boxY = canvas.height - 80;
+
+      if (phase === 1) {
+        drawDeluxeBox(ctx, boxX, boxY, 0);
+      }
+
+      if (phase === 2) {
+        const easeOpen = phaseProgress < 0.5 
+          ? 4 * phaseProgress * phaseProgress * phaseProgress
+          : 1 - Math.pow(-2 * phaseProgress + 2, 3) / 2;
+        drawDeluxeBox(ctx, boxX, boxY, easeOpen);
+      }
+
+      if (phase === 3) {
+        drawDeluxeBox(ctx, boxX, boxY, 1);
+        
+        if (Math.random() < 0.12) {
+          const offsetX = (Math.random() - 0.5) * 50;
+          rockets.push(new DeluxeRocket(boxX + offsetX, boxY - 25));
         }
       }
 
-      ctx.globalAlpha = 1;
-      time++;
+      for (let i = rockets.length - 1; i >= 0; i--) {
+        rockets[i].update();
+        rockets[i].draw(ctx);
+        
+        if (rockets[i].exploded) {
+          rockets.splice(i, 1);
+        }
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw(ctx);
+        
+        if (particles[i].life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
 
       this.animationFrameId = requestAnimationFrame(animate);
     };
