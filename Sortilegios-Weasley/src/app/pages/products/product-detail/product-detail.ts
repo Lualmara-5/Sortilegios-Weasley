@@ -7,11 +7,12 @@ import { ProductsService, Product } from '../../../services/products.service';
 import { ReviewsService, Review } from '../../../services/reviews.service';
 import { Observable, map, shareReplay, switchMap } from 'rxjs';
 import { WishlistService } from '../../../services/wishlist.service';
-
+import { AnimationViewerComponent } from './animations/animation-viewer';
+import { hasAnimation } from './animations/product-animations';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, AnimationViewerComponent],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
@@ -69,4 +70,5 @@ export class ProductDetail {
     this.wishlistSvc.agregarDeseo(product);
     alert(`¡${product.name} añadido a tu lista de deseos! ✨`);
   }
+  hasAnimation = hasAnimation;
 }

@@ -1,0 +1,400 @@
+/* src/app/pages/products/product-detail/animations/product-animations.css */
+
+/* ========================================
+   CONTENEDOR GENERAL DE ANIMACIONES
+======================================== */
+.animation-container {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  background: radial-gradient(circle at center, #1a0a2e 0%, #0f051d 100%);
+  border-radius: 16px;
+  border: 2px solid var(--color-primary);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  box-shadow: 0 0 30px rgba(255, 107, 0, 0.3);
+}
+
+.animation-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   ANIMACIÓN 1: CARAMELO LONGUILINGUO
+   Lengua que se estira
+======================================== */
+.animation-tongue-stretch {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.tongue-base {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 30px;
+  background: linear-gradient(180deg, #ff6b9d 0%, #ff4081 100%);
+  border-radius: 30px 30px 50% 50%;
+  animation: tongue-wiggle 0.5s ease-in-out infinite;
+}
+
+.tongue-extension {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 0;
+  background: linear-gradient(180deg, #ff4081 0%, #e91e63 100%);
+  border-radius: 20px 20px 0 0;
+  animation: tongue-extend 3s ease-in-out infinite;
+}
+
+@keyframes tongue-extend {
+  0%, 100% {
+    height: 0;
+  }
+  50% {
+    height: 300px;
+  }
+}
+
+@keyframes tongue-wiggle {
+  0%, 100% {
+    transform: translateX(-50%) rotate(-5deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(5deg);
+  }
+}
+
+/* ========================================
+   ANIMACIÓN 2: GALLETAS DE CANARIOS
+   Transformación en canario
+======================================== */
+.animation-canary-transform {
+  position: relative;
+  width: 300px;
+  height: 300px;
+}
+
+.human-silhouette {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 200px;
+  background: #8e44ad;
+  border-radius: 50px 50px 0 0;
+  animation: human-shrink 2s ease-in-out infinite;
+}
+
+.canary-bird {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 80px;
+  height: 80px;
+  background: #ffd700;
+  border-radius: 50% 50% 40% 40%;
+  animation: canary-appear 2s ease-in-out infinite;
+}
+
+.canary-bird::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: -20px;
+  width: 40px;
+  height: 20px;
+  background: #ffd700;
+  border-radius: 50% 0 0 50%;
+  animation: wing-flap 0.3s ease-in-out infinite;
+}
+
+.canary-bird::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  right: -20px;
+  width: 40px;
+  height: 20px;
+  background: #ffd700;
+  border-radius: 0 50% 50% 0;
+  animation: wing-flap 0.3s ease-in-out infinite;
+}
+
+@keyframes human-shrink {
+  0%, 30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+}
+
+@keyframes canary-appear {
+  0%, 30% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50%, 100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes wing-flap {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-5px) scaleY(1.2);
+  }
+}
+
+/* ========================================
+   ANIMACIÓN 5: OREJAS EXTENSIBLES
+======================================== */
+.animation-ears-extend {
+  position: relative;
+  width: 250px;
+  height: 250px;
+}
+
+.head-base {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 140px;
+  background: #ffdbac;
+  border-radius: 50%;
+}
+
+.ear {
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  height: 40px;
+  background: #ffdbac;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  animation: ear-extend 2s ease-in-out infinite;
+}
+
+.ear-left {
+  left: -30px;
+  animation-delay: 0s;
+}
+
+.ear-right {
+  right: -30px;
+  animation-delay: 0s;
+}
+
+@keyframes ear-extend {
+  0%, 100% {
+    width: 30px;
+  }
+  50% {
+    width: 150px;
+  }
+}
+
+/* ========================================
+   ANIMACIÓN 8: BOMBONES DESMAYO
+======================================== */
+.animation-faint {
+  position: relative;
+  width: 250px;
+  height: 300px;
+}
+
+.person-standing {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 150px;
+  background: #6c5ce7;
+  border-radius: 30px 30px 0 0;
+  animation: person-fall 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.person-head {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background: #ffdbac;
+  border-radius: 50%;
+}
+
+.dizzy-stars {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 30px;
+  animation: stars-spin 1s linear infinite;
+}
+
+@keyframes person-fall {
+  0%, 30% {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  50%, 100% {
+    transform: translateX(-50%) rotate(90deg);
+    bottom: 0;
+  }
+}
+
+@keyframes stars-spin {
+  from {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateX(-50%) rotate(360deg);
+  }
+}
+
+/* ========================================
+   ANIMACIÓN 27: POCIÓN DE AMOR
+======================================== */
+.animation-love-potion {
+  position: relative;
+  width: 300px;
+  height: 350px;
+}
+
+.potion-bottle {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 120px;
+  background: linear-gradient(180deg, #ff69b4 0%, #ff1493 100%);
+  border-radius: 10px 10px 20px 20px;
+  animation: bottle-glow 2s ease-in-out infinite;
+}
+
+.potion-bottle::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  background: #ff69b4;
+  border-radius: 50% 50% 0 0;
+}
+
+.heart {
+  position: absolute;
+  font-size: 30px;
+  color: #ff69b4;
+  animation: heart-float 3s ease-in-out infinite;
+}
+
+.heart:nth-child(2) {
+  left: 30%;
+  animation-delay: 0s;
+}
+
+.heart:nth-child(3) {
+  left: 50%;
+  animation-delay: 0.5s;
+}
+
+.heart:nth-child(4) {
+  left: 70%;
+  animation-delay: 1s;
+}
+
+@keyframes bottle-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 105, 180, 1);
+  }
+}
+
+@keyframes heart-float {
+  0% {
+    bottom: 170px;
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  100% {
+    bottom: 350px;
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+  }
+}
+
+/* ========================================
+   CANVAS PARA ANIMACIONES COMPLEJAS
+======================================== */
+.animation-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ========================================
+   BOTÓN DE CONTROL
+======================================== */
+.animation-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.animation-btn {
+  padding: 12px 24px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.animation-btn:hover {
+  background: #e66b00;
+  transform: scale(1.05);
+}
+
+.animation-btn:active {
+  transform: scale(0.95);
+}

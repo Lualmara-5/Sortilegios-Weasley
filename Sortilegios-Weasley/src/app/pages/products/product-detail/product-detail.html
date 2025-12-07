@@ -27,7 +27,11 @@
             Añadir a lista de deseos
           </button>
         </div>
-
+        <!-- ===== DEMOSTRACIÓN DE EFECTOS MÁGICOS ===== -->
+        <app-animation-viewer 
+          *ngIf="hasAnimation(p.id)"
+          [productId]="p.id">
+        </app-animation-viewer>
         <!-- ===== Reseñas del producto ===== -->
         <section class="pd-reviews">
           <h3 class="rv-title">Opiniones y Reseñas Muggle</h3>
