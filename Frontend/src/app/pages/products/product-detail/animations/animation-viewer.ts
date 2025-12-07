@@ -187,11 +187,13 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
 
     if (this.animation?.id === 1) {
       this.animateTongueCandy(ctx, canvas);
-    } else if (this.animation?.id === 2) {  // ⬅️ AGREGAR ESTA LÍNEA
-      this.animateCanaryTransform(ctx, canvas);  // ⬅️ Y ESTA
+    } else if (this.animation?.id === 2) {
+      this.animateCanaryTransform(ctx, canvas);
     } else if (this.animation?.id === 3) {
+      this.animateFireworksBasic(ctx, canvas);  
+    } else if (this.animation?.id === 4) {
+      this.animateFireworksDeluxe(ctx, canvas);
     }
-
   }
   // Animación del Caramelo Longuilinguo (ID 1)
   private animateTongueCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -521,62 +523,370 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
 
   // Animación de fuegos artificiales básicos (ID 3)
   private animateFireworksBasic(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-    interface Particle {
+    class Firework {
+      x: number;
+      y: number;
+      targetY: number;
+      vy: number;
+      exploded: boolean;
+      color: string;
+      trail: Array<{x: number, y: number, alpha: number}>;
+
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.targetY = y - 100 - Math.random() * 100;
+        this.vy = -8 - Math.random() * 4;
+        this.exploded = false;
+        this.color = ['#FF6B00', '#FFA500', '#FFFF00', '#FF0000', '#FF1493', '#00CED1'][Math.floor(Math.random() * 6)];
+        this.trail = [];
+      }
+
+      update() {
+        if (!this.exploded) {
+          this.trail.push({ x: this.x, y: this.y, alpha: 1 });
+          if (this.trail.length > 10) this.trail.shift();
+          
+          this.y += this.vy;
+          this.vy += 0.2;
+          
+          if (this.y <= this.targetY || this.vy > 0) {
+            this.exploded = true;
+            this.createExplosion();
+          }
+        }
+      }
+
+      createExplosion() {
+        const count = 15 + Math.floor(Math.random() * 10);
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count;
+          const speed = 2 + Math.random() * 3;
+          sparks.push(new SparkParticle(this.x, this.y, angle, speed, this.color));
+        }
+        
+        for (let i = 0; i < 5; i++) {
+          smokeParticles.push(new SmokeParticle(this.x, this.y));
+        }
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        if (!this.exploded) {
+          this.trail.forEach((t, i) => {
+            const alpha = (i / this.trail.length) * 0.8;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            
+            const gradient = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 4);
+            gradient.addColorStop(0, this.color);
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(t.x, t.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          });
+          
+          ctx.save();
+          ctx.shadowColor = this.color;
+          ctx.shadowBlur = 20;
+          
+          const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 6);
+          gradient.addColorStop(0, '#FFFFFF');
+          gradient.addColorStop(0.5, this.color);
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    class SparkParticle {
       x: number;
       y: number;
       vx: number;
       vy: number;
       life: number;
       color: string;
+      size: number;
+
+      constructor(x: number, y: number, angle: number, speed: number, color: string) {
+        this.x = x;
+        this.y = y;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.life = 1;
+        this.color = color;
+        this.size = 2 + Math.random() * 2;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.15;
+        this.vx *= 0.98;
+        this.life -= 0.015;
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        if (this.life <= 0) return;
+
+        ctx.save();
+        ctx.globalAlpha = this.life;
+        
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+        gradient.addColorStop(0, this.color);
+        gradient.addColorStop(0.5, this.color + '80');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#FFFFFF';
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+      }
     }
 
-    const particles: Particle[] = [];
+    class SmokeParticle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      life: number;
+      size: number;
+      rotation: number;
+      rotationSpeed: number;
+
+      constructor(x: number, y: number) {
+        this.x = x + (Math.random() - 0.5) * 20;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = -0.5 - Math.random() * 1;
+        this.life = 1;
+        this.size = 5 + Math.random() * 10;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= 0.95;
+        this.vy *= 0.95;
+        this.life -= 0.008;
+        this.size += 0.2;
+        this.rotation += this.rotationSpeed;
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        if (this.life <= 0) return;
+
+        ctx.save();
+        ctx.globalAlpha = this.life * 0.6;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+        gradient.addColorStop(0, '#8B008B');
+        gradient.addColorStop(0.5, '#4B0082');
+        gradient.addColorStop(1, 'rgba(75, 0, 130, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+      }
+    }
+
+    const fireworks: Firework[] = [];
+    const sparks: SparkParticle[] = [];
+    const smokeParticles: SmokeParticle[] = [];
     let time = 0;
 
-    const colors = ['#ff6b00', '#ffa500', '#ffff00', '#ff0000'];
-
-    const animate = () => {
-      ctx.fillStyle = 'rgba(26, 10, 46, 0.2)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      if (time % 30 === 0) {
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        
-        for (let i = 0; i < 20; i++) {
-          const angle = (Math.PI * 2 * i) / 20;
-          particles.push({
-            x: cx,
-            y: cy,
-            vx: Math.cos(angle) * 3,
-            vy: Math.sin(angle) * 3 - 2,
-            life: 60,
-            color: colors[Math.floor(Math.random() * colors.length)]
-          });
-        }
-      }
-
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.1;
-        p.life--;
-
-        if (p.life <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.life / 60;
+    const drawBox = (ctx: CanvasRenderingContext2D, x: number, y: number, openProgress: number) => {
+      ctx.save();
+      
+      if (openProgress > 0) {
+        const glowSize = 80 + openProgress * 30;
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, glowSize);
+        gradient.addColorStop(0, `rgba(255, 215, 0, ${0.3 * (1 - openProgress)})`);
+        gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+        ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.arc(x, y, glowSize, 0, Math.PI * 2);
         ctx.fill();
       }
+      
+      const boxGradient = ctx.createLinearGradient(x - 40, y - 20, x + 40, y + 20);
+      boxGradient.addColorStop(0, '#FF6B00');
+      boxGradient.addColorStop(0.5, '#FF8C00');
+      boxGradient.addColorStop(1, '#FFA500');
+      
+      ctx.fillStyle = boxGradient;
+      ctx.strokeStyle = '#D2691E';
+      ctx.lineWidth = 3;
+      
+      ctx.beginPath();
+      ctx.rect(x - 40, y - 20, 80, 60);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.rect(x - 35, y - 15, 70, 50);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#FFD700';
+      ctx.save();
+      ctx.translate(x, y + 15);
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * Math.PI * 2) / 5 - Math.PI / 2;
+        const x1 = Math.cos(angle) * 8;
+        const y1 = Math.sin(angle) * 8;
+        if (i === 0) ctx.moveTo(x1, y1);
+        else ctx.lineTo(x1, y1);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      
+      const lidOffset = openProgress * -50;
+      const lidAngle = openProgress * -0.8;
+      
+      ctx.save();
+      ctx.translate(x - 40, y - 20 + lidOffset);
+      ctx.rotate(lidAngle);
+      
+      const lidGradient = ctx.createLinearGradient(0, 0, 80, 0);
+      lidGradient.addColorStop(0, '#FF0000');
+      lidGradient.addColorStop(0.5, '#FF1493');
+      lidGradient.addColorStop(1, '#FF69B4');
+      
+      ctx.fillStyle = lidGradient;
+      ctx.strokeStyle = '#8B0000';
+      ctx.lineWidth = 3;
+      
+      ctx.beginPath();
+      ctx.rect(0, 0, 80, 25);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.ellipse(15, 8, 20, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+      
+      if (openProgress > 0.3) {
+        for (let i = 0; i < 3; i++) {
+          const angle = time * 3 + (i * Math.PI * 2) / 3;
+          const radius = 50 + Math.sin(time * 5 + i) * 10;
+          const px = x + Math.cos(angle) * radius;
+          const py = y + Math.sin(angle) * radius;
+          
+          ctx.save();
+          ctx.globalAlpha = 0.6 + Math.sin(time * 8 + i) * 0.4;
+          ctx.fillStyle = '#FFD700';
+          ctx.shadowColor = '#FFA500';
+          ctx.shadowBlur = 15;
+          ctx.beginPath();
+          ctx.arc(px, py, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+      
+      ctx.restore();
+    };
 
-      ctx.globalAlpha = 1;
-      time++;
+    const animate = () => {
+      ctx.fillStyle = 'rgba(10, 5, 20, 0.3)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      time += 0.016;
+
+      const loopTime = time % 4;
+      let phase = 0;
+      let phaseProgress = 0;
+
+      if (loopTime < 1) {
+        phase = 1;
+        phaseProgress = loopTime / 1;
+      } else if (loopTime < 1.5) {
+        phase = 2;
+        phaseProgress = (loopTime - 1) / 0.5;
+      } else {
+        phase = 3;
+        phaseProgress = (loopTime - 1.5) / 2.5;
+      }
+
+      const boxX = canvas.width / 2;
+      const boxY = canvas.height - 100;
+
+      if (phase === 1) {
+        drawBox(ctx, boxX, boxY, 0);
+      }
+
+      if (phase === 2) {
+        const easeOpen = phaseProgress < 0.5 
+          ? 2 * phaseProgress * phaseProgress 
+          : 1 - Math.pow(-2 * phaseProgress + 2, 2) / 2;
+        drawBox(ctx, boxX, boxY, easeOpen);
+      }
+
+      if (phase === 3) {
+        drawBox(ctx, boxX, boxY, 1);
+        
+        if (Math.random() < 0.15) {
+          const offsetX = (Math.random() - 0.5) * 40;
+          fireworks.push(new Firework(boxX + offsetX, boxY - 20));
+        }
+      }
+
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        fireworks[i].update();
+        fireworks[i].draw(ctx);
+        
+        if (fireworks[i].exploded) {
+          fireworks.splice(i, 1);
+        }
+      }
+
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        sparks[i].update();
+        sparks[i].draw(ctx);
+        
+        if (sparks[i].life <= 0) {
+          sparks.splice(i, 1);
+        }
+      }
+
+      for (let i = smokeParticles.length - 1; i >= 0; i--) {
+        smokeParticles[i].update();
+        smokeParticles[i].draw(ctx);
+        
+        if (smokeParticles[i].life <= 0) {
+          smokeParticles.splice(i, 1);
+        }
+      }
 
       this.animationFrameId = requestAnimationFrame(animate);
     };
