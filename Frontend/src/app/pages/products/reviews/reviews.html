@@ -14,7 +14,9 @@
         <div class="rv-content">
           <div class="rv-head">
             <strong class="rv-author">{{ r?.author }}</strong>
-            <span class="rv-stars-line">
+
+            <!-- Wrapper de estrellas: clase homogénea 'rv-stars' -->
+            <span class="rv-stars" aria-label="Calificación: {{ r?.rating || 0 }}">
               <span
                 *ngFor="let s of [1, 2, 3, 4, 5]"
                 class="star"
@@ -22,15 +24,17 @@
                 >★</span
               >
             </span>
+
+            <small class="rv-date">{{ r?.createdAt | date : 'medium' }}</small>
           </div>
+
           <p class="rv-text">{{ r?.text }}</p>
-          <small class="rv-date">{{ r?.createdAt | date : 'medium' }}</small>
         </div>
       </article>
     </div>
 
     <div class="rv-actions">
-      <a class="btn btn-secondary" routerLink="/catalogo">← Volver al catálogo</a>
+      <a class="btn rv-back" routerLink="/catalogo">← Volver al catálogo</a>
     </div>
   </ng-container>
 

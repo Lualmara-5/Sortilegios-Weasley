@@ -123,28 +123,39 @@
   font-family: 'Harry P', 'Cinzel Decorative', serif;
   color: var(--color-primary);
   font-size: 1.6rem;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
+/* --- Resumen general --- */
 .rv-summary {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 24px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #3a2156;
-  margin-bottom: 12px;
+}
+
+/* --- Score principal --- */
+.rv-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .rv-score-number {
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-size: 2.6rem;
+  font-weight: 900;
   color: var(--color-accent);
+}
+
+.rv-stars {
+  margin: 6px 0;
 }
 
 .star {
   color: #6a4c9d;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
+
 .star.filled {
   color: var(--color-primary);
 }
@@ -154,10 +165,10 @@
   opacity: 0.85;
 }
 
+/* --- Lista de reseñas cortas --- */
 .rv-list {
   display: grid;
   gap: 14px;
-  margin-top: 10px;
 }
 
 .rv-item {
@@ -182,23 +193,60 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .rv-author {
   color: #fff;
+  font-weight: 600;
 }
+
 .rv-text {
   color: #eaeaea;
   opacity: 0.95;
+  line-height: 1.4;
 }
 
+.rv-date {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+/* --- Acciones --- */
 .rv-actions {
   display: flex;
+  justify-content: flex-end;
   gap: 10px;
   margin-top: 12px;
-  justify-content: flex-end;
 }
+
+/* --- Formulario --- */
+.rv-form {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #210c35;
+  border: 1px solid #3a2156;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.rv-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.rv-input,
+.rv-textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #54306d;
+  background: #180a26;
+  color: #fff;
+}
+
 
 /* ========== RESPONSIVE DESIGN ========== */
 @media (max-width: 1024px) {
@@ -280,5 +328,17 @@
     font-size: 0.8rem;
     line-height: 1.3;
     margin-top: 32px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .rv-form-row {
+    flex-direction: column;
+  }
+
+  .rv-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

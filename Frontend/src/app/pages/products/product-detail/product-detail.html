@@ -28,11 +28,8 @@
           </button>
         </div>
         <!-- ===== DEMOSTRACIÓN DE EFECTOS MÁGICOS ===== -->
-        <app-animation-viewer 
-          *ngIf="hasAnimation(p.id)"
-          [productId]="p.id">
-        </app-animation-viewer>
-        <!-- ===== Reseñas del producto ===== -->
+        <app-animation-viewer *ngIf="hasAnimation(p.id)" [productId]="p.id"> </app-animation-viewer>
+
         <section class="pd-reviews">
           <h3 class="rv-title">Opiniones y Reseñas Muggle</h3>
 
@@ -40,14 +37,17 @@
           <div class="rv-summary" *ngIf="reviews$ | async as reviews">
             <div class="rv-score">
               <div class="rv-score-number">{{ (avgRating$ | async)?.toFixed(1) }}</div>
+
               <div class="rv-stars">
                 <span
                   *ngFor="let s of [1, 2, 3, 4, 5]"
                   class="star"
                   [class.filled]="s <= Math.round((avgRating$ | async) || 0)"
-                  >★</span
                 >
+                  ★
+                </span>
               </div>
+
               <div class="rv-count">Basado en {{ reviews.length }} reseñas</div>
             </div>
 
@@ -62,15 +62,18 @@
                 <div class="rv-content">
                   <div class="rv-head">
                     <strong class="rv-author">{{ r?.author }}</strong>
+
                     <span class="rv-stars-line">
                       <span
-                        *ngFor="let s of [1, 2, 3, 4, 5]"
+                        *ngFor="let s of [1, 2, 3, 2, 1]"
                         class="star"
                         [class.filled]="s <= (r?.rating || 0)"
-                        >★</span
                       >
+                        ★
+                      </span>
                     </span>
                   </div>
+
                   <p class="rv-text">{{ r?.text }}</p>
                   <small class="rv-date">{{ r?.createdAt | date : 'medium' }}</small>
                 </div>
@@ -78,21 +81,18 @@
             </div>
 
             <!-- Acciones -->
-            <div class="rv-actions" *ngIf="product$ | async as p">
+            <div class="rv-actions">
               <a class="btn btn-secondary" [routerLink]="['/catalogo', p.id, 'resenas']">
                 Ver más reseñas
               </a>
+
               <button class="btn btn-primary" type="button" (click)="toggleForm()">
                 {{ showForm ? 'Cancelar' : 'Escribir reseña' }}
               </button>
             </div>
 
             <!-- Formulario -->
-            <form
-              class="rv-form"
-              *ngIf="showForm && (product$ | async) as p"
-              (ngSubmit)="submitReview(p.id)"
-            >
+            <form class="rv-form" *ngIf="showForm" (ngSubmit)="submitReview(p.id)">
               <div class="rv-form-row">
                 <input
                   class="rv-input"
@@ -101,10 +101,12 @@
                   placeholder="Tu nombre..."
                   required
                 />
+
                 <select class="rv-input" [(ngModel)]="form.rating" name="rating">
                   <option *ngFor="let s of [5, 4, 3, 2, 1]" [value]="s">{{ s }} ★</option>
                 </select>
               </div>
+
               <textarea
                 class="rv-textarea"
                 [(ngModel)]="form.text"
@@ -113,6 +115,7 @@
                 placeholder="Cuéntanos tu experiencia..."
                 required
               ></textarea>
+
               <div class="rv-actions">
                 <button class="btn btn-primary" type="submit">Publicar reseña</button>
               </div>
