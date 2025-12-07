@@ -20,7 +20,7 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
   // 2. Galletas de canarios - Transformación mágica
   2: {
     id: 2,
-    animationType: 'css',
+    animationType: 'canvas',
     cssClass: 'animation-canary-transform',
     description: '¡Transformación épica en un canario dorado!'
   },
