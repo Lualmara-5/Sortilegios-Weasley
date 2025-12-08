@@ -47,6 +47,14 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     animationType: 'canvas',
     cssClass: 'animation-ears-extend',
     description: 'Las orejas se extienden con ondas de sonido mágicas'
+  },
+
+  // 6. Pantano portátil
+  6: {
+    id: 6,
+    animationType: 'canvas',
+    componentName: 'portable-swamp',
+    description: 'Un pantano mágico se expande con burbujas y plantas'
   }
 };
 

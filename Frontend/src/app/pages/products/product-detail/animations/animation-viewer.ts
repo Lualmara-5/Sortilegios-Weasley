@@ -193,8 +193,10 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
       this.animateFireworksBasic(ctx, canvas);
     } else if (this.animation?.id === 4) {
       this.animateFireworksDeluxe(ctx, canvas);
-    } else if (this.animation?.id === 5) {  // ⬅️ AGREGAR ESTA LÍNEA
-      this.animateExtendableEars(ctx, canvas);  // ⬅️ Y ESTA
+    } else if (this.animation?.id === 5) {
+      this.animateExtendableEars(ctx, canvas);
+    } else if (this.animation?.id === 6) {  
+      this.animatePortableSwamp(ctx, canvas);  
     }
   }
 
@@ -1931,7 +1933,7 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
 
     animate();
     }
-    
+
   // Animación de Orejas Extensibles (ID 5)
   private animateExtendableEars(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     class SoundWave {
@@ -2237,4 +2239,373 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
 
     animate();
   }
+
+  // Animación de Pantano Portátil (ID 6)
+private animatePortableSwamp(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  class Bubble {
+    x: number;
+    y: number;
+    size: number;
+    vy: number;
+    life: number;
+    maxY: number;
+    wobble: number;
+
+    constructor(x: number, y: number, swampRadius: number) {
+      this.x = x;
+      this.y = y;
+      this.size = 3 + Math.random() * 8;
+      this.vy = -0.5 - Math.random() * 1;
+      this.life = 1;
+      this.maxY = y - 50 - Math.random() * 30;
+      this.wobble = Math.random() * Math.PI * 2;
+    }
+
+    update() {
+      this.y += this.vy;
+      this.wobble += 0.1;
+      this.x += Math.sin(this.wobble) * 0.5;
+      
+      if (this.y <= this.maxY) {
+        this.life -= 0.05;
+      }
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (this.life <= 0) return;
+
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.8;
+      
+      const bubbleGrad = ctx.createRadialGradient(this.x - this.size * 0.3, this.y - this.size * 0.3, 0, this.x, this.y, this.size);
+      bubbleGrad.addColorStop(0, '#C8FF9A');
+      bubbleGrad.addColorStop(0.5, '#90EE90');
+      bubbleGrad.addColorStop(1, '#4CAF50');
+      
+      ctx.fillStyle = bubbleGrad;
+      ctx.strokeStyle = '#2E7D32';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.arc(this.x - this.size * 0.3, this.y - this.size * 0.3, this.size * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  class SwampPlant {
+    x: number;
+    y: number;
+    type: string;
+    height: number;
+    sway: number;
+    swaySpeed: number;
+    alpha: number;
+    targetAlpha: number;
+
+    constructor(x: number, y: number, type: string) {
+      this.x = x;
+      this.y = y;
+      this.type = type;
+      this.height = 20 + Math.random() * 30;
+      this.sway = Math.random() * Math.PI * 2;
+      this.swaySpeed = 0.02 + Math.random() * 0.03;
+      this.alpha = 0;
+      this.targetAlpha = 0.7 + Math.random() * 0.3;
+    }
+
+    update() {
+      this.sway += this.swaySpeed;
+      if (this.alpha < this.targetAlpha) {
+        this.alpha += 0.02;
+      }
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.translate(this.x, this.y);
+      
+      const swayAngle = Math.sin(this.sway) * 0.15;
+      ctx.rotate(swayAngle);
+      
+      if (this.type === 'grass') {
+        const grassGrad = ctx.createLinearGradient(0, 0, 0, -this.height);
+        grassGrad.addColorStop(0, '#1B5E20');
+        grassGrad.addColorStop(0.5, '#4CAF50');
+        grassGrad.addColorStop(1, '#81C784');
+        
+        ctx.strokeStyle = grassGrad;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(2, -this.height * 0.5, 0, -this.height);
+        ctx.stroke();
+        
+      } else {
+        ctx.strokeStyle = '#6B8E23';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -this.height);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.ellipse(0, -this.height - 3, 3, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      ctx.restore();
+    }
+  }
+
+  const bubbles: Bubble[] = [];
+  const plants: SwampPlant[] = [];
+  let time = 0;
+
+  const drawBottle = (ctx: CanvasRenderingContext2D, x: number, y: number, tipped: boolean, liquidLevel: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    if (tipped) {
+      ctx.rotate(Math.PI / 3);
+    }
+    
+    const bottleGrad = ctx.createLinearGradient(-20, 0, 20, 0);
+    bottleGrad.addColorStop(0, 'rgba(200, 230, 255, 0.4)');
+    bottleGrad.addColorStop(0.5, 'rgba(220, 240, 255, 0.6)');
+    bottleGrad.addColorStop(1, 'rgba(200, 230, 255, 0.4)');
+    
+    ctx.fillStyle = bottleGrad;
+    ctx.strokeStyle = '#4FC3F7';
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.moveTo(-20, 10);
+    ctx.lineTo(-20, -30);
+    ctx.lineTo(20, -30);
+    ctx.lineTo(20, 10);
+    ctx.lineTo(-20, 10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    if (liquidLevel > 0) {
+      const liquidY = 10 - (40 * liquidLevel);
+      const liquidGrad = ctx.createLinearGradient(0, liquidY, 0, 10);
+      liquidGrad.addColorStop(0, '#81C784');
+      liquidGrad.addColorStop(1, '#4CAF50');
+      
+      ctx.fillStyle = liquidGrad;
+      ctx.beginPath();
+      ctx.moveTo(-18, 10);
+      ctx.lineTo(-18, liquidY);
+      ctx.lineTo(18, liquidY);
+      ctx.lineTo(18, 10);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
+    ctx.fillStyle = bottleGrad;
+    ctx.strokeStyle = '#4FC3F7';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.rect(-10, -45, 20, 15);
+    ctx.fill();
+    ctx.stroke();
+    
+    if (!tipped) {
+      ctx.fillStyle = '#8B4513';
+      ctx.strokeStyle = '#5D4037';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.rect(-12, -55, 24, 10);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#6D4C41';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.moveTo(-10, -52 + i * 3);
+        ctx.lineTo(10, -52 + i * 3);
+        ctx.stroke();
+      }
+    }
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.beginPath();
+    ctx.ellipse(-10, -15, 8, 15, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  };
+
+  const drawSwamp = (ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, alpha: number) => {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    
+    const swampGrad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    swampGrad.addColorStop(0, '#7CB342');
+    swampGrad.addColorStop(0.5, '#558B2F');
+    swampGrad.addColorStop(0.8, '#33691E');
+    swampGrad.addColorStop(1, 'rgba(51, 105, 30, 0)');
+    
+    ctx.fillStyle = swampGrad;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const dist = radius * (0.3 + Math.random() * 0.5);
+      const spotX = x + Math.cos(angle) * dist;
+      const spotY = y + Math.sin(angle) * dist;
+      const spotSize = 5 + Math.random() * 10;
+      
+      ctx.fillStyle = 'rgba(46, 125, 50, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(spotX, spotY, spotSize, spotSize * 0.6, angle, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    const shineGrad = ctx.createRadialGradient(x - radius * 0.3, y - radius * 0.3, 0, x, y, radius * 0.8);
+    shineGrad.addColorStop(0, 'rgba(200, 255, 154, 0.3)');
+    shineGrad.addColorStop(1, 'rgba(200, 255, 154, 0)');
+    
+    ctx.fillStyle = shineGrad;
+    ctx.beginPath();
+    ctx.arc(x, y, radius * 0.8, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  };
+
+  const animate = () => {
+    ctx.fillStyle = 'rgba(20, 10, 30, 0.3)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    time += 0.016;
+
+    const loopTime = time % 5;
+    let phase = 0;
+    let phaseProgress = 0;
+
+    if (loopTime < 1) {
+      phase = 1;
+      phaseProgress = loopTime / 1;
+    } else if (loopTime < 1.5) {
+      phase = 2;
+      phaseProgress = (loopTime - 1) / 0.5;
+    } else if (loopTime < 3.5) {
+      phase = 3;
+      phaseProgress = (loopTime - 1.5) / 2;
+    } else {
+      phase = 4;
+      phaseProgress = (loopTime - 3.5) / 1.5;
+    }
+
+    const bottleX = canvas.width / 2 - 120;
+    const bottleY = 150;
+    const swampX = canvas.width / 2 + 60;
+    const swampY = canvas.height - 150;
+
+    if (phase === 1) {
+      drawBottle(ctx, bottleX, bottleY, false, 0.7);
+    }
+
+    if (phase === 2) {
+      const liquidLevel = 0.7 - (phaseProgress * 0.7);
+      drawBottle(ctx, bottleX, bottleY, true, liquidLevel);
+    }
+
+    if (phase === 3 || phase === 4) {
+      drawBottle(ctx, bottleX, bottleY, true, 0);
+      
+      let swampRadius;
+      let swampAlpha;
+      
+      if (phase === 3) {
+        const easeExpand = phaseProgress < 0.5 
+          ? 2 * phaseProgress * phaseProgress 
+          : 1 - Math.pow(-2 * phaseProgress + 2, 2) / 2;
+        swampRadius = easeExpand * 120;
+        swampAlpha = easeExpand;
+        
+        if (phaseProgress > 0.3 && plants.length < 15 && Math.random() < 0.3) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = Math.random() * swampRadius * 0.8;
+          const px = swampX + Math.cos(angle) * dist;
+          const py = swampY + Math.sin(angle) * dist;
+          const type = Math.random() < 0.6 ? 'grass' : 'reed';
+          plants.push(new SwampPlant(px, py, type));
+        }
+        
+        if (phaseProgress > 0.5 && Math.random() < 0.2) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = Math.random() * swampRadius * 0.7;
+          const bx = swampX + Math.cos(angle) * dist;
+          const by = swampY + Math.sin(angle) * dist;
+          bubbles.push(new Bubble(bx, by, swampRadius));
+        }
+      } else {
+        const easeContract = 1 - (phaseProgress < 0.5 
+          ? 2 * phaseProgress * phaseProgress 
+          : 1 - Math.pow(-2 * phaseProgress + 2, 2) / 2);
+        swampRadius = easeContract * 120;
+        swampAlpha = easeContract;
+      }
+      
+      drawSwamp(ctx, swampX, swampY, swampRadius, swampAlpha);
+      
+      for (let i = plants.length - 1; i >= 0; i--) {
+        const p = plants[i];
+        const dist = Math.sqrt(Math.pow(p.x - swampX, 2) + Math.pow(p.y - swampY, 2));
+        
+        if (dist <= swampRadius) {
+          p.update();
+          p.draw(ctx);
+        }
+        
+        if (phase === 4 && dist > swampRadius) {
+          plants.splice(i, 1);
+        }
+      }
+      
+      for (let i = bubbles.length - 1; i >= 0; i--) {
+        bubbles[i].update();
+        bubbles[i].draw(ctx);
+        
+        if (bubbles[i].isDead()) {
+          bubbles.splice(i, 1);
+        }
+      }
+    }
+
+    if (phase === 1 && loopTime < 0.1) {
+      plants.length = 0;
+      bubbles.length = 0;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
 }
