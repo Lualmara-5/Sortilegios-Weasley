@@ -87,6 +87,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'turron-sangranarices',
     description: 'Provoca una considerable hemorragia nasal temporal'
   },
+  // 11. Caramelo de la fiebre
+    11: {
+    id: 11,
+    animationType: 'canvas',
+    componentName: 'caramelo-fiebre',
+    description: 'Aumenta la temperatura corporal causando fiebre temporal'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

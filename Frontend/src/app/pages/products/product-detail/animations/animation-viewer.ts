@@ -205,7 +205,9 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
       this.animateVomitPills(ctx, canvas); 
     }else if (this.animation?.id === 10) {
       this.animateTurronSangranarices(ctx, canvas); 
-  }
+    }else if (this.animation?.id === 11) {
+    this.animateCarameloFiebre(ctx, canvas); 
+    }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
   private animateTongueCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -4741,6 +4743,668 @@ private animateTurronSangranarices(ctx: CanvasRenderingContext2D, canvas: HTMLCa
 
   animate();
 }
+// Animación del Caramelo de la Fiebre (ID 11)
+private animateCarameloFiebre(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
 
+  interface SweatDrop {
+    x: number;
+    y: number;
+    vy: number;
+    size: number;
+    life: number;
+  }
+
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    stateProgress: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+    heatIntensity: number;
+    sweatDrops: SweatDrop[];
+
+    constructor() {
+      this.x = canvas.width / 2;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+      this.heatIntensity = 0;
+      this.sweatDrops = [];
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.stateProgress += 0.02;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'eating';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'eating') {
+        this.stateProgress += 0.04;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'heating';
+          this.stateProgress = 0;
+          this.heatIntensity = 0;
+        }
+      } else if (this.state === 'heating') {
+        this.stateProgress += 0.008;
+        
+        if (this.heatIntensity < 1) {
+          this.heatIntensity += 0.015;
+        }
+        
+        if (this.heatIntensity > 0.3 && Math.random() < 0.08) {
+          this.sweatDrops.push({
+            x: this.x + (Math.random() - 0.5) * 40,
+            y: this.y - 20 + (Math.random() - 0.5) * 30,
+            vy: Math.random() * 1.5 + 1,
+            size: Math.random() * 2.5 + 1.5,
+            life: 1
+          });
+        }
+        
+        if (this.stateProgress >= 1) {
+          this.reset();
+        }
+      }
+
+      for (let i = this.sweatDrops.length - 1; i >= 0; i--) {
+        const drop = this.sweatDrops[i];
+        drop.y += drop.vy;
+        drop.vy += 0.1;
+        drop.life -= 0.015;
+        
+        if (drop.life <= 0 || drop.y > this.y + 100) {
+          this.sweatDrops.splice(i, 1);
+        }
+      }
+
+      if (this.eyesOpen && this.state !== 'heating') {
+        this.blinkTimer++;
+        if (this.blinkTimer > 80 && Math.random() < 0.03) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 100);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.heatIntensity = 0;
+      this.sweatDrops = [];
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#3B3B98';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#1F1F5C';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      bodyGradient.addColorStop(0, '#5A67D8');
+      bodyGradient.addColorStop(1, '#4C51BF');
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      if (this.state === 'eating') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-25, -10, -5, -15);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-5, -15, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.lineTo(-42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.lineTo(42, 60);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      if (this.state === 'heating') {
+        const redTint = this.heatIntensity * 0.4;
+        headGradient.addColorStop(0, `rgba(255, 235, 212, ${1 - redTint})`);
+        headGradient.addColorStop(0, `rgba(255, 160, 140, ${redTint})`);
+        headGradient.addColorStop(1, `rgba(255, 215, 186, ${1 - redTint})`);
+        headGradient.addColorStop(1, `rgba(255, 140, 120, ${redTint})`);
+      } else {
+        headGradient.addColorStop(0, '#FFEBD4');
+        headGradient.addColorStop(1, '#FFD7BA');
+      }
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = this.state === 'heating' 
+        ? `rgba(255, 140, 120, ${0.6 + this.heatIntensity * 0.4})`
+        : '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'heating') {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 2.5;
+        
+        for (let side of [-18, 18]) {
+          ctx.beginPath();
+          for (let i = 0; i < 15; i++) {
+            const angle = i * 0.5 + this.stateProgress * 5;
+            const radius = i * 0.6;
+            const x = side + Math.cos(angle) * radius;
+            const y = -23 + Math.sin(angle) * radius;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+      } else if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+        ctx.arc(20, -25, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#6B4423';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      if (this.state === 'heating') {
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -38, -10, -36);
+        ctx.moveTo(10, -36);
+        ctx.quadraticCurveTo(18, -38, 28, -32);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -35, -10, -32);
+        ctx.moveTo(10, -32);
+        ctx.quadraticCurveTo(18, -35, 28, -32);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#2C1810';
+      ctx.beginPath();
+      ctx.ellipse(0, -48, 40, 20, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(0, -56, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFB6A3';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(-2, -15, 2.5, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'eating') {
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.arc(0, -3, 10, 0.2, Math.PI - 0.2);
+        ctx.fill();
+      } else if (this.state === 'heating') {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.arc(0, -3, 12, 0.4, Math.PI - 0.4);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FF6B8A';
+        ctx.beginPath();
+        ctx.ellipse(0, 5, 8, 6, 0, 0, Math.PI);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+        ctx.stroke();
+      }
+
+      if (this.state === 'heating') {
+        ctx.fillStyle = `rgba(255, 100, 100, ${0.5 + this.heatIntensity * 0.3})`;
+      } else {
+        ctx.fillStyle = 'rgba(255, 160, 160, 0.4)';
+      }
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (const drop of this.sweatDrops) {
+        ctx.save();
+        ctx.globalAlpha = drop.life;
+        
+        ctx.fillStyle = '#87CEEB';
+        ctx.beginPath();
+        ctx.ellipse(drop.x - this.x, drop.y - this.y, drop.size, drop.size * 1.3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.beginPath();
+        ctx.arc(drop.x - this.x - drop.size * 0.3, drop.y - this.y - drop.size * 0.3, drop.size * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+  }
+
+  class Candy {
+    x: number;
+    y: number;
+    visible: boolean;
+    eaten: boolean;
+    float: number;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    update() {
+      if (!this.eaten) {
+        this.float += 0.08;
+      }
+
+      if (this.character.state === 'eating' && !this.eaten) {
+        this.x += (this.character.x - 5 - this.x) * 0.15;
+        this.y += (this.character.y - 15 - this.y) * 0.15;
+
+        if (Math.abs(this.x - (this.character.x - 5)) < 8) {
+          this.visible = false;
+          this.eaten = true;
+        }
+      }
+
+      if (this.character.state === 'standing' && this.character.stateProgress < 0.1) {
+        this.reset();
+      }
+    }
+
+    reset() {
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (!this.visible) return;
+
+      const floatOffset = Math.sin(this.float) * 5;
+
+      ctx.save();
+      ctx.translate(this.x, this.y + floatOffset);
+
+      const candyGradient = ctx.createRadialGradient(-3, -3, 2, 0, 0, 12);
+      candyGradient.addColorStop(0, '#FFD700');
+      candyGradient.addColorStop(0.4, '#FF8C00');
+      candyGradient.addColorStop(1, '#FF6347');
+      ctx.fillStyle = candyGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, 0, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(angle) * 12, Math.sin(angle) * 12);
+        ctx.lineTo(Math.cos(angle) * 18, Math.sin(angle) * 18);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.arc(-4, -4, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class HeatWave {
+    x: number;
+    y: number;
+    amplitude: number;
+    frequency: number;
+    speed: number;
+    offset: number;
+    life: number;
+    width: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.amplitude = Math.random() * 15 + 10;
+      this.frequency = Math.random() * 0.05 + 0.03;
+      this.speed = Math.random() * 1.5 + 1;
+      this.offset = Math.random() * Math.PI * 2;
+      this.life = 1;
+      this.width = Math.random() * 40 + 60;
+    }
+
+    update() {
+      this.y -= this.speed;
+      this.life -= 0.01;
+      this.offset += 0.1;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.4;
+      
+      const gradient = ctx.createLinearGradient(this.x - this.width / 2, 0, this.x + this.width / 2, 0);
+      gradient.addColorStop(0, 'rgba(255, 140, 0, 0)');
+      gradient.addColorStop(0.5, 'rgba(255, 69, 0, 0.6)');
+      gradient.addColorStop(1, 'rgba(255, 140, 0, 0)');
+      
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      
+      ctx.beginPath();
+      for (let i = 0; i <= 20; i++) {
+        const x = this.x - this.width / 2 + (i / 20) * this.width;
+        const wave = Math.sin(i * this.frequency + this.offset + time * 0.1) * this.amplitude;
+        const y = this.y + wave;
+        
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      ctx.restore();
+    }
+  }
+
+  class HeatParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    hue: number;
+
+    constructor(x: number, y: number) {
+      this.x = x + (Math.random() - 0.5) * 60;
+      this.y = y + (Math.random() - 0.5) * 60;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = -Math.random() * 2 - 1;
+      this.size = Math.random() * 4 + 2;
+      this.life = 1;
+      this.hue = Math.random() * 60 + 10;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy -= 0.02;
+      this.life -= 0.015;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life;
+      
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+      gradient.addColorStop(0, `hsla(${this.hue}, 100%, 60%, 1)`);
+      gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+  }
+
+  class SmokeParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    rotation: number;
+    rotationSpeed: number;
+
+    constructor(x: number, y: number) {
+      this.x = x + (Math.random() - 0.5) * 30;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 0.8;
+      this.vy = -Math.random() * 1.5 - 0.5;
+      this.size = Math.random() * 15 + 10;
+      this.life = 1;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.05;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.size += 0.3;
+      this.rotation += this.rotationSpeed;
+      this.life -= 0.012;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.3;
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      
+      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+      gradient.addColorStop(0, 'rgba(255, 200, 150, 0.5)');
+      gradient.addColorStop(1, 'rgba(255, 150, 100, 0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const candy = new Candy(character);
+  const heatWaves: HeatWave[] = [];
+  const heatParticles: HeatParticle[] = [];
+  const smokeParticles: SmokeParticle[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a33');
+    gradient.addColorStop(1, '#2d1b4e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 30; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (character.state === 'heating' && character.heatIntensity > 0.1) {
+      if (Math.random() < 0.15) {
+        heatWaves.push(new HeatWave(character.x, character.y + 50));
+      }
+      
+      if (Math.random() < 0.4 * character.heatIntensity) {
+        heatParticles.push(new HeatParticle(character.x, character.y));
+      }
+      
+      if (Math.random() < 0.1 * character.heatIntensity) {
+        smokeParticles.push(new SmokeParticle(character.x, character.y - 50));
+      }
+    }
+
+    for (let i = heatWaves.length - 1; i >= 0; i--) {
+      const wave = heatWaves[i];
+      wave.update();
+      
+      if (wave.life <= 0 || wave.y < 0) {
+        heatWaves.splice(i, 1);
+      } else {
+        wave.draw(ctx);
+      }
+    }
+
+    for (let i = smokeParticles.length - 1; i >= 0; i--) {
+      const smoke = smokeParticles[i];
+      smoke.update();
+      
+      if (smoke.life <= 0) {
+        smokeParticles.splice(i, 1);
+      } else {
+        smoke.draw(ctx);
+      }
+    }
+
+    candy.update();
+    character.update();
+
+    candy.draw(ctx);
+    character.draw(ctx);
+
+    for (let i = heatParticles.length - 1; i >= 0; i--) {
+      const particle = heatParticles[i];
+      particle.update();
+      
+      if (particle.life <= 0) {
+        heatParticles.splice(i, 1);
+      } else {
+        particle.draw(ctx);
+      }
+    }
+
+    if (character.state === 'heating' && character.heatIntensity > 0.3) {
+      const glowGradient = ctx.createRadialGradient(
+        character.x, character.y - 20, 0,
+        character.x, character.y - 20, 120 * character.heatIntensity
+      );
+      glowGradient.addColorStop(0, `rgba(255, 140, 0, ${0.15 * character.heatIntensity})`);
+      glowGradient.addColorStop(1, 'rgba(255, 69, 0, 0)');
+      
+      ctx.fillStyle = glowGradient;
+      ctx.beginPath();
+      ctx.arc(character.x, character.y - 20, 120 * character.heatIntensity, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
 
 }
