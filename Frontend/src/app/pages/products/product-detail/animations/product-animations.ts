@@ -63,6 +63,14 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     animationType: 'canvas',
     componentName: 'headless-hat',
     description: 'El sombrero hace desaparecer la cabeza mágicamente'
+  },
+
+    // 8. Bombones desmayo - Animación de desmayo con estrellas
+  8: {
+    id: 8,
+    animationType: 'canvas',
+    componentName: 'fainting-bonbon',
+    description: '¡Desmayo instantáneo con efectos mágicos y estrellas!'
   }
 };
 
