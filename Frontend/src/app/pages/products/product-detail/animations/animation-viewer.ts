@@ -203,6 +203,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
       this.animateFaintingBonbon(ctx, canvas);
     } else if (this.animation?.id === 9) {
       this.animateVomitPills(ctx, canvas); 
+    }else if (this.animation?.id === 10) {
+      this.animateTurronSangranarices(ctx, canvas); 
   }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -4192,6 +4194,546 @@ private animateVomitPills(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasEleme
 
     pill.draw(ctx);
     character.draw(ctx);
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+// Animación del Turrón Sangranarices (ID 10)
+private animateTurronSangranarices(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    stateProgress: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+    noseGlow: number;
+    bleedingIntensity: number;
+
+    constructor() {
+      this.x = canvas.width / 2;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+      this.noseGlow = 0;
+      this.bleedingIntensity = 0;
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.stateProgress += 0.02;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'eating';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'eating') {
+        this.stateProgress += 0.04;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'glowing';
+          this.stateProgress = 0;
+          this.noseGlow = 0;
+        }
+      } else if (this.state === 'glowing') {
+        this.stateProgress += 0.03;
+        
+        if (this.noseGlow < 1) {
+          this.noseGlow += 0.05;
+        }
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'bleeding';
+          this.stateProgress = 0;
+          this.bleedingIntensity = 0;
+        }
+      } else if (this.state === 'bleeding') {
+        this.stateProgress += 0.01;
+        
+        if (this.bleedingIntensity < 1) {
+          this.bleedingIntensity += 0.03;
+        }
+        
+        if (this.stateProgress >= 1) {
+          this.reset();
+        }
+      }
+
+      if (this.eyesOpen && this.state !== 'bleeding') {
+        this.blinkTimer++;
+        if (this.blinkTimer > 80 && Math.random() < 0.03) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 100);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.noseGlow = 0;
+      this.bleedingIntensity = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+
+      // Sombra
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Piernas
+      ctx.fillStyle = '#3B3B98';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Zapatos
+      ctx.fillStyle = '#1F1F5C';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Cuerpo
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      bodyGradient.addColorStop(0, '#5A67D8');
+      bodyGradient.addColorStop(1, '#4C51BF');
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Brazos
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      if (this.state === 'eating') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-25, -10, -5, -15);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-5, -15, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (this.state === 'bleeding') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-30, -5, -10, -8);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-10, -8, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.quadraticCurveTo(30, -5, 10, -8);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(10, -8, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.lineTo(-42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.lineTo(42, 60);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Cabeza
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      headGradient.addColorStop(0, '#FFEBD4');
+      headGradient.addColorStop(1, '#FFD7BA');
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Orejas
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ojos
+      if (this.state === 'bleeding') {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-26, -28);
+        ctx.lineTo(-10, -18);
+        ctx.moveTo(-10, -28);
+        ctx.lineTo(-26, -18);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(10, -28);
+        ctx.lineTo(26, -18);
+        ctx.moveTo(26, -28);
+        ctx.lineTo(10, -18);
+        ctx.stroke();
+      } else if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+        ctx.arc(20, -25, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      // Cejas
+      ctx.strokeStyle = '#6B4423';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      if (this.state === 'bleeding') {
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -38, -10, -36);
+        ctx.moveTo(10, -36);
+        ctx.quadraticCurveTo(18, -38, 28, -32);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -35, -10, -32);
+        ctx.moveTo(10, -32);
+        ctx.quadraticCurveTo(18, -35, 28, -32);
+        ctx.stroke();
+      }
+
+      // Cabello
+      ctx.fillStyle = '#2C1810';
+      ctx.beginPath();
+      ctx.ellipse(0, -48, 40, 20, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(0, -56, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Resplandor de nariz
+      if (this.state === 'glowing' && this.noseGlow > 0) {
+        const glowSize = 25 * this.noseGlow;
+        const glowGradient = ctx.createRadialGradient(0, -12, 0, 0, -12, glowSize);
+        glowGradient.addColorStop(0, `rgba(220, 20, 60, ${0.8 * this.noseGlow})`);
+        glowGradient.addColorStop(0.4, `rgba(255, 100, 100, ${0.5 * this.noseGlow})`);
+        glowGradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+        
+        ctx.fillStyle = glowGradient;
+        ctx.beginPath();
+        ctx.arc(0, -12, glowSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let i = 0; i < 8; i++) {
+          const angle = (time * 0.1 + i * Math.PI / 4);
+          const radius = 18 + Math.sin(time * 0.15) * 3;
+          const sparkleX = Math.cos(angle) * radius;
+          const sparkleY = -12 + Math.sin(angle) * radius;
+          
+          ctx.fillStyle = `rgba(255, 60, 60, ${this.noseGlow * 0.8})`;
+          ctx.beginPath();
+          ctx.arc(sparkleX, sparkleY, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Nariz
+      ctx.fillStyle = '#FFB6A3';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(-2, -15, 2.5, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Boca
+      if (this.state === 'eating') {
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.arc(0, -3, 10, 0.2, Math.PI - 0.2);
+        ctx.fill();
+      } else if (this.state === 'bleeding') {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-12, -3);
+        for (let i = 0; i <= 12; i++) {
+          const x = -12 + i * 2;
+          const y = -3 + Math.sin(i * 0.8) * 2;
+          ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+        ctx.stroke();
+      }
+
+      // Mejillas
+      ctx.fillStyle = 'rgba(255, 160, 160, 0.4)';
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class Turron {
+    x: number;
+    y: number;
+    visible: boolean;
+    eaten: boolean;
+    float: number;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    update() {
+      if (!this.eaten) {
+        this.float += 0.08;
+      }
+
+      if (this.character.state === 'eating' && !this.eaten) {
+        this.x += (this.character.x - 5 - this.x) * 0.15;
+        this.y += (this.character.y - 15 - this.y) * 0.15;
+
+        if (Math.abs(this.x - (this.character.x - 5)) < 8) {
+          this.visible = false;
+          this.eaten = true;
+        }
+      }
+
+      if (this.character.state === 'standing' && this.character.stateProgress < 0.1) {
+        this.reset();
+      }
+    }
+
+    reset() {
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (!this.visible) return;
+
+      const floatOffset = Math.sin(this.float) * 5;
+
+      ctx.save();
+      ctx.translate(this.x, this.y + floatOffset);
+
+      const turronGradient = ctx.createLinearGradient(-15, -10, 15, 10);
+      turronGradient.addColorStop(0, '#DC143C');
+      turronGradient.addColorStop(0.5, '#B22222');
+      turronGradient.addColorStop(1, '#8B0000');
+      ctx.fillStyle = turronGradient;
+      
+      ctx.fillRect(-15, -10, 30, 20);
+
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-15, -10, 30, 20);
+
+      ctx.fillStyle = '#FFD700';
+      for (let i = 0; i < 4; i++) {
+        ctx.fillRect(-12 + i * 8, -8, 2, 16);
+      }
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.fillRect(-12, -8, 10, 3);
+
+      ctx.restore();
+    }
+  }
+
+  class BloodDrop {
+    startX: number;
+    startY: number;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    rotation: number;
+    rotationSpeed: number;
+
+    constructor(x: number, y: number) {
+      this.startX = x;
+      this.startY = y;
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 2;
+      this.vy = Math.random() * 1 + 0.5;
+      this.size = Math.random() * 3.5 + 2;
+      this.life = 1;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.12;
+      this.rotation += this.rotationSpeed;
+      this.life -= 0.008;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.globalAlpha = this.life;
+
+      ctx.fillStyle = '#8B0000';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.size, this.size * 1.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#CD5C5C';
+      ctx.beginPath();
+      ctx.ellipse(-this.size * 0.3, -this.size * 0.4, this.size * 0.4, this.size * 0.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const turron = new Turron(character);
+  const bloodDrops: BloodDrop[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a33');
+    gradient.addColorStop(1, '#2d1b4e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 30; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (character.state === 'bleeding' && character.bleedingIntensity > 0.2) {
+      if (Math.random() < 0.35 * character.bleedingIntensity) {
+        const noseX = character.x;
+        const noseY = character.y - 12;
+        
+        bloodDrops.push(new BloodDrop(
+          noseX + (Math.random() - 0.5) * 8,
+          noseY
+        ));
+      }
+    }
+
+    for (let i = bloodDrops.length - 1; i >= 0; i--) {
+      const drop = bloodDrops[i];
+      drop.update();
+      
+      if (drop.life <= 0 || drop.y > canvas.height) {
+        bloodDrops.splice(i, 1);
+      }
+    }
+
+    turron.update();
+    character.update();
+
+    turron.draw(ctx);
+    character.draw(ctx);
+
+    for (const drop of bloodDrops) {
+      drop.draw(ctx);
+    }
 
     time++;
     this.animationFrameId = requestAnimationFrame(animate);

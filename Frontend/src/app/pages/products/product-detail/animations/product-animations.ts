@@ -79,7 +79,14 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     animationType: 'canvas',
     componentName: 'vomit-pills',
     description: '¡Náuseas instantáneas con espirales mágicos verdes!'
-  }
+  },
+ // 10. Turron sangranarices - Hemorragia mágica por la nariz
+    10: {
+    id: 10,
+    animationType: 'canvas',
+    componentName: 'turron-sangranarices',
+    description: 'Provoca una considerable hemorragia nasal temporal'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {
