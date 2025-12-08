@@ -122,6 +122,14 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'chocolate-breaking-teeth',
     description: '¡Chocolate imposible de morder que provoca un rebote caricaturesco!'
   },
+  // 16. Libro mordedor - Libro con dientes juguetón
+  16: {
+    id: 16,
+    animationType: 'canvas',
+    componentName: 'biting-book',
+    description: '¡Libro mágico que intenta morder con dientes afilados!'
+  },
+  
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

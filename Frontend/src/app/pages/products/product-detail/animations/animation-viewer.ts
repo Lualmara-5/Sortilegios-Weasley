@@ -215,6 +215,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateTruthCandy(ctx, canvas); 
     }else if (this.animation?.id === 15) { 
     this.animateChocolateRompedientes(ctx, canvas); 
+    }else if (this.animation?.id === 16) {  
+    this.animateLibroMordedor(ctx, canvas);  
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -7558,6 +7560,422 @@ private animateChocolateRompedientes(ctx: CanvasRenderingContext2D, canvas: HTML
         ctx.fill();
         ctx.restore();
       });
+    }
+
+    time++;
+    if (time >= cycleTime) {
+      time = 0;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+
+// Animación del Libro Mordedor (ID 16)
+private animateLibroMordedor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+  const cycleTime = 240;
+
+  interface MagicParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+  }
+
+  const particles: MagicParticle[] = [];
+
+  class ParticleClass {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.vx = (Math.random() - 0.5) * 1;
+      this.vy = (Math.random() - 0.5) * 1;
+      this.life = 100;
+      this.maxLife = 100;
+      this.size = Math.random() * 3 + 1;
+      this.color = ['#ffd700', '#ffaa00', '#ff6b00', '#ff00ff'][Math.floor(Math.random() * 4)];
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life--;
+
+      this.vx += (Math.random() - 0.5) * 0.1;
+      this.vy += (Math.random() - 0.5) * 0.1;
+
+      const speed = Math.sqrt(this.vx ** 2 + this.vy ** 2);
+      if (speed > 2) {
+        this.vx = (this.vx / speed) * 2;
+        this.vy = (this.vy / speed) * 2;
+      }
+
+      if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+      if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+
+    draw() {
+      const alpha = this.life / this.maxLife;
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = alpha * 0.8;
+      
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        const radius = i % 2 === 0 ? this.size : this.size / 2;
+        const x = this.x + Math.cos(angle) * radius;
+        const y = this.y + Math.sin(angle) * radius;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fill();
+      
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = this.color;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      
+      ctx.globalAlpha = 1;
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const drawBook = (x: number, y: number, angle: number, mouthOpen: number, eyeExpression: any, bounce: number) => {
+    ctx.save();
+    ctx.translate(x, y + bounce);
+    ctx.rotate(angle);
+
+    const bookWidth = 120;
+    const bookHeight = 90;
+
+    // Sombra del libro
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.beginPath();
+    ctx.ellipse(0, bookHeight / 2 + 10, bookWidth / 2, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Parte inferior del libro
+    const lowerGradient = ctx.createLinearGradient(-bookWidth / 2, 0, bookWidth / 2, 0);
+    lowerGradient.addColorStop(0, '#6d4c2a');
+    lowerGradient.addColorStop(0.5, '#8b6332');
+    lowerGradient.addColorStop(1, '#6d4c2a');
+    ctx.fillStyle = lowerGradient;
+    ctx.fillRect(-bookWidth / 2, 0, bookWidth, bookHeight / 2);
+
+    // Textura peluda en parte inferior
+    ctx.strokeStyle = 'rgba(139, 99, 50, 0.4)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 40; i++) {
+      const furX = -bookWidth / 2 + Math.random() * bookWidth;
+      const furY = Math.random() * (bookHeight / 2);
+      const furLength = Math.random() * 6 + 2;
+      ctx.beginPath();
+      ctx.moveTo(furX, furY);
+      ctx.lineTo(furX + Math.random() * 4 - 2, furY + furLength);
+      ctx.stroke();
+    }
+
+    // Parte superior del libro
+    ctx.save();
+    ctx.translate(0, 0);
+    
+    const openAngle = (mouthOpen / 100) * Math.PI * 0.4;
+    ctx.rotate(-openAngle);
+
+    const upperGradient = ctx.createLinearGradient(-bookWidth / 2, -bookHeight / 2, bookWidth / 2, 0);
+    upperGradient.addColorStop(0, '#8b6332');
+    upperGradient.addColorStop(0.5, '#a67c3a');
+    upperGradient.addColorStop(1, '#8b6332');
+    ctx.fillStyle = upperGradient;
+    ctx.fillRect(-bookWidth / 2, -bookHeight / 2, bookWidth, bookHeight / 2);
+
+    // Textura peluda en parte superior
+    ctx.strokeStyle = 'rgba(166, 124, 58, 0.4)';
+    for (let i = 0; i < 40; i++) {
+      const furX = -bookWidth / 2 + Math.random() * bookWidth;
+      const furY = -bookHeight / 2 + Math.random() * (bookHeight / 2);
+      const furLength = Math.random() * 6 + 2;
+      ctx.beginPath();
+      ctx.moveTo(furX, furY);
+      ctx.lineTo(furX + Math.random() * 4 - 2, furY - furLength);
+      ctx.stroke();
+    }
+
+    // Ojos
+    const eyeY = -bookHeight / 4;
+    const eyeSize = 12;
+    const pupilSize = 6;
+
+    // Ojo izquierdo
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(-25, eyeY, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#8b4513';
+    ctx.beginPath();
+    ctx.arc(-25 + eyeExpression.pupilOffsetX, eyeY + eyeExpression.pupilOffsetY, pupilSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(-25 + eyeExpression.pupilOffsetX, eyeY + eyeExpression.pupilOffsetY, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.beginPath();
+    ctx.arc(-27 + eyeExpression.pupilOffsetX, eyeY - 2 + eyeExpression.pupilOffsetY, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ojo derecho
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(25, eyeY, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#8b4513';
+    ctx.beginPath();
+    ctx.arc(25 + eyeExpression.pupilOffsetX, eyeY + eyeExpression.pupilOffsetY, pupilSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(25 + eyeExpression.pupilOffsetX, eyeY + eyeExpression.pupilOffsetY, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.beginPath();
+    ctx.arc(23 + eyeExpression.pupilOffsetX, eyeY - 2 + eyeExpression.pupilOffsetY, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cejas
+    ctx.strokeStyle = '#5c3d1f';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+
+    if (eyeExpression.angry) {
+      ctx.beginPath();
+      ctx.moveTo(-35, eyeY - 15);
+      ctx.lineTo(-15, eyeY - 10);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(35, eyeY - 15);
+      ctx.lineTo(15, eyeY - 10);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(-35, eyeY - 12);
+      ctx.quadraticCurveTo(-25, eyeY - 15, -15, eyeY - 12);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(35, eyeY - 12);
+      ctx.quadraticCurveTo(25, eyeY - 15, 15, eyeY - 12);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+
+    // Dientes
+    if (mouthOpen > 10) {
+      ctx.fillStyle = '#fff';
+      const numTeeth = 8;
+      const toothWidth = bookWidth / (numTeeth * 1.5);
+      const toothHeight = 12;
+
+      for (let i = 0; i < numTeeth; i++) {
+        const toothX = -bookWidth / 2 + (i * bookWidth) / numTeeth + toothWidth / 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(toothX - toothWidth / 2, -2);
+        ctx.lineTo(toothX, toothHeight);
+        ctx.lineTo(toothX + toothWidth / 2, -2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#ddd';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(toothX - toothWidth / 2 + 5, 2);
+        ctx.lineTo(toothX + 5, -toothHeight);
+        ctx.lineTo(toothX + toothWidth / 2 + 5, 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+
+    // Título
+    if (mouthOpen < 50) {
+      ctx.fillStyle = 'rgba(212, 175, 55, 0.6)';
+      ctx.font = 'bold 14px Georgia';
+      ctx.textAlign = 'center';
+      
+    }
+
+    ctx.restore();
+  };
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a2e');
+    gradient.addColorStop(1, '#0a0514');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Partículas
+    if (Math.random() < 0.2) {
+      particles.push(new ParticleClass() as any);
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i] as any;
+      p.update();
+      p.draw();
+      
+      if (p.isDead()) {
+        particles.splice(i, 1);
+      }
+    }
+
+    if (particles.length > 30) {
+      particles.shift();
+    }
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const idlePhase = time < 60;
+    const snapPhase1 = time >= 60 && time < 90;
+    const jumpPhase = time >= 90 && time < 120;
+    const snapPhase2 = time >= 120 && time < 150;
+    const movePhase = time >= 150 && time < 180;
+    const snapPhase3 = time >= 180 && time < 210;
+    const returnPhase = time >= 210;
+
+    let bookX = centerX;
+    let bookY = centerY;
+    let bookAngle = 0;
+    let mouthOpen = 0;
+    let eyeExpression = {
+      pupilOffsetX: 0,
+      pupilOffsetY: 0,
+      angry: false
+    };
+    let bounce = 0;
+
+    if (idlePhase) {
+      const breathe = Math.sin(time * 0.1) * 3;
+      bounce = breathe;
+      mouthOpen = 10 + Math.sin(time * 0.15) * 5;
+      eyeExpression.pupilOffsetX = Math.sin(time * 0.05) * 3;
+      eyeExpression.pupilOffsetY = Math.cos(time * 0.03) * 2;
+
+    } else if (snapPhase1) {
+      const progress = (time - 60) / 30;
+      const snapCycle = Math.sin(progress * Math.PI * 4);
+      mouthOpen = 50 + snapCycle * 40;
+      bounce = Math.abs(snapCycle) * 10;
+      eyeExpression.angry = true;
+      eyeExpression.pupilOffsetY = 3;
+
+    } else if (jumpPhase) {
+      const progress = (time - 90) / 30;
+      const jumpHeight = Math.sin(progress * Math.PI) * -80;
+      bookY = centerY + jumpHeight;
+      bookAngle = Math.sin(progress * Math.PI * 2) * 0.3;
+      mouthOpen = 30 + Math.sin(progress * Math.PI * 6) * 20;
+      eyeExpression.pupilOffsetY = -4;
+
+    } else if (snapPhase2) {
+      const progress = (time - 120) / 30;
+      const snapCycle = Math.sin(progress * Math.PI * 6);
+      mouthOpen = 60 + snapCycle * 50;
+      bounce = Math.abs(snapCycle) * 12;
+      bookAngle = snapCycle * 0.2;
+      eyeExpression.angry = true;
+      eyeExpression.pupilOffsetX = Math.sin(time * 0.5) * 4;
+
+    } else if (movePhase) {
+      const progress = (time - 150) / 30;
+      bookX = centerX + Math.sin(progress * Math.PI * 2) * 60;
+      bookAngle = Math.sin(progress * Math.PI * 2) * 0.15;
+      mouthOpen = 25 + Math.sin(time * 0.3) * 15;
+      eyeExpression.pupilOffsetX = Math.sin(progress * Math.PI * 2) * 5;
+
+    } else if (snapPhase3) {
+      const progress = (time - 180) / 30;
+      const snapCycle = Math.sin(progress * Math.PI * 3);
+      mouthOpen = 70 + snapCycle * 60;
+      bounce = Math.abs(snapCycle) * 15;
+      bookAngle = snapCycle * 0.25;
+      eyeExpression.angry = true;
+      eyeExpression.pupilOffsetY = 4;
+      bookX = centerX + Math.sin(time * 2) * 3;
+
+    } else if (returnPhase) {
+      const progress = (time - 210) / 30;
+      const easeProgress = progress * (2 - progress);
+      bookX = centerX;
+      bookY = centerY;
+      bookAngle = bookAngle * (1 - easeProgress);
+      mouthOpen = 10 + Math.sin(time * 0.15) * 5;
+      bounce = Math.sin(time * 0.1) * 3;
+    }
+
+    drawBook(bookX, bookY, bookAngle, mouthOpen, eyeExpression, bounce);
+
+    // Efectos
+    if (snapPhase1 || snapPhase2 || snapPhase3) {
+      ctx.strokeStyle = 'rgba(255, 200, 100, 0.3)';
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(bookX - 80 - i * 10, bookY);
+        ctx.lineTo(bookX - 60 - i * 10, bookY + (Math.random() - 0.5) * 20);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(bookX + 80 + i * 10, bookY);
+        ctx.lineTo(bookX + 60 + i * 10, bookY + (Math.random() - 0.5) * 20);
+        ctx.stroke();
+      }
+
+      if ((time - 60) % 30 < 5 || (time - 120) % 30 < 5 || (time - 180) % 30 < 5) {
+        ctx.save();
+        ctx.font = 'bold 30px Arial';
+        ctx.fillStyle = '#ffd700';
+        ctx.strokeStyle = '#8b4513';
+        ctx.lineWidth = 3;
+        ctx.textAlign = 'center';
+        ctx.strokeText('¡SNAP!', bookX, bookY - 80);
+        ctx.fillText('¡SNAP!', bookX, bookY - 80);
+        ctx.restore();
+      }
     }
 
     time++;
