@@ -44,7 +44,7 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
   // 5. Orejas extensibles - Orejas mágicas
   5: {
     id: 5,
-    animationType: 'css',
+    animationType: 'canvas',
     cssClass: 'animation-ears-extend',
     description: 'Las orejas se extienden con ondas de sonido mágicas'
   }

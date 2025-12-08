@@ -190,11 +190,14 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     } else if (this.animation?.id === 2) {
       this.animateCanaryTransform(ctx, canvas);
     } else if (this.animation?.id === 3) {
-      this.animateFireworksBasic(ctx, canvas);  
+      this.animateFireworksBasic(ctx, canvas);
     } else if (this.animation?.id === 4) {
       this.animateFireworksDeluxe(ctx, canvas);
+    } else if (this.animation?.id === 5) {  // ⬅️ AGREGAR ESTA LÍNEA
+      this.animateExtendableEars(ctx, canvas);  // ⬅️ Y ESTA
     }
   }
+
   // Animación del Caramelo Longuilinguo (ID 1)
   private animateTongueCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     class MagicParticle {
@@ -1298,6 +1301,7 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
 
     animate();
   }
+
   // Animación de Galletas de Canarios (ID 2)
   private animateCanaryTransform(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     class MagicParticle {
@@ -1927,4 +1931,310 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
 
     animate();
     }
+    
+  // Animación de Orejas Extensibles (ID 5)
+  private animateExtendableEars(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+    class SoundWave {
+      x: number;
+      y: number;
+      targetX: number | null;
+      radius: number;
+      maxRadius: number;
+      alpha: number;
+      speed: number;
+
+      constructor(x: number, y: number, targetX: number | null) {
+        this.x = x;
+        this.y = y;
+        this.targetX = targetX;
+        this.radius = 5;
+        this.maxRadius = 40;
+        this.alpha = 1;
+        this.speed = 2;
+      }
+
+      update() {
+        this.radius += this.speed;
+        this.alpha = 1 - (this.radius / this.maxRadius);
+      }
+
+      draw(ctx: CanvasRenderingContext2D) {
+        if (this.alpha <= 0) return;
+
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.strokeStyle = '#FFD700';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#FFA500';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      isDead() {
+        return this.radius >= this.maxRadius;
+      }
+    }
+
+    const soundWaves: SoundWave[] = [];
+    let time = 0;
+
+    const drawEar = (ctx: CanvasRenderingContext2D, x: number, y: number, scale: number, flipped: boolean) => {
+      ctx.save();
+      ctx.translate(x, y);
+      if (flipped) ctx.scale(-scale, scale);
+      else ctx.scale(scale, scale);
+      
+      const glowGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 60);
+      glowGrad.addColorStop(0, 'rgba(255, 182, 193, 0.4)');
+      glowGrad.addColorStop(1, 'rgba(255, 182, 193, 0)');
+      ctx.fillStyle = glowGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, 60, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#FFD4C4';
+      ctx.strokeStyle = '#D8A494';
+      ctx.lineWidth = 3;
+      
+      ctx.beginPath();
+      ctx.moveTo(0, -35);
+      ctx.bezierCurveTo(20, -35, 30, -20, 30, 0);
+      ctx.bezierCurveTo(30, 25, 15, 40, 0, 40);
+      ctx.bezierCurveTo(-15, 40, -30, 25, -30, 0);
+      ctx.bezierCurveTo(-30, -20, -20, -35, 0, -35);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#C8947E';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(-5, -30);
+      ctx.bezierCurveTo(15, -32, 25, -15, 25, 5);
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#C8947E';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(-8, -20);
+      ctx.bezierCurveTo(8, -22, 18, -8, 18, 10);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#FFBEA3';
+      ctx.beginPath();
+      ctx.ellipse(0, 32, 12, 15, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#D8A494';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      ctx.fillStyle = '#E8A48E';
+      ctx.beginPath();
+      ctx.ellipse(-5, 0, 15, 22, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#D89A7E';
+      ctx.beginPath();
+      ctx.ellipse(-8, 0, 10, 16, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#C88A6E';
+      ctx.beginPath();
+      ctx.ellipse(-10, 2, 5, 8, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#FFD4C4';
+      ctx.beginPath();
+      ctx.ellipse(8, 5, 6, 10, 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.beginPath();
+      ctx.ellipse(8, -15, 8, 12, 0.4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.ellipse(-15, 15, 5, 8, -0.3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    };
+
+    const drawDoor = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      ctx.save();
+      
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillRect(x + 5, y + 5, 100, 180);
+      
+      const doorGrad = ctx.createLinearGradient(x, y, x + 100, y);
+      doorGrad.addColorStop(0, '#8B4513');
+      doorGrad.addColorStop(0.5, '#A0522D');
+      doorGrad.addColorStop(1, '#8B4513');
+      
+      ctx.fillStyle = doorGrad;
+      ctx.strokeStyle = '#654321';
+      ctx.lineWidth = 3;
+      ctx.fillRect(x, y, 100, 180);
+      ctx.strokeRect(x, y, 100, 180);
+      
+      ctx.strokeStyle = '#6B3410';
+      ctx.lineWidth = 2;
+      for (let i = 1; i < 4; i++) {
+        const yPos = y + (180 / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(x, yPos);
+        ctx.lineTo(x + 100, yPos);
+        ctx.stroke();
+      }
+      
+      ctx.fillStyle = '#FFD700';
+      ctx.strokeStyle = '#B8860B';
+      ctx.lineWidth = 2;
+      ctx.shadowColor = '#FFD700';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(x + 80, y + 90, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.shadowBlur = 0;
+      
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.fillRect(x, y + 180, 100, 3);
+      
+      ctx.restore();
+    };
+
+    const drawExtensionCord = (ctx: CanvasRenderingContext2D, startX: number, startY: number, endX: number, endY: number, vibration: number) => {
+      ctx.save();
+      
+      const segments = 30;
+      const points = [];
+      
+      for (let i = 0; i <= segments; i++) {
+        const t = i / segments;
+        const x = startX + (endX - startX) * t;
+        const y = startY + (endY - startY) * t;
+        
+        const wave = Math.sin(t * Math.PI * 4 + time * 5) * vibration * 3;
+        const finalY = y + wave;
+        
+        points.push({ x, y: finalY });
+      }
+      
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x + 2, p.y + 2);
+        else ctx.lineTo(p.x + 2, p.y + 2);
+      });
+      ctx.stroke();
+      
+      const cordGrad = ctx.createLinearGradient(startX, startY, endX, endY);
+      cordGrad.addColorStop(0, '#FFD4C4');
+      cordGrad.addColorStop(0.5, '#FFB6A3');
+      cordGrad.addColorStop(1, '#FFD4C4');
+      
+      ctx.strokeStyle = cordGrad;
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = 'rgba(255, 182, 193, 0.5)';
+      ctx.shadowBlur = 5;
+      
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#E89A7E';
+      ctx.lineWidth = 2;
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y - 2);
+        else ctx.lineTo(p.x, p.y - 2);
+      });
+      ctx.stroke();
+      
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y + 2);
+        else ctx.lineTo(p.x, p.y + 2);
+      });
+      ctx.stroke();
+      
+      ctx.restore();
+    };
+
+    const animate = () => {
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      bgGrad.addColorStop(0, 'rgba(30, 20, 40, 0.3)');
+      bgGrad.addColorStop(1, 'rgba(20, 10, 30, 0.3)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      time += 0.016;
+
+      const loopTime = time % 3;
+      let phase = 0;
+      let phaseProgress = 0;
+
+      if (loopTime < 0.8) {
+        phase = 1;
+        phaseProgress = loopTime / 0.8;
+      } else {
+        phase = 2;
+        phaseProgress = (loopTime - 0.8) / 2.2;
+      }
+
+      const earLeftX = 120;
+      const earLeftY = canvas.height / 2;
+      const doorX = canvas.width - 200;
+      const doorY = canvas.height / 2 - 90;
+      const cordEndX = doorX + 50;
+      const cordEndY = doorY + 183;
+
+      drawDoor(ctx, doorX, doorY);
+
+      const vibration = phase === 2 ? Math.sin(time * 8) * 0.5 + 0.5 : 0;
+
+      drawExtensionCord(ctx, earLeftX, earLeftY, cordEndX, cordEndY, vibration);
+
+      drawEar(ctx, earLeftX, earLeftY, 1.2, false);
+      drawEar(ctx, cordEndX, cordEndY, 1, true);
+
+      if (phase === 2) {
+        if (Math.random() < 0.15) {
+          soundWaves.push(new SoundWave(doorX + 30, doorY + 90, earLeftX));
+          soundWaves.push(new SoundWave(doorX + 70, doorY + 90, earLeftX));
+        }
+        
+        if (Math.random() < 0.1) {
+          soundWaves.push(new SoundWave(earLeftX, earLeftY, null));
+        }
+      }
+
+      for (let i = soundWaves.length - 1; i >= 0; i--) {
+        soundWaves[i].update();
+        soundWaves[i].draw(ctx);
+        
+        if (soundWaves[i].isDead()) {
+          soundWaves.splice(i, 1);
+        }
+      }
+
+      this.animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+  }
 }
