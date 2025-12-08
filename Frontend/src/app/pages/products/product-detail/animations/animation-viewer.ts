@@ -201,6 +201,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
       this.animateHeadlessHat(ctx, canvas);  
     }else if (this.animation?.id === 8) {  
       this.animateFaintingBonbon(ctx, canvas);
+    } else if (this.animation?.id === 9) {
+      this.animateVomitPills(ctx, canvas); 
   }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -3621,5 +3623,582 @@ private animateFaintingBonbon(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
 
   animate();
 }
+
+// Animación de Pastillas Vomitivas (ID 9)
+private animateVomitPills(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  interface Spiral {
+    x: number;
+    y: number;
+    direction: number;
+    size: number;
+    maxSize: number;
+    rotation: number;
+    life: number;
+    speed: number;
+    opacity: number;
+    offsetX: number;
+    offsetY: number;
+  }
+
+  interface Particle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    fadeSpeed: number;
+  }
+
+  let time = 0;
+
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    stateProgress: number;
+    rotation: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+    swayOffset: number;
+    greenTint: number;
+    headTilt: number;
+    squish: number;
+    nauseaIntensity: number;
+
+    constructor() {
+      this.x = canvas.width / 2;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.rotation = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+      this.swayOffset = 0;
+      this.greenTint = 0;
+      this.headTilt = 0;
+      this.squish = 1;
+      this.nauseaIntensity = 0;
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.stateProgress += 0.02;
+        this.swayOffset = Math.sin(time * 0.05) * 2;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'eating';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'eating') {
+        this.stateProgress += 0.04;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'nauseated';
+          this.stateProgress = 0;
+          this.nauseaIntensity = 0;
+        }
+      } else if (this.state === 'nauseated') {
+        this.stateProgress += 0.01;
+        
+        if (this.nauseaIntensity < 1) {
+          this.nauseaIntensity += 0.05;
+        }
+        
+        const intensity = Math.min(this.nauseaIntensity, 1);
+        this.swayOffset = Math.sin(this.stateProgress * 15) * 15 * intensity;
+        this.headTilt = Math.sin(this.stateProgress * 10) * 0.3 * intensity;
+        this.greenTint = (0.3 + Math.sin(this.stateProgress * 20) * 0.2) * intensity;
+        this.squish = 1 + Math.sin(this.stateProgress * 25) * 0.15 * intensity;
+        
+        if (this.stateProgress >= 1) {
+          this.reset();
+        }
+      }
+
+      if (this.eyesOpen && this.state !== 'nauseated') {
+        this.blinkTimer++;
+        if (this.blinkTimer > 80 && Math.random() < 0.03) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 100);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.rotation = 0;
+      this.eyesOpen = true;
+      this.swayOffset = 0;
+      this.greenTint = 0;
+      this.headTilt = 0;
+      this.squish = 1;
+      this.nauseaIntensity = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x + this.swayOffset, this.y);
+      ctx.rotate(this.headTilt);
+      ctx.scale(this.squish, 1 / this.squish);
+
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#4A5568';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#2D3748';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      bodyGradient.addColorStop(0, '#5A67D8');
+      bodyGradient.addColorStop(1, '#4C51BF');
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      if (this.state === 'eating') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-25, -10, -5, -15);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-5, -15, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (this.state === 'nauseated') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-30, 35, -15, 45);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-15, 45, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.quadraticCurveTo(30, 35, 15, 45);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(15, 45, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.lineTo(-42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.lineTo(42, 60);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      if (this.state === 'nauseated') {
+        const greenMix = this.greenTint;
+        headGradient.addColorStop(0, `rgba(255, 235, 212, ${1 - greenMix})`);
+        headGradient.addColorStop(0, `rgba(180, 255, 180, ${greenMix})`);
+        headGradient.addColorStop(1, `rgba(255, 215, 186, ${1 - greenMix})`);
+        headGradient.addColorStop(1, `rgba(150, 230, 150, ${greenMix})`);
+      } else {
+        headGradient.addColorStop(0, '#FFEBD4');
+        headGradient.addColorStop(1, '#FFD7BA');
+      }
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#2C1810';
+      ctx.beginPath();
+      ctx.ellipse(0, -42, 40, 25, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -38, 15, 0, Math.PI * 2);
+      ctx.arc(20, -38, 15, 0, Math.PI * 2);
+      ctx.arc(0, -50, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = this.state === 'nauseated' 
+        ? `rgba(255, 205, 176, ${1 - this.greenTint * 0.5})`
+        : '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'nauseated') {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        
+        ctx.beginPath();
+        for (let i = 0; i < 20; i++) {
+          const angle = i * 0.5 + this.stateProgress * 10;
+          const radius = i * 0.5;
+          const x = -18 + Math.cos(angle) * radius;
+          const y = -23 + Math.sin(angle) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        
+        ctx.beginPath();
+        for (let i = 0; i < 20; i++) {
+          const angle = i * 0.5 + this.stateProgress * 10;
+          const radius = i * 0.5;
+          const x = 18 + Math.cos(angle) * radius;
+          const y = -23 + Math.sin(angle) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      } else if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+        ctx.arc(20, -25, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      if (this.state === 'nauseated') {
+        ctx.strokeStyle = '#6B4423';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-28, -30);
+        ctx.quadraticCurveTo(-18, -36, -10, -34);
+        ctx.moveTo(10, -34);
+        ctx.quadraticCurveTo(18, -36, 28, -30);
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = '#6B4423';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -35, -10, -32);
+        ctx.moveTo(10, -32);
+        ctx.quadraticCurveTo(18, -35, 28, -32);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'eating') {
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.arc(0, -3, 10, 0.2, Math.PI - 0.2);
+        ctx.fill();
+      } else if (this.state === 'nauseated') {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-12, -3);
+        for (let i = 0; i <= 12; i++) {
+          const x = -12 + i * 2;
+          const y = -3 + Math.sin(i * 0.8 + this.stateProgress * 15) * 3;
+          ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+        ctx.stroke();
+      }
+
+      if (this.state === 'nauseated') {
+        ctx.fillStyle = 'rgba(160, 255, 160, 0.3)';
+      } else {
+        ctx.fillStyle = 'rgba(255, 160, 160, 0.4)';
+      }
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class Pill {
+    x: number;
+    y: number;
+    visible: boolean;
+    eaten: boolean;
+    float: number;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    update() {
+      if (!this.eaten) {
+        this.float += 0.08;
+      }
+
+      if (this.character.state === 'eating' && !this.eaten) {
+        this.x += (this.character.x - 5 - this.x) * 0.15;
+        this.y += (this.character.y - 15 - this.y) * 0.15;
+
+        if (Math.abs(this.x - (this.character.x - 5)) < 8) {
+          this.visible = false;
+          this.eaten = true;
+        }
+      }
+
+      if (this.character.state === 'standing' && this.character.stateProgress < 0.1) {
+        this.reset();
+      }
+    }
+
+    reset() {
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (!this.visible) return;
+
+      const floatOffset = Math.sin(this.float) * 5;
+
+      ctx.save();
+      ctx.translate(this.x, this.y + floatOffset);
+
+      const pillGradient = ctx.createLinearGradient(-12, -8, 12, 8);
+      pillGradient.addColorStop(0, '#FF8C42');
+      pillGradient.addColorStop(1, '#FF6B35');
+      ctx.fillStyle = pillGradient;
+      
+      ctx.beginPath();
+      ctx.arc(-6, 0, 8, Math.PI / 2, Math.PI * 1.5);
+      ctx.arc(6, 0, 8, Math.PI * 1.5, Math.PI / 2);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = '#FF5722';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, -8);
+      ctx.lineTo(0, 8);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.beginPath();
+      ctx.arc(-4, -3, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const pill = new Pill(character);
+  const spirals: Spiral[] = [];
+  const particles: Particle[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a33');
+    gradient.addColorStop(1, '#2d1b4e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 30; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (character.state === 'nauseated') {
+      if (Math.random() < 0.25) {
+        const side = Math.random() < 0.5 ? -1 : 1;
+        spirals.push({
+          x: character.x,
+          y: character.y - 20,
+          direction: side,
+          size: 0,
+          maxSize: 40 + Math.random() * 20,
+          rotation: 0,
+          life: 1,
+          speed: 1.2 + Math.random() * 0.8,
+          opacity: 0.7 + Math.random() * 0.3,
+          offsetX: (Math.random() - 0.5) * 60,
+          offsetY: -Math.random() * 80 - 20
+        });
+      }
+      
+      if (Math.random() < 0.4) {
+        particles.push({
+          x: character.x + (Math.random() - 0.5) * 50,
+          y: character.y - 20 + (Math.random() - 0.5) * 40,
+          vx: (Math.random() - 0.5) * 3,
+          vy: -Math.random() * 3 - 1,
+          size: Math.random() * 5 + 2,
+          life: 1,
+          fadeSpeed: 0.012
+        });
+      }
+    }
+
+    for (let i = spirals.length - 1; i >= 0; i--) {
+      const s = spirals[i];
+      if (s.size < s.maxSize) {
+        s.size += s.speed;
+      } else {
+        s.life -= 0.015;
+      }
+      s.rotation += 0.08 * s.direction;
+      s.y -= 0.5;
+
+      if (s.life <= 0) {
+        spirals.splice(i, 1);
+      } else {
+        ctx.save();
+        ctx.translate(s.x + s.offsetX, s.y + s.offsetY);
+        ctx.rotate(s.rotation);
+        ctx.globalAlpha = s.life * s.opacity;
+
+        ctx.strokeStyle = '#4ADE80';
+        ctx.lineWidth = 4;
+        ctx.shadowColor = '#4ADE80';
+        ctx.shadowBlur = 10;
+
+        ctx.beginPath();
+        for (let j = 0; j < 50; j++) {
+          const angle = j * 0.3;
+          const radius = (j / 50) * s.size;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          if (j === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05;
+      p.life -= p.fadeSpeed;
+
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+      } else {
+        ctx.save();
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = '#4ADE80';
+        ctx.shadowColor = '#4ADE80';
+        ctx.shadowBlur = 8;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
+    }
+
+    pill.update();
+    character.update();
+
+    pill.draw(ctx);
+    character.draw(ctx);
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
 
 }

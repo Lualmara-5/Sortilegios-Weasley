@@ -71,6 +71,14 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     animationType: 'canvas',
     componentName: 'fainting-bonbon',
     description: '¡Desmayo instantáneo con efectos mágicos y estrellas!'
+  },
+
+    // 9. Pastillas vomitivas - Náusea mágica con espirales verdes
+  9: {
+    id: 9,
+    animationType: 'canvas',
+    componentName: 'vomit-pills',
+    description: '¡Náuseas instantáneas con espirales mágicos verdes!'
   }
 };
 
