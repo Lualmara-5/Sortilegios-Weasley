@@ -94,6 +94,14 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'caramelo-fiebre',
     description: 'Aumenta la temperatura corporal causando fiebre temporal'
   },
+  // 12. Manantial de sangre
+    12: {
+    id: 12,
+    animationType: 'canvas',
+    componentName: 'manantial-sangre',
+    description: 'Caramelos que provocan una gran hemorragia nasal mágica'
+  },
+  // 13. Varitas falsas
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

@@ -207,6 +207,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
       this.animateTurronSangranarices(ctx, canvas); 
     }else if (this.animation?.id === 11) {
     this.animateCarameloFiebre(ctx, canvas); 
+    }else if (this.animation?.id === 12) {
+    this.animateManantialSangre(ctx, canvas);
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -5398,6 +5400,658 @@ private animateCarameloFiebre(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
       ctx.beginPath();
       ctx.arc(character.x, character.y - 20, 120 * character.heatIntensity, 0, Math.PI * 2);
       ctx.fill();
+    }
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+// Animación del Manantial de Sangre (ID 12)
+private animateManantialSangre(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    stateProgress: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+    magicIntensity: number;
+    bleedingIntensity: number;
+
+    constructor() {
+      this.x = canvas.width / 2;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+      this.magicIntensity = 0;
+      this.bleedingIntensity = 0;
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.stateProgress += 0.02;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'eating';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'eating') {
+        this.stateProgress += 0.04;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'magical';
+          this.stateProgress = 0;
+          this.magicIntensity = 0;
+        }
+      } else if (this.state === 'magical') {
+        this.stateProgress += 0.01;
+        
+        if (this.magicIntensity < 1) {
+          this.magicIntensity += 0.02;
+        }
+        
+        if (this.stateProgress > 0.3 && this.bleedingIntensity < 1) {
+          this.bleedingIntensity += 0.025;
+        }
+        
+        if (this.stateProgress >= 1) {
+          this.reset();
+        }
+      }
+
+      if (this.eyesOpen && this.state !== 'magical') {
+        this.blinkTimer++;
+        if (this.blinkTimer > 80 && Math.random() < 0.03) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 100);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.magicIntensity = 0;
+      this.bleedingIntensity = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#3B3B98';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#1F1F5C';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      bodyGradient.addColorStop(0, '#5A67D8');
+      bodyGradient.addColorStop(1, '#4C51BF');
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      if (this.state === 'eating') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-25, -10, -5, -15);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-5, -15, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (this.state === 'magical') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-28, -8, -8, -10);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-8, -10, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.lineTo(-42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.lineTo(42, 60);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      headGradient.addColorStop(0, '#FFEBD4');
+      headGradient.addColorStop(1, '#FFD7BA');
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'magical') {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -26);
+        ctx.quadraticCurveTo(-18, -22, -12, -24);
+        ctx.moveTo(12, -24);
+        ctx.quadraticCurveTo(18, -22, 24, -26);
+        ctx.stroke();
+      } else if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+        ctx.arc(20, -25, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#6B4423';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      if (this.state === 'magical') {
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -38, -10, -36);
+        ctx.moveTo(10, -36);
+        ctx.quadraticCurveTo(18, -38, 28, -32);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -35, -10, -32);
+        ctx.moveTo(10, -32);
+        ctx.quadraticCurveTo(18, -35, 28, -32);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#2C1810';
+      ctx.beginPath();
+      ctx.ellipse(0, -48, 40, 20, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(0, -56, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'magical' && this.magicIntensity > 0) {
+        for (let i = 0; i < 3; i++) {
+          const radius = 20 + i * 8;
+          const alpha = (this.magicIntensity * 0.3) * (1 - i * 0.3);
+          
+          ctx.strokeStyle = `rgba(220, 20, 60, ${alpha})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(0, -12, radius + Math.sin(time * 0.1 + i) * 3, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      ctx.fillStyle = '#FFB6A3';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(-2, -15, 2.5, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'eating') {
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.arc(0, -3, 10, 0.2, Math.PI - 0.2);
+        ctx.fill();
+      } else if (this.state === 'magical') {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-10, -3);
+        ctx.lineTo(10, -3);
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = 'rgba(255, 160, 160, 0.4)';
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class Candy {
+    x: number;
+    y: number;
+    visible: boolean;
+    eaten: boolean;
+    float: number;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    update() {
+      if (!this.eaten) {
+        this.float += 0.08;
+      }
+
+      if (this.character.state === 'eating' && !this.eaten) {
+        this.x += (this.character.x - 5 - this.x) * 0.15;
+        this.y += (this.character.y - 15 - this.y) * 0.15;
+
+        if (Math.abs(this.x - (this.character.x - 5)) < 8) {
+          this.visible = false;
+          this.eaten = true;
+        }
+      }
+
+      if (this.character.state === 'standing' && this.character.stateProgress < 0.1) {
+        this.reset();
+      }
+    }
+
+    reset() {
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (!this.visible) return;
+
+      const floatOffset = Math.sin(this.float) * 5;
+
+      ctx.save();
+      ctx.translate(this.x, this.y + floatOffset);
+
+      const candyGradient = ctx.createRadialGradient(-3, -3, 2, 0, 0, 12);
+      candyGradient.addColorStop(0, '#8B0000');
+      candyGradient.addColorStop(0.5, '#5C0000');
+      candyGradient.addColorStop(1, '#3A0000');
+      ctx.fillStyle = candyGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, 0, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(220, 20, 60, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, 16 + Math.sin(this.float * 2) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 100, 100, 0.5)';
+      ctx.beginPath();
+      ctx.arc(-4, -4, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class MagicParticle {
+    x: number;
+    y: number;
+    startX: number;
+    startY: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    rotation: number;
+    rotationSpeed: number;
+    sparkle: boolean;
+
+    constructor(x: number, y: number) {
+      this.startX = x;
+      this.startY = y;
+      this.x = x + (Math.random() - 0.5) * 20;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 1.5;
+      this.vy = -Math.random() * 2.5 - 1.5;
+      this.size = Math.random() * 4 + 2;
+      this.life = 1;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+      this.sparkle = Math.random() < 0.3;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vx *= 0.98;
+      this.vy += 0.05;
+      this.rotation += this.rotationSpeed;
+      this.life -= 0.012;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life;
+      
+      if (this.sparkle) {
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 2);
+        gradient.addColorStop(0, 'rgba(255, 50, 50, 1)');
+        gradient.addColorStop(0.5, 'rgba(220, 20, 60, 0.8)');
+        gradient.addColorStop(1, 'rgba(180, 0, 0, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * Math.PI * 2) / 5;
+          const x1 = Math.cos(angle) * this.size;
+          const y1 = Math.sin(angle) * this.size;
+          const x2 = Math.cos(angle + Math.PI / 5) * this.size * 0.4;
+          const y2 = Math.sin(angle + Math.PI / 5) * this.size * 0.4;
+          
+          if (i === 0) ctx.moveTo(x1, y1);
+          else ctx.lineTo(x1, y1);
+          ctx.lineTo(x2, y2);
+        }
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+        gradient.addColorStop(0, 'rgba(255, 80, 80, 1)');
+        gradient.addColorStop(0.5, 'rgba(220, 20, 60, 0.9)');
+        gradient.addColorStop(1, 'rgba(180, 0, 0, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      ctx.restore();
+    }
+  }
+
+  class BloodStream {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    trail: Array<{x: number, y: number}>;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 1.2;
+      this.vy = Math.random() * 1 + 0.8;
+      this.size = Math.random() * 2.5 + 1.5;
+      this.life = 1;
+      this.trail = [];
+    }
+
+    update() {
+      this.trail.push({ x: this.x, y: this.y });
+      if (this.trail.length > 8) {
+        this.trail.shift();
+      }
+      
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.08;
+      this.life -= 0.01;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      
+      for (let i = 0; i < this.trail.length; i++) {
+        const t = this.trail[i];
+        const alpha = (i / this.trail.length) * this.life * 0.5;
+        
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = '#DC143C';
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, this.size * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      ctx.globalAlpha = this.life;
+      
+      const gradient = ctx.createRadialGradient(
+        this.x - this.size * 0.3, 
+        this.y - this.size * 0.3, 
+        0,
+        this.x, 
+        this.y, 
+        this.size
+      );
+      gradient.addColorStop(0, '#FF6B8A');
+      gradient.addColorStop(0.5, '#DC143C');
+      gradient.addColorStop(1, '#8B0000');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.ellipse(this.x, this.y, this.size, this.size * 1.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+  }
+
+  class MysticRing {
+    x: number;
+    y: number;
+    radius: number;
+    maxRadius: number;
+    life: number;
+    rotation: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.radius = 0;
+      this.maxRadius = 40 + Math.random() * 20;
+      this.life = 1;
+      this.rotation = Math.random() * Math.PI * 2;
+    }
+
+    update() {
+      this.radius += 1.5;
+      this.rotation += 0.05;
+      this.life = 1 - (this.radius / this.maxRadius);
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.6;
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      
+      ctx.strokeStyle = '#DC143C';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const candy = new Candy(character);
+  const magicParticles: MagicParticle[] = [];
+  const bloodStreams: BloodStream[] = [];
+  const mysticRings: MysticRing[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a33');
+    gradient.addColorStop(1, '#2d1b4e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 30; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (character.state === 'magical') {
+      if (Math.random() < 0.5 * character.magicIntensity) {
+        const noseX = character.x;
+        const noseY = character.y - 12;
+        magicParticles.push(new MagicParticle(noseX, noseY));
+      }
+      
+      if (character.bleedingIntensity > 0.2 && Math.random() < 0.25 * character.bleedingIntensity) {
+        const noseX = character.x;
+        const noseY = character.y - 12;
+        bloodStreams.push(new BloodStream(noseX + (Math.random() - 0.5) * 8, noseY));
+      }
+      
+      if (Math.random() < 0.05 && character.magicIntensity > 0.5) {
+        const noseX = character.x;
+        const noseY = character.y - 12;
+        mysticRings.push(new MysticRing(noseX, noseY));
+      }
+    }
+
+    for (let i = mysticRings.length - 1; i >= 0; i--) {
+      const ring = mysticRings[i];
+      ring.update();
+      
+      if (ring.radius >= ring.maxRadius) {
+        mysticRings.splice(i, 1);
+      } else {
+        ring.draw(ctx);
+      }
+    }
+
+    for (let i = magicParticles.length - 1; i >= 0; i--) {
+      const particle = magicParticles[i];
+      particle.update();
+      
+      if (particle.life <= 0 || particle.y < 0) {
+        magicParticles.splice(i, 1);
+      } else {
+        particle.draw(ctx);
+      }
+    }
+
+    candy.update();
+    character.update();
+
+    candy.draw(ctx);
+    character.draw(ctx);
+
+    for (let i = bloodStreams.length - 1; i >= 0; i--) {
+      const stream = bloodStreams[i];
+      stream.update();
+      
+      if (stream.life <= 0 || stream.y > canvas.height) {
+        bloodStreams.splice(i, 1);
+      } else {
+        stream.draw(ctx);
+      }
     }
 
     time++;
