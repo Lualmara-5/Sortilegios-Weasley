@@ -213,6 +213,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateFakeWandBanana(ctx, canvas); 
     }else if (this.animation?.id === 14) {
     this.animateTruthCandy(ctx, canvas); 
+    }else if (this.animation?.id === 15) { 
+    this.animateChocolateRompedientes(ctx, canvas); 
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -7063,6 +7065,506 @@ private animateTruthCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasEleme
     character.draw(ctx);
 
     time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+// Animación del Chocolate Rompedientes (ID 15)
+private animateChocolateRompedientes(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+  const cycleTime = 200;
+
+  const drawFace = (x: number, y: number, rotation: number, expression: any) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+
+    const scale = expression.scale || 1;
+    ctx.scale(scale, scale);
+
+    // Cabeza con sombras realistas
+    const headGradient = ctx.createRadialGradient(-10, -10, 10, 0, 0, 55);
+    headGradient.addColorStop(0, '#ffe4c4');
+    headGradient.addColorStop(0.7, '#ffd4a3');
+    headGradient.addColorStop(1, '#e6b88a');
+    ctx.fillStyle = headGradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, 55, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Contorno de la cara
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Orejas
+    ctx.fillStyle = '#ffd4a3';
+    ctx.beginPath();
+    ctx.ellipse(-50, 0, 15, 20, 0, 0, Math.PI * 2);
+    ctx.ellipse(50, 0, 15, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sombras de orejas
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.beginPath();
+    ctx.ellipse(-50, 0, 8, 12, 0, 0, Math.PI * 2);
+    ctx.ellipse(50, 0, 8, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cabello
+    ctx.fillStyle = '#4a2c2a';
+    ctx.beginPath();
+    ctx.arc(0, -15, 58, Math.PI, Math.PI * 2);
+    ctx.fill();
+    
+    // Mechones de cabello
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.ellipse(i * 20, -55, 12, 20, i * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Cejas expresivas
+    ctx.strokeStyle = '#3a1c1a';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+
+    if (expression.eyebrowAngle) {
+      // Cejas preocupadas
+      ctx.beginPath();
+      ctx.moveTo(-30, -20);
+      ctx.quadraticCurveTo(-22, -18 - expression.eyebrowAngle * 5, -14, -20);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(30, -20);
+      ctx.quadraticCurveTo(22, -18 - expression.eyebrowAngle * 5, 14, -20);
+      ctx.stroke();
+    } else {
+      // Cejas normales
+      ctx.beginPath();
+      ctx.moveTo(-30, -20);
+      ctx.lineTo(-14, -22);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(30, -20);
+      ctx.lineTo(14, -22);
+      ctx.stroke();
+    }
+
+    // Ojos
+    if (expression.eyesClosed) {
+      // Ojos cerrados con fuerza
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-26, -8);
+      ctx.quadraticCurveTo(-18, -12, -10, -8);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(26, -8);
+      ctx.quadraticCurveTo(18, -12, 10, -8);
+      ctx.stroke();
+
+      // Arrugas de dolor
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+      for (let i = 0; i < 2; i++) {
+        ctx.beginPath();
+        ctx.moveTo(-28 - i * 5, -5);
+        ctx.lineTo(-24 - i * 5, -8);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(28 + i * 5, -5);
+        ctx.lineTo(24 + i * 5, -8);
+        ctx.stroke();
+      }
+    } else {
+      // Ojos abiertos detallados
+      const eyeWidth = 12 + (expression.eyeWide || 0);
+      const eyeHeight = 14 + (expression.eyeWide || 0);
+
+      // Ojo izquierdo
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.ellipse(-18, -8, eyeWidth, eyeHeight, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#4a90e2';
+      ctx.beginPath();
+      ctx.arc(-18, -8, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(-18, -8, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(-16, -10, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ojo derecho
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.ellipse(18, -8, eyeWidth, eyeHeight, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#4a90e2';
+      ctx.beginPath();
+      ctx.arc(18, -8, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(18, -8, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(20, -10, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Nariz
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -5);
+    ctx.lineTo(-3, 8);
+    ctx.lineTo(0, 10);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255, 192, 203, 0.3)';
+    ctx.beginPath();
+    ctx.ellipse(-2, 10, 4, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mejillas sonrojadas
+    const blushAlpha = expression.blush || 0.2;
+    ctx.fillStyle = `rgba(255, 150, 150, ${blushAlpha})`;
+    ctx.beginPath();
+    ctx.ellipse(-28, 10, 12, 10, 0, 0, Math.PI * 2);
+    ctx.ellipse(28, 10, 12, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Boca expresiva
+    if (expression.mouthOpen) {
+      const openAmount = expression.mouthOpen;
+      
+      ctx.fillStyle = '#8b4444';
+      ctx.beginPath();
+      ctx.ellipse(0, 22, 18, openAmount, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#c97676';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(-18, 22 - openAmount / 2);
+      ctx.quadraticCurveTo(0, 18 - openAmount / 2, 18, 22 - openAmount / 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(-18, 22 + openAmount / 2);
+      ctx.quadraticCurveTo(0, 26 + openAmount / 2, 18, 22 + openAmount / 2);
+      ctx.stroke();
+
+      // Dientes superiores
+      ctx.fillStyle = '#ffffff';
+      const numTeeth = 5;
+      for (let i = 0; i < numTeeth; i++) {
+        const toothX = -15 + (i * 30 / numTeeth);
+        ctx.fillRect(toothX, 18 - openAmount / 2, 5, 8);
+      }
+
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+      ctx.lineWidth = 1;
+      for (let i = 1; i < numTeeth; i++) {
+        const lineX = -15 + (i * 30 / numTeeth);
+        ctx.beginPath();
+        ctx.moveTo(lineX, 18 - openAmount / 2);
+        ctx.lineTo(lineX, 26 - openAmount / 2);
+        ctx.stroke();
+      }
+
+      // Dientes inferiores
+      ctx.fillStyle = '#f5f5f5';
+      for (let i = 0; i < numTeeth; i++) {
+        const toothX = -15 + (i * 30 / numTeeth);
+        ctx.fillRect(toothX, 22 + openAmount / 2 - 8, 5, 8);
+      }
+
+      // Lengua
+      ctx.fillStyle = '#ff6b8a';
+      ctx.beginPath();
+      ctx.ellipse(0, 25, 10, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.ellipse(-2, 24, 5, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+    } else if (expression.mouthPain) {
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(0, 25, 15, 12, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = '#8b4444';
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(-8, 18, 4, 6);
+      ctx.fillRect(-2, 18, 4, 6);
+      ctx.fillRect(4, 18, 4, 6);
+
+    } else {
+      ctx.strokeStyle = '#c97676';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(-15, 25);
+      ctx.quadraticCurveTo(0, 30, 15, 25);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  };
+
+  const drawChocolate = (x: number, y: number, shake: number, glow: number, biteMarks: number) => {
+    ctx.save();
+
+    if (glow > 0) {
+      ctx.shadowBlur = glow;
+      ctx.shadowColor = '#8b4513';
+    }
+
+    const chocolateGradient = ctx.createLinearGradient(x - 50, y - 35, x - 50, y + 35);
+    chocolateGradient.addColorStop(0, '#3d2517');
+    chocolateGradient.addColorStop(0.5, '#2d1810');
+    chocolateGradient.addColorStop(1, '#1d0f08');
+    
+    ctx.fillStyle = chocolateGradient;
+    ctx.fillRect(x - 50 + shake, y - 35, 100, 70);
+
+    ctx.strokeStyle = '#1a0a06';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x - 50 + shake, y - 35, 100, 70);
+
+    ctx.strokeStyle = '#2d1810';
+    ctx.lineWidth = 1.5;
+    for (let i = 1; i < 4; i++) {
+      ctx.beginPath();
+      ctx.moveTo(x - 50 + i * 25 + shake, y - 35);
+      ctx.lineTo(x - 50 + i * 25 + shake, y + 35);
+      ctx.stroke();
+    }
+    for (let i = 1; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(x - 50 + shake, y - 35 + i * 23.3);
+      ctx.lineTo(x + 50 + shake, y - 35 + i * 23.3);
+      ctx.stroke();
+    }
+
+    const shineGradient = ctx.createLinearGradient(x - 40, y - 30, x - 40, y - 20);
+    shineGradient.addColorStop(0, 'rgba(139, 69, 19, 0.4)');
+    shineGradient.addColorStop(1, 'rgba(139, 69, 19, 0)');
+    ctx.fillStyle = shineGradient;
+    ctx.fillRect(x - 45 + shake, y - 30, 90, 15);
+
+    if (biteMarks > 0) {
+      ctx.fillStyle = `rgba(100, 50, 20, ${biteMarks})`;
+      ctx.beginPath();
+      ctx.arc(x + shake, y - 35, 12, 0, Math.PI);
+      ctx.fill();
+      
+      for (let i = 0; i < 4; i++) {
+        ctx.fillRect(x - 8 + i * 5 + shake, y - 35, 3, 5);
+      }
+    }
+
+    ctx.shadowBlur = 0;
+    ctx.restore();
+
+    if (shake !== 0) {
+      ctx.fillStyle = 'rgba(139, 69, 19, 0.4)';
+      for (let i = 0; i < 4; i++) {
+        const angle = (i * Math.PI) / 2;
+        const dist = 60 + Math.random() * 10;
+        ctx.beginPath();
+        ctx.arc(
+          x + Math.cos(angle) * dist + shake,
+          y + Math.sin(angle) * dist,
+          3,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      }
+    }
+  };
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a2e');
+    gradient.addColorStop(1, '#0a0514');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const approachPhase = time < 70;
+    const bitePhase = time >= 70 && time < 85;
+    const impactPhase = time >= 85 && time < 100;
+    const recoilPhase = time >= 100 && time < 150;
+    const recoveryPhase = time >= 150;
+
+    let headY = centerY - 80;
+    let headRotation = 0;
+    let expression: any = {
+      mouthOpen: 0,
+      eyesClosed: false,
+      eyeWide: 0,
+      eyebrowAngle: 0,
+      blush: 0.2,
+      mouthPain: false,
+      scale: 1
+    };
+
+    if (approachPhase) {
+      const progress = time / 70;
+      headY = centerY - 80 + progress * 50;
+      expression.mouthOpen = Math.sin(progress * Math.PI) * 20;
+      expression.eyeWide = progress * 4;
+    } else if (bitePhase) {
+      headY = centerY - 30;
+      expression.mouthOpen = 25;
+      expression.eyeWide = 5;
+    } else if (impactPhase) {
+      const impactProgress = (time - 85) / 15;
+      headY = centerY - 30 + Math.sin(impactProgress * Math.PI * 4) * 3;
+      headRotation = Math.sin(impactProgress * Math.PI * 6) * 0.15;
+      expression.eyesClosed = true;
+      expression.mouthPain = true;
+      expression.blush = 0.6;
+      expression.eyebrowAngle = 1;
+    } else if (recoilPhase) {
+      const recoilProgress = (time - 100) / 50;
+      const bounce = Math.sin(recoilProgress * Math.PI);
+      headY = centerY - 30 - bounce * 100;
+      headRotation = -bounce * 0.4;
+      expression.eyesClosed = true;
+      expression.mouthPain = true;
+      expression.blush = 0.6 * (1 - recoilProgress * 0.5);
+      expression.eyebrowAngle = 1;
+      expression.scale = 1 + bounce * 0.1;
+    } else if (recoveryPhase) {
+      const recoveryProgress = (time - 150) / 50;
+      headY = centerY - 80;
+      expression.eyesClosed = recoveryProgress < 0.5;
+      expression.blush = 0.3;
+    }
+
+    const chocolateY = centerY + 30;
+    let chocolateShake = 0;
+    let chocolateGlow = 0;
+    let biteMarks = 0;
+
+    if (bitePhase) {
+      biteMarks = 0.5;
+    } else if (impactPhase) {
+      const impactProgress = (time - 85) / 15;
+      chocolateShake = Math.sin(time * 4) * 10;
+      chocolateGlow = 20;
+      biteMarks = 1;
+    } else if (recoilPhase) {
+      const recoilProgress = (time - 100) / 50;
+      chocolateShake = Math.sin(time * 3) * 8 * (1 - recoilProgress);
+      chocolateGlow = 15 * (1 - recoilProgress);
+      biteMarks = 1 - recoilProgress;
+    }
+
+    drawChocolate(centerX, chocolateY, chocolateShake, chocolateGlow, biteMarks);
+    drawFace(centerX, headY, headRotation, expression);
+
+    if (impactPhase) {
+      const impactProgress = (time - 85) / 15;
+      
+      ctx.strokeStyle = `rgba(255, 215, 0, ${1 - impactProgress})`;
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.arc(
+          centerX,
+          chocolateY,
+          30 + impactProgress * 60 + i * 20,
+          0,
+          Math.PI * 2
+        );
+        ctx.stroke();
+      }
+
+      ctx.save();
+      ctx.font = 'bold 40px Arial';
+      ctx.fillStyle = `rgba(255, 215, 0, ${1 - impactProgress})`;
+      ctx.strokeStyle = `rgba(139, 69, 19, ${1 - impactProgress})`;
+      ctx.lineWidth = 3;
+      ctx.textAlign = 'center';
+      const impactY = chocolateY - 60 - impactProgress * 30;
+      ctx.strokeText('¡CLANG!', centerX, impactY);
+      ctx.fillText('¡CLANG!', centerX, impactY);
+      ctx.restore();
+    }
+
+    if (recoilPhase) {
+      const recoilProgress = (time - 100) / 50;
+      const alpha = 1 - recoilProgress;
+      ctx.fillStyle = `rgba(255, 255, 100, ${alpha})`;
+      
+      const starPositions = [
+        { x: centerX - 70, y: headY - 50, rotation: time * 0.1 },
+        { x: centerX - 80, y: headY - 20, rotation: -time * 0.12 },
+        { x: centerX - 70, y: headY + 10, rotation: time * 0.08 }
+      ];
+
+      starPositions.forEach(star => {
+        ctx.save();
+        ctx.translate(star.x, star.y);
+        ctx.rotate(star.rotation);
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+          const radius = i % 2 === 0 ? 10 : 5;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    time++;
+    if (time >= cycleTime) {
+      time = 0;
+    }
+
     this.animationFrameId = requestAnimationFrame(animate);
   };
 

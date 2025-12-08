@@ -115,6 +115,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'truth-candy',
     description: '¡La verdad siempre sale a la luz con burbujas mágicas!'
   },
+  // 15. Chocolate rompedientes - Mordida imposible
+  15: {
+    id: 15,
+    animationType: 'canvas',
+    componentName: 'chocolate-breaking-teeth',
+    description: '¡Chocolate imposible de morder que provoca un rebote caricaturesco!'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {
