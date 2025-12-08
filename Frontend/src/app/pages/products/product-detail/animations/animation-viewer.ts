@@ -211,7 +211,9 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateManantialSangre(ctx, canvas);
     } else if (this.animation?.id === 13) {
     this.animateFakeWandBanana(ctx, canvas); 
-  }
+    }else if (this.animation?.id === 14) {
+    this.animateTruthCandy(ctx, canvas); 
+    }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
   private animateTongueCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -6488,6 +6490,577 @@ private animateFakeWandBanana(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
         poofParticles.splice(i, 1);
       }
     }
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+// Animación de Caramelos de la Verdad (ID 14)
+private animateTruthCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    eatProgress: number;
+    glowIntensity: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+    bounceOffset: number;
+    mouthOpen: boolean;
+    speakTimer: number;
+
+    constructor() {
+      this.x = canvas.width / 2 - 80;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.eatProgress = 0;
+      this.glowIntensity = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+      this.bounceOffset = 0;
+      this.mouthOpen = false;
+      this.speakTimer = 0;
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.eatProgress += 0.012;
+        this.bounceOffset = Math.sin(time * 0.05) * 2;
+        
+        if (this.eatProgress >= 1) {
+          this.state = 'eating';
+          this.eatProgress = 0;
+        }
+      } else if (this.state === 'eating') {
+        this.eatProgress += 0.025;
+        
+        if (this.eatProgress >= 1) {
+          this.state = 'glowing';
+          this.eatProgress = 0;
+        }
+      } else if (this.state === 'glowing') {
+        this.glowIntensity += 0.015;
+        this.bounceOffset = Math.sin(time * 0.08) * 3;
+        
+        this.speakTimer++;
+        if (this.speakTimer % 40 < 20) {
+          this.mouthOpen = true;
+        } else {
+          this.mouthOpen = false;
+        }
+        
+        if (this.glowIntensity >= 2.5) {
+          this.reset();
+        }
+      }
+
+      if (this.eyesOpen && this.state !== 'eating') {
+        this.blinkTimer++;
+        if (this.blinkTimer > 90 && Math.random() < 0.02) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 120);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.state = 'standing';
+      this.eatProgress = 0;
+      this.glowIntensity = 0;
+      this.bounceOffset = 0;
+      this.mouthOpen = false;
+      this.speakTimer = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y + this.bounceOffset);
+
+      if (this.state === 'glowing') {
+        const haloAlpha = Math.sin(this.glowIntensity * 2) * 0.3 + 0.4;
+        const haloSize = 100 + Math.sin(time * 0.1) * 10;
+        
+        const haloGradient = ctx.createRadialGradient(0, -20, 20, 0, -20, haloSize);
+        haloGradient.addColorStop(0, `rgba(77, 208, 225, ${haloAlpha})`);
+        haloGradient.addColorStop(0.5, `rgba(100, 181, 246, ${haloAlpha * 0.5})`);
+        haloGradient.addColorStop(1, 'rgba(77, 208, 225, 0)');
+        
+        ctx.fillStyle = haloGradient;
+        ctx.beginPath();
+        ctx.arc(0, -20, haloSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let i = 0; i < 3; i++) {
+          const ringProgress = (this.glowIntensity + i * 0.3) % 1;
+          const ringRadius = 60 + ringProgress * 80;
+          const ringAlpha = (1 - ringProgress) * 0.4;
+          
+          ctx.strokeStyle = `rgba(77, 208, 225, ${ringAlpha})`;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(0, -20, ringRadius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#6B4E3D';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#3D2817';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      bodyGradient.addColorStop(0, '#9B6B47');
+      bodyGradient.addColorStop(1, '#7D5635');
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'glowing') {
+        ctx.fillStyle = `rgba(77, 208, 225, ${Math.sin(time * 0.15) * 0.2 + 0.2})`;
+        ctx.beginPath();
+        ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      if (this.state === 'eating') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-25, -10, -5, -15);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-5, -15, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.lineTo(-42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(35, 20);
+      ctx.lineTo(42, 60);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#FFD7BA';
+      ctx.beginPath();
+      ctx.arc(42, 60, 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      headGradient.addColorStop(0, '#FFEBD4');
+      headGradient.addColorStop(1, '#FFD7BA');
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'glowing') {
+        ctx.fillStyle = `rgba(129, 212, 250, ${Math.sin(time * 0.2) * 0.15 + 0.15})`;
+        ctx.beginPath();
+        ctx.arc(0, -20, 42, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = '#8B4513';
+      ctx.beginPath();
+      ctx.ellipse(0, -42, 40, 25, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -38, 15, 0, Math.PI * 2);
+      ctx.arc(20, -38, 15, 0, Math.PI * 2);
+      ctx.arc(0, -50, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (this.state === 'glowing') {
+          ctx.fillStyle = '#4dd0e1';
+          ctx.beginPath();
+          ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+          ctx.arc(20, -25, 3, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+          ctx.arc(20, -25, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#6B4423';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      ctx.beginPath();
+      ctx.moveTo(-28, -32);
+      ctx.quadraticCurveTo(-18, -35, -10, -32);
+      ctx.moveTo(10, -32);
+      ctx.quadraticCurveTo(18, -35, 28, -32);
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'eating') {
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.arc(0, -3, 10, 0.2, Math.PI - 0.2);
+        ctx.fill();
+      } else if (this.state === 'glowing' && this.mouthOpen) {
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.ellipse(0, -3, 10, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = 'rgba(77, 208, 225, 0.6)';
+        ctx.beginPath();
+        ctx.ellipse(0, -3, 8, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = 'rgba(255, 160, 160, 0.4)';
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class TruthCandy {
+    x: number;
+    y: number;
+    visible: boolean;
+    eaten: boolean;
+    float: number;
+    sparkles: Array<{x: number, y: number, size: number, life: number, vx: number, vy: number}>;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.x = canvas.width / 2 + 100;
+      this.y = canvas.height / 2 - 30;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+      this.sparkles = [];
+    }
+
+    update() {
+      if (!this.eaten) {
+        this.float += 0.08;
+        
+        if (Math.random() < 0.15) {
+          this.sparkles.push({
+            x: this.x + (Math.random() - 0.5) * 20,
+            y: this.y + (Math.random() - 0.5) * 20,
+            size: Math.random() * 3 + 2,
+            life: 1,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2
+          });
+        }
+      }
+
+      for (let i = this.sparkles.length - 1; i >= 0; i--) {
+        const s = this.sparkles[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.life -= 0.02;
+        if (s.life <= 0) {
+          this.sparkles.splice(i, 1);
+        }
+      }
+
+      if (this.character.state === 'eating' && !this.eaten) {
+        this.x += (this.character.x - 5 - this.x) * 0.12;
+        this.y += (this.character.y - 15 - this.y) * 0.12;
+
+        if (Math.abs(this.x - (this.character.x - 5)) < 10) {
+          this.visible = false;
+          this.eaten = true;
+        }
+      }
+
+      if (this.character.state === 'standing' && this.character.eatProgress < 0.1) {
+        this.reset();
+      }
+    }
+
+    reset() {
+      this.x = canvas.width / 2 + 100;
+      this.y = canvas.height / 2 - 30;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+      this.sparkles = [];
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      for (const s of this.sparkles) {
+        ctx.save();
+        ctx.globalAlpha = s.life;
+        ctx.fillStyle = '#4dd0e1';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      if (!this.visible) return;
+
+      const floatOffset = Math.sin(this.float) * 6;
+
+      ctx.save();
+      ctx.translate(this.x, this.y + floatOffset);
+
+      const auraGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 35);
+      auraGradient.addColorStop(0, 'rgba(77, 208, 225, 0.4)');
+      auraGradient.addColorStop(1, 'rgba(77, 208, 225, 0)');
+      ctx.fillStyle = auraGradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, 35, 0, Math.PI * 2);
+      ctx.fill();
+
+      const candyGradient = ctx.createRadialGradient(-5, -5, 0, 0, 0, 20);
+      candyGradient.addColorStop(0, '#80deea');
+      candyGradient.addColorStop(0.5, '#4dd0e1');
+      candyGradient.addColorStop(1, '#00bcd4');
+      
+      ctx.fillStyle = candyGradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.beginPath();
+      ctx.arc(-6, -6, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.beginPath();
+      ctx.arc(4, 5, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(129, 212, 250, 0.7)';
+      ctx.beginPath();
+      ctx.moveTo(-18, 0);
+      ctx.lineTo(-26, -7);
+      ctx.lineTo(-26, 7);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(18, 0);
+      ctx.lineTo(26, -7);
+      ctx.lineTo(26, 7);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(-18, -4);
+      ctx.lineTo(-24, -8);
+      ctx.moveTo(-18, 4);
+      ctx.lineTo(-24, 8);
+      ctx.moveTo(18, -4);
+      ctx.lineTo(24, -8);
+      ctx.moveTo(18, 4);
+      ctx.lineTo(24, 8);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+  }
+
+  class TruthBubble {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    fadeSpeed: number;
+    wobble: number;
+    wobbleSpeed: number;
+    text: string;
+    rotation: number;
+
+    constructor(x: number, y: number) {
+      this.x = x + (Math.random() - 0.5) * 60;
+      this.y = y - 40;
+      this.vx = (Math.random() - 0.5) * 1.5;
+      this.vy = -Math.random() * 1.5 - 1;
+      this.size = Math.random() * 25 + 20;
+      this.life = 1;
+      this.fadeSpeed = 0.006;
+      this.wobble = Math.random() * Math.PI * 2;
+      this.wobbleSpeed = Math.random() * 0.1 + 0.05;
+      this.text = this.getRandomTruthText();
+      this.rotation = Math.random() * 0.4 - 0.2;
+    }
+
+    getRandomTruthText(): string {
+      const texts = ['!', '?', '...', 'SÍ', 'NO', 'VERDAD'];
+      return texts[Math.floor(Math.random() * texts.length)];
+    }
+
+    update() {
+      this.x += this.vx + Math.sin(this.wobble) * 0.5;
+      this.y += this.vy;
+      this.wobble += this.wobbleSpeed;
+      this.life -= this.fadeSpeed;
+      this.vy *= 0.98;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life;
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+
+      const bubbleGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+      bubbleGradient.addColorStop(0, 'rgba(225, 245, 254, 0.95)');
+      bubbleGradient.addColorStop(1, 'rgba(179, 229, 252, 0.8)');
+      
+      ctx.fillStyle = bubbleGradient;
+      ctx.strokeStyle = '#4dd0e1';
+      ctx.lineWidth = 2;
+      
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.arc(-this.size * 0.3, -this.size * 0.3, this.size * 0.25, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#00838f';
+      ctx.font = `bold ${this.size * 0.5}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(this.text, 0, 0);
+
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const candy = new TruthCandy(character);
+  const bubbles: TruthBubble[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a33');
+    gradient.addColorStop(1, '#0d1b2a');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    for (let i = 0; i < 40; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (character.state === 'glowing' && Math.random() < 0.08) {
+      bubbles.push(new TruthBubble(character.x, character.y - 20));
+    }
+
+    for (let i = bubbles.length - 1; i >= 0; i--) {
+      bubbles[i].update();
+      bubbles[i].draw(ctx);
+      
+      if (bubbles[i].life <= 0) {
+        bubbles.splice(i, 1);
+      }
+    }
+
+    candy.update();
+    character.update();
+
+    candy.draw(ctx);
+    character.draw(ctx);
 
     time++;
     this.animationFrameId = requestAnimationFrame(animate);

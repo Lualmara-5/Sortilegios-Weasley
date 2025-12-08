@@ -108,6 +108,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'fake-wand-banana',
     description: '¡La varita se transforma en un plátano de goma ridículo!'
   },
+    // 14. Caramelos de la verdad - Efecto de verdad mágico
+  14: {
+    id: 14,
+    animationType: 'canvas',
+    componentName: 'truth-candy',
+    description: '¡La verdad siempre sale a la luz con burbujas mágicas!'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {
