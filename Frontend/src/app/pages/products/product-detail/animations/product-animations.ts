@@ -101,7 +101,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'manantial-sangre',
     description: 'Caramelos que provocan una gran hemorragia nasal mágica'
   },
-  // 13. Varitas falsas
+    // 13. Varitas falsas - Transformación en plátano
+  13: {
+    id: 13,
+    animationType: 'canvas',
+    componentName: 'fake-wand-banana',
+    description: '¡La varita se transforma en un plátano de goma ridículo!'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

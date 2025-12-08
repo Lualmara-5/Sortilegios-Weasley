@@ -209,7 +209,9 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateCarameloFiebre(ctx, canvas); 
     }else if (this.animation?.id === 12) {
     this.animateManantialSangre(ctx, canvas);
-    }
+    } else if (this.animation?.id === 13) {
+    this.animateFakeWandBanana(ctx, canvas); 
+  }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
   private animateTongueCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -6051,6 +6053,439 @@ private animateManantialSangre(ctx: CanvasRenderingContext2D, canvas: HTMLCanvas
         bloodStreams.splice(i, 1);
       } else {
         stream.draw(ctx);
+      }
+    }
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+// Animación de Varita Falsa - Plátano (ID 13)
+private animateFakeWandBanana(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  class BananaParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+    rotation: number;
+    rotationSpeed: number;
+
+    constructor(x: number, y: number, isRubber = false) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * (isRubber ? 6 : 3);
+      this.vy = (Math.random() - 0.5) * (isRubber ? 6 : 3) - 2;
+      this.life = isRubber ? 60 : 40;
+      this.maxLife = this.life;
+      this.size = isRubber ? 3 + Math.random() * 4 : 2 + Math.random() * 3;
+      this.color = isRubber ? 
+        `hsl(${Math.random() * 60 + 300}, 80%, 60%)` : 
+        `hsl(${Math.random() * 60 + 200}, 80%, 70%)`;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.15;
+      this.vx *= 0.98;
+      this.life--;
+      this.rotation += this.rotationSpeed;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * Math.PI * 2) / 5;
+        const x = Math.cos(angle) * this.size;
+        const y = Math.sin(angle) * this.size;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  const particles: BananaParticle[] = [];
+  const poofParticles: BananaParticle[] = [];
+  let time = 0;
+
+  let wandState: 'normal' | 'charging' | 'transforming' | 'rubber' = 'normal';
+  let stateTimer = 0;
+  const STATE_DURATIONS = {
+    normal: 120,
+    charging: 40,
+    transforming: 30,
+    rubber: 90
+  };
+
+  let wandWobble = 0;
+  let wandScale = 1;
+  let wandRotation = 0;
+
+  const drawNormalWand = (x: number, y: number, scale: number, rotation: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.scale(scale, scale);
+
+    const gradient = ctx.createLinearGradient(-50, 0, 50, 0);
+    gradient.addColorStop(0, '#2d1810');
+    gradient.addColorStop(0.5, '#5c3317');
+    gradient.addColorStop(1, '#2d1810');
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(-50, -4);
+    ctx.lineTo(50, -2);
+    ctx.lineTo(50, 2);
+    ctx.lineTo(-50, 4);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = '#8b4513';
+    ctx.lineWidth = 1;
+    for (let i = -40; i < 40; i += 10) {
+      ctx.beginPath();
+      ctx.moveTo(i, -4);
+      ctx.lineTo(i, 4);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = '#ffffcc';
+    ctx.beginPath();
+    ctx.moveTo(50, -2);
+    ctx.lineTo(65, 0);
+    ctx.lineTo(50, 2);
+    ctx.closePath();
+    ctx.fill();
+
+    const glowGradient = ctx.createRadialGradient(65, 0, 0, 65, 0, 10);
+    glowGradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+    glowGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+    ctx.fillStyle = glowGradient;
+    ctx.beginPath();
+    ctx.arc(65, 0, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  const drawRubberBanana = (x: number, y: number, wobbleAmount: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+
+    const bendAmount = Math.sin(time * 0.12) * 30;
+    const wiggle = Math.sin(time * 0.18) * 8;
+
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.beginPath();
+    for (let i = 0; i <= 30; i++) {
+      const t = i / 30;
+      const baseX = -70 + t * 140;
+      const curveY = Math.sin(t * Math.PI) * bendAmount;
+      const px = baseX + 3;
+      const py = curveY + 25 + 3;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.fill();
+
+    ctx.strokeStyle = '#d4a017';
+    ctx.lineWidth = 3;
+    ctx.fillStyle = '#ffe135';
+
+    ctx.beginPath();
+    for (let i = 0; i <= 30; i++) {
+      const t = i / 30;
+      const baseX = -70 + t * 140;
+      const curveY = Math.sin(t * Math.PI) * bendAmount;
+      const width = 18 - Math.abs(t - 0.5) * 8;
+      const px = baseX;
+      const py = curveY - width;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+
+    ctx.lineTo(70 + wiggle, bendAmount);
+
+    for (let i = 30; i >= 0; i--) {
+      const t = i / 30;
+      const baseX = -70 + t * 140;
+      const curveY = Math.sin(t * Math.PI) * bendAmount;
+      const width = 18 - Math.abs(t - 0.5) * 8;
+      const px = baseX;
+      const py = curveY + width;
+      ctx.lineTo(px, py);
+    }
+
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = '#d4a700';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i <= 30; i++) {
+      const t = i / 30;
+      const baseX = -70 + t * 140;
+      const curveY = Math.sin(t * Math.PI) * bendAmount;
+      const px = baseX;
+      const py = curveY - 5;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    ctx.beginPath();
+    for (let i = 0; i <= 30; i++) {
+      const t = i / 30;
+      const baseX = -70 + t * 140;
+      const curveY = Math.sin(t * Math.PI) * bendAmount;
+      const px = baseX;
+      const py = curveY + 5;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = '#8b6914';
+    const spots = [
+      { x: -40, y: Math.sin(0.3 * Math.PI) * bendAmount + 3, w: 12, h: 8 },
+      { x: -15, y: Math.sin(0.4 * Math.PI) * bendAmount - 2, w: 10, h: 7 },
+      { x: 10, y: Math.sin(0.55 * Math.PI) * bendAmount + 4, w: 14, h: 9 },
+      { x: 35, y: Math.sin(0.7 * Math.PI) * bendAmount - 1, w: 11, h: 7 },
+      { x: 50, y: Math.sin(0.8 * Math.PI) * bendAmount + 2, w: 9, h: 6 },
+    ];
+
+    spots.forEach(spot => {
+      ctx.beginPath();
+      ctx.ellipse(spot.x, spot.y, spot.w, spot.h, Math.random() * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    const stemY = Math.sin(0.05 * Math.PI) * bendAmount;
+    ctx.fillStyle = '#654321';
+    ctx.strokeStyle = '#4a3319';
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(-72, stemY - 8);
+    ctx.lineTo(-82, stemY - 12);
+    ctx.lineTo(-82, stemY + 12);
+    ctx.lineTo(-72, stemY + 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = '#3a2312';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(-78, stemY - 6 + i * 6);
+      ctx.lineTo(-76, stemY - 6 + i * 6);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = '#6b5d1f';
+    ctx.beginPath();
+    const tipY = Math.sin(0.95 * Math.PI) * bendAmount;
+    ctx.arc(68 + wiggle, tipY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    const faceX = 0;
+    const faceY = Math.sin(0.5 * Math.PI) * bendAmount;
+
+    ctx.strokeStyle = '#654321';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(faceX - 22, faceY - 6);
+    ctx.lineTo(faceX - 16, faceY);
+    ctx.moveTo(faceX - 22, faceY);
+    ctx.lineTo(faceX - 16, faceY - 6);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(faceX + 16, faceY - 6);
+    ctx.lineTo(faceX + 22, faceY);
+    ctx.moveTo(faceX + 16, faceY);
+    ctx.lineTo(faceX + 22, faceY - 6);
+    ctx.stroke();
+
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(faceX - 18, faceY + 10);
+    ctx.quadraticCurveTo(faceX - 10, faceY + 8, faceX, faceY + 11);
+    ctx.quadraticCurveTo(faceX + 10, faceY + 9, faceX + 18, faceY + 11);
+    ctx.stroke();
+
+    for (let i = 0; i < 4; i++) {
+      const angle = (time * 0.08 + i * Math.PI * 2 / 4);
+      const orbitRadius = 55;
+      const starX = faceX + Math.cos(angle) * orbitRadius;
+      const starY = faceY + Math.sin(angle) * (orbitRadius * 0.7);
+
+      ctx.fillStyle = i % 2 === 0 ? '#ffff00' : '#ffa500';
+      ctx.strokeStyle = '#ff8800';
+      ctx.lineWidth = 1.5;
+      ctx.save();
+      ctx.translate(starX, starY);
+      ctx.rotate(time * 0.15);
+
+      ctx.beginPath();
+      for (let j = 0; j < 8; j++) {
+        const starAngle = (j * Math.PI) / 4;
+        const radius = j % 2 === 0 ? 7 : 3;
+        const sx = Math.cos(starAngle) * radius;
+        const sy = Math.sin(starAngle) * radius;
+        if (j === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+
+    for (let i = 0; i < 3; i++) {
+      const offset = i * 25 - 25;
+      const moveY = Math.sin(0.5 * Math.PI) * bendAmount + offset;
+
+      ctx.beginPath();
+      ctx.moveTo(-85, moveY);
+      ctx.lineTo(-90, moveY - 5);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(75, moveY);
+      ctx.lineTo(80, moveY + 5);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  };
+
+  const createPoofEffect = (x: number, y: number) => {
+    for (let i = 0; i < 30; i++) {
+      poofParticles.push(new BananaParticle(x, y, true));
+    }
+
+    for (let i = 0; i < 20; i++) {
+      const angle = (i * Math.PI * 2) / 20;
+      const speed = 3 + Math.random() * 2;
+      const p = new BananaParticle(x, y, true);
+      p.vx = Math.cos(angle) * speed;
+      p.vy = Math.sin(angle) * speed;
+      p.size = 4;
+      poofParticles.push(p);
+    }
+  };
+
+  const animate = () => {
+    const bgGradient = ctx.createRadialGradient(300, 200, 0, 300, 200, 400);
+    bgGradient.addColorStop(0, '#1a0a3e');
+    bgGradient.addColorStop(1, '#0a0015');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    stateTimer++;
+
+    if (wandState === 'normal' && stateTimer >= STATE_DURATIONS.normal) {
+      wandState = 'charging';
+      stateTimer = 0;
+    } else if (wandState === 'charging' && stateTimer >= STATE_DURATIONS.charging) {
+      wandState = 'transforming';
+      stateTimer = 0;
+      createPoofEffect(canvas.width / 2, canvas.height / 2);
+    } else if (wandState === 'transforming' && stateTimer >= STATE_DURATIONS.transforming) {
+      wandState = 'rubber';
+      stateTimer = 0;
+    } else if (wandState === 'rubber' && stateTimer >= STATE_DURATIONS.rubber) {
+      wandState = 'normal';
+      stateTimer = 0;
+      particles.length = 0;
+      poofParticles.length = 0;
+    }
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    if (wandState === 'normal') {
+      wandWobble = 0;
+      wandScale = 1;
+      wandRotation = Math.sin(time * 0.03) * 0.1;
+
+      if (time % 10 === 0) {
+        particles.push(new BananaParticle(cx + 65, cy, false));
+      }
+
+    } else if (wandState === 'charging') {
+      wandWobble = Math.sin(time * 0.3) * 2;
+      wandScale = 1 + Math.sin(time * 0.2) * 0.1;
+      wandRotation = Math.sin(time * 0.3) * 0.2;
+
+      if (time % 3 === 0) {
+        particles.push(new BananaParticle(cx + Math.random() * 100 - 50, cy + Math.random() * 100 - 50, false));
+      }
+
+    } else if (wandState === 'transforming') {
+      wandScale = 1 + Math.sin(stateTimer * 0.5) * 0.5;
+      wandRotation = stateTimer * 0.3;
+
+    } else if (wandState === 'rubber') {
+      wandWobble = 10;
+    }
+
+    if (wandState !== 'rubber') {
+      drawNormalWand(cx, cy + wandWobble, wandScale, wandRotation);
+    } else {
+      drawRubberBanana(cx, cy, wandWobble);
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      if (particles[i].life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+
+    for (let i = poofParticles.length - 1; i >= 0; i--) {
+      poofParticles[i].update();
+      poofParticles[i].draw(ctx);
+      if (poofParticles[i].life <= 0) {
+        poofParticles.splice(i, 1);
       }
     }
 
