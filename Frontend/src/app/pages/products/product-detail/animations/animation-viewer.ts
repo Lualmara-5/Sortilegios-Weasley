@@ -217,6 +217,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateChocolateRompedientes(ctx, canvas); 
     }else if (this.animation?.id === 16) {  
     this.animateLibroMordedor(ctx, canvas);  
+    }else if (this.animation?.id === 17) { 
+    this.animatePergaminoInservible(ctx, canvas);
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -7981,6 +7983,379 @@ private animateLibroMordedor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasEl
     time++;
     if (time >= cycleTime) {
       time = 0;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+// Animación del Pergamino Inservible (ID 17)
+private animatePergaminoInservible(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+  const cycleTime = 180;
+
+  const particles: any[] = [];
+
+  class MagicParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+    rotation: number;
+    rotationSpeed: number;
+
+    constructor(x: number, y: number, color?: string) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 3;
+      this.vy = (Math.random() - 0.5) * 3 - 1;
+      this.life = 60;
+      this.maxLife = 60;
+      this.size = Math.random() * 4 + 2;
+      this.color = color || ['#ffd700', '#ffaa00', '#fff', '#88ccff'][Math.floor(Math.random() * 4)];
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.05;
+      this.vx *= 0.98;
+      this.rotation += this.rotationSpeed;
+      this.life--;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      context.save();
+      context.translate(this.x, this.y);
+      context.rotate(this.rotation);
+      context.globalAlpha = alpha;
+      
+      context.fillStyle = this.color;
+      context.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        const radius = i % 2 === 0 ? this.size : this.size / 2;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        if (i === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      }
+      context.closePath();
+      context.fill();
+      
+      context.shadowBlur = 8;
+      context.shadowColor = this.color;
+      context.fill();
+      
+      context.globalAlpha = 1;
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  class DisappearingLetter {
+    char: string;
+    x: number;
+    y: number;
+    delay: number;
+    age: number;
+    alpha: number;
+    dissolveProgress: number;
+    isDissolved: boolean;
+
+    constructor(char: string, x: number, y: number, delay: number) {
+      this.char = char;
+      this.x = x;
+      this.y = y;
+      this.delay = delay;
+      this.age = 0;
+      this.alpha = 0;
+      this.dissolveProgress = 0;
+      this.isDissolved = false;
+    }
+
+    update() {
+      this.age++;
+      
+      if (this.age < this.delay) {
+        return;
+      }
+
+      const activeAge = this.age - this.delay;
+
+      if (activeAge < 20) {
+        this.alpha = activeAge / 20;
+      } else if (activeAge < 80) {
+        this.alpha = 1;
+      } else if (activeAge < 100) {
+        this.dissolveProgress = (activeAge - 80) / 20;
+        this.alpha = 1 - this.dissolveProgress;
+        
+        if (Math.random() < 0.3) {
+          particles.push(new MagicParticle(this.x, this.y));
+        }
+      } else {
+        this.isDissolved = true;
+      }
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      if (this.age < this.delay || this.isDissolved) return;
+
+      context.save();
+      context.globalAlpha = this.alpha;
+      
+      if (this.dissolveProgress > 0) {
+        const fragmentOffset = this.dissolveProgress * 10;
+        context.translate(
+          (Math.random() - 0.5) * fragmentOffset,
+          (Math.random() - 0.5) * fragmentOffset
+        );
+      }
+
+      context.fillStyle = '#2d1810';
+      context.font = '20px Georgia, serif';
+      context.fillText(this.char, this.x, this.y);
+      
+      context.globalAlpha = 1;
+      context.restore();
+    }
+  }
+
+  const textLines = [
+    "Querido Fred y George,",
+    "Este pergamino es",
+    "completamente inútil...",
+    "¡TODO DESAPARECE!"
+  ];
+
+  let letters: DisappearingLetter[] = [];
+
+  const createTextAnimation = () => {
+    letters = [];
+    let charIndex = 0;
+    
+    ctx.font = '20px Georgia, serif';
+    
+    textLines.forEach((line, lineIndex) => {
+      const lineY = 140 + lineIndex * 35;
+      const lineWidth = ctx.measureText(line).width;
+      const startX = (canvas.width - lineWidth) / 2;
+      
+      for (let i = 0; i < line.length; i++) {
+        const charX = startX + ctx.measureText(line.substring(0, i)).width;
+        
+        letters.push(new DisappearingLetter(
+          line[i],
+          charX,
+          lineY,
+          charIndex * 3
+        ));
+        charIndex++;
+      }
+    });
+  };
+
+  const drawParchment = (x: number, y: number, width: number, height: number, curl: number) => {
+    ctx.save();
+    
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 20;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 10;
+    
+    const parchmentGradient = ctx.createLinearGradient(x, y, x, y + height);
+    parchmentGradient.addColorStop(0, '#f4e8d0');
+    parchmentGradient.addColorStop(0.5, '#e8d4b0');
+    parchmentGradient.addColorStop(1, '#d4c4a8');
+    
+    ctx.fillStyle = parchmentGradient;
+    
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y);
+    ctx.lineTo(x + width - 10, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + 10);
+    ctx.lineTo(x + width + curl, y + height - 10);
+    ctx.quadraticCurveTo(x + width + curl, y + height, x + width - 10 + curl, y + height);
+    ctx.lineTo(x + 10, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - 10);
+    ctx.lineTo(x - curl, y + 10);
+    ctx.quadraticCurveTo(x - curl, y, x + 10 - curl, y);
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.shadowBlur = 0;
+    
+    ctx.strokeStyle = '#a89070';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    ctx.strokeStyle = 'rgba(168, 144, 112, 0.15)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 15; i++) {
+      const lineY = y + 20 + i * (height - 40) / 15;
+      ctx.beginPath();
+      ctx.moveTo(x + 20, lineY);
+      ctx.lineTo(x + width - 20, lineY);
+      ctx.stroke();
+    }
+    
+    ctx.fillStyle = 'rgba(139, 99, 50, 0.1)';
+    for (let i = 0; i < 8; i++) {
+      const spotX = x + 30 + Math.random() * (width - 60);
+      const spotY = y + 30 + Math.random() * (height - 60);
+      const spotRadius = Math.random() * 15 + 5;
+      ctx.beginPath();
+      ctx.arc(spotX, spotY, spotRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    const rollGradient = ctx.createLinearGradient(x, y - 15, x, y);
+    rollGradient.addColorStop(0, '#8b7355');
+    rollGradient.addColorStop(1, '#a89070');
+    ctx.fillStyle = rollGradient;
+    ctx.fillRect(x, y - 15, width, 15);
+    
+    ctx.strokeStyle = '#6d5d45';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < width; i += 5) {
+      ctx.beginPath();
+      ctx.moveTo(x + i, y - 15);
+      ctx.lineTo(x + i, y);
+      ctx.stroke();
+    }
+    
+    ctx.fillStyle = rollGradient;
+    ctx.fillRect(x, y + height, width, 15);
+    
+    for (let i = 0; i < width; i += 5) {
+      ctx.beginPath();
+      ctx.moveTo(x + i, y + height);
+      ctx.lineTo(x + i, y + height + 15);
+      ctx.stroke();
+    }
+    
+    ctx.restore();
+  };
+
+  const drawQuill = (x: number, y: number, angle: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    
+    const quillGradient = ctx.createLinearGradient(0, -40, 0, 0);
+    quillGradient.addColorStop(0, '#8b4513');
+    quillGradient.addColorStop(1, '#654321');
+    
+    ctx.fillStyle = quillGradient;
+    ctx.fillRect(-2, -40, 4, 40);
+    
+    ctx.fillStyle = 'rgba(139, 69, 19, 0.6)';
+    for (let i = 0; i < 5; i++) {
+      const plY = -35 + i * 8;
+      const plWidth = 12 - i * 2;
+      
+      ctx.beginPath();
+      ctx.moveTo(0, plY);
+      ctx.quadraticCurveTo(-plWidth, plY - 3, -plWidth, plY + 5);
+      ctx.lineTo(0, plY + 3);
+      ctx.closePath();
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.moveTo(0, plY);
+      ctx.quadraticCurveTo(plWidth, plY - 3, plWidth, plY + 5);
+      ctx.lineTo(0, plY + 3);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
+    ctx.fillStyle = '#c0c0c0';
+    ctx.beginPath();
+    ctx.moveTo(-3, -2);
+    ctx.lineTo(0, 3);
+    ctx.lineTo(3, -2);
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.restore();
+  };
+
+  createTextAnimation();
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a2e');
+    gradient.addColorStop(1, '#0a0514');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const curlAmount = Math.sin(time * 0.05) * 3;
+
+    drawParchment(centerX - 200, centerY - 120, 400, 240, curlAmount);
+
+    ctx.font = '20px Georgia, serif';
+    letters.forEach(letter => {
+      letter.update();
+      letter.draw(ctx);
+    });
+
+    if (time < 100) {
+      const quillProgress = time / 100;
+      const quillX = 150 + quillProgress * 300;
+      const quillY = 140 + Math.sin(quillProgress * Math.PI * 8) * 15;
+      const quillAngle = Math.sin(time * 0.3) * 0.2 + 0.3;
+      
+      drawQuill(quillX, quillY, quillAngle);
+      
+      if (Math.random() < 0.1) {
+        particles.push(new MagicParticle(quillX, quillY + 3, '#2d1810'));
+      }
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      
+      if (particles[i].isDead()) {
+        particles.splice(i, 1);
+      }
+    }
+
+    if (time > 100 && time < 120) {
+      const glowProgress = (time - 100) / 20;
+      ctx.save();
+      ctx.globalAlpha = Math.sin(glowProgress * Math.PI);
+      ctx.fillStyle = '#ffd700';
+      ctx.shadowBlur = 40;
+      ctx.shadowColor = '#ffd700';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 150, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    time++;
+    
+    if (time >= cycleTime) {
+      time = 0;
+      createTextAnimation();
+      particles.length = 0;
     }
 
     this.animationFrameId = requestAnimationFrame(animate);

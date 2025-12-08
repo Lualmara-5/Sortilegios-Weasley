@@ -129,7 +129,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'biting-book',
     description: '¡Libro mágico que intenta morder con dientes afilados!'
   },
-  
+    // 17. Pergamino inservible - Texto que desaparece
+  17: {
+    id: 17,
+    animationType: 'canvas',
+    componentName: 'useless-parchment',
+    description: '¡Todo lo que se escriba desaparece al instante en partículas mágicas!'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {
