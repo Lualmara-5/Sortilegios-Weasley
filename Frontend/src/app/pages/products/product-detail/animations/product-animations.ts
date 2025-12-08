@@ -136,6 +136,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'useless-parchment',
     description: '¡Todo lo que se escriba desaparece al instante en partículas mágicas!'
   },
+    // 18. Pluma invisible - Tinta que desaparece
+  18: {
+    id: 18,
+    animationType: 'canvas',
+    componentName: 'invisible-ink-quill',
+    description: '¡La tinta desaparece a los 10 minutos! Perfecta para mensajes temporales.'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

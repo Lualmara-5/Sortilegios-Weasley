@@ -219,6 +219,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateLibroMordedor(ctx, canvas);  
     }else if (this.animation?.id === 17) { 
     this.animatePergaminoInservible(ctx, canvas);
+    }else if (this.animation?.id === 18) {  
+    this.animatePlumaInvisible(ctx, canvas);  
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -8356,6 +8358,382 @@ private animatePergaminoInservible(ctx: CanvasRenderingContext2D, canvas: HTMLCa
       time = 0;
       createTextAnimation();
       particles.length = 0;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+// Animación de la Pluma Invisible (ID 18)
+private animatePlumaInvisible(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+  const cycleTime = 240;
+
+  class InkStroke {
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+    delay: number;
+    age: number;
+    drawProgress: number;
+    fadeProgress: number;
+    alpha: number;
+    isComplete: boolean;
+    color: string;
+
+    constructor(startX: number, startY: number, endX: number, endY: number, delay: number) {
+      this.startX = startX;
+      this.startY = startY;
+      this.endX = endX;
+      this.endY = endY;
+      this.delay = delay;
+      this.age = 0;
+      this.drawProgress = 0;
+      this.fadeProgress = 0;
+      this.alpha = 0;
+      this.isComplete = false;
+      this.color = ['#00ffff', '#88ccff', '#aaddff', '#66ddff'][Math.floor(Math.random() * 4)];
+    }
+
+    update() {
+      this.age++;
+
+      if (this.age < this.delay) return;
+
+      const activeAge = this.age - this.delay;
+
+      if (activeAge < 20) {
+        this.drawProgress = activeAge / 20;
+        this.alpha = 1;
+      } else if (activeAge < 80) {
+        this.drawProgress = 1;
+        this.alpha = 1;
+      } else if (activeAge < 110) {
+        this.drawProgress = 1;
+        this.fadeProgress = (activeAge - 80) / 30;
+        this.alpha = 1 - this.fadeProgress;
+      } else {
+        this.isComplete = true;
+      }
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      if (this.age < this.delay || this.isComplete) return;
+
+      context.save();
+      context.globalAlpha = this.alpha;
+
+      const currentX = this.startX + (this.endX - this.startX) * this.drawProgress;
+      const currentY = this.startY + (this.endY - this.startY) * this.drawProgress;
+
+      context.strokeStyle = this.color;
+      context.lineWidth = 3;
+      context.lineCap = 'round';
+      context.shadowBlur = 15;
+      context.shadowColor = this.color;
+
+      context.beginPath();
+      context.moveTo(this.startX, this.startY);
+      context.lineTo(currentX, currentY);
+      context.stroke();
+
+      context.shadowBlur = 25;
+      context.lineWidth = 1;
+      context.stroke();
+
+      if (this.drawProgress < 1 && this.drawProgress > 0) {
+        context.fillStyle = this.color;
+        context.shadowBlur = 20;
+        context.beginPath();
+        context.arc(currentX, currentY, 4, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      context.globalAlpha = 1;
+      context.restore();
+    }
+  }
+
+  const fadeParticles: any[] = [];
+
+  class FadeParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+
+    constructor(x: number, y: number, color: string) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 2;
+      this.vy = (Math.random() - 0.5) * 2 - 1;
+      this.life = 30;
+      this.maxLife = 30;
+      this.size = Math.random() * 3 + 1;
+      this.color = color;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.05;
+      this.vx *= 0.98;
+      this.life--;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      context.save();
+      context.globalAlpha = alpha;
+      context.fillStyle = this.color;
+      context.shadowBlur = 10;
+      context.shadowColor = this.color;
+      context.beginPath();
+      context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  let strokes: InkStroke[] = [];
+
+  const createWritingStrokes = () => {
+    strokes = [];
+    const lines = [
+      { text: "Mensaje secreto:", y: 130 },
+      { text: "Esta tinta es", y: 160 },
+      { text: "completamente", y: 190 },
+      { text: "temporal...", y: 220 }
+    ];
+
+    let strokeDelay = 0;
+
+    lines.forEach((line, lineIndex) => {
+      const startX = 180;
+      const y = line.y;
+      const text = line.text;
+
+      const segmentLength = 30;
+      const numSegments = Math.ceil((text.length * 12) / segmentLength);
+
+      for (let i = 0; i < numSegments; i++) {
+        const segStartX = startX + i * segmentLength;
+        const segEndX = startX + (i + 1) * segmentLength;
+        const segStartY = y + Math.sin(i * 0.5) * 3;
+        const segEndY = y + Math.sin((i + 1) * 0.5) * 3;
+
+        strokes.push(new InkStroke(
+          segStartX,
+          segStartY,
+          segEndX,
+          segEndY,
+          strokeDelay
+        ));
+
+        strokeDelay += 3;
+      }
+
+      strokeDelay += 5;
+    });
+  };
+
+  const drawPaper = (x: number, y: number, width: number, height: number) => {
+    ctx.save();
+
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 8;
+
+    const paperGradient = ctx.createLinearGradient(x, y, x + width, y + height);
+    paperGradient.addColorStop(0, '#ffffff');
+    paperGradient.addColorStop(0.5, '#f8f8f8');
+    paperGradient.addColorStop(1, '#f0f0f0');
+
+    ctx.fillStyle = paperGradient;
+    ctx.fillRect(x, y, width, height);
+
+    ctx.shadowBlur = 0;
+
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, width, height);
+
+    ctx.strokeStyle = 'rgba(200, 220, 255, 0.3)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 10; i++) {
+      const lineY = y + (i * height) / 10;
+      ctx.beginPath();
+      ctx.moveTo(x + 20, lineY);
+      ctx.lineTo(x + width - 20, lineY);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = 'rgba(255, 200, 200, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x + 40, y + 20);
+    ctx.lineTo(x + 40, y + height - 20);
+    ctx.stroke();
+
+    ctx.restore();
+  };
+
+  const drawQuill = (x: number, y: number, angle: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    const quillGradient = ctx.createLinearGradient(0, -50, 0, 0);
+    quillGradient.addColorStop(0, '#4a90e2');
+    quillGradient.addColorStop(0.5, '#357abd');
+    quillGradient.addColorStop(1, '#2a5f9e');
+
+    ctx.fillStyle = quillGradient;
+    ctx.fillRect(-2, -50, 4, 50);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.fillRect(-1, -48, 2, 40);
+
+    ctx.fillStyle = 'rgba(74, 144, 226, 0.5)';
+    for (let i = 0; i < 6; i++) {
+      const plY = -45 + i * 9;
+      const plWidth = 14 - i * 2;
+
+      ctx.beginPath();
+      ctx.moveTo(0, plY);
+      ctx.quadraticCurveTo(-plWidth, plY - 4, -plWidth, plY + 6);
+      ctx.lineTo(0, plY + 4);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(0, plY);
+      ctx.quadraticCurveTo(plWidth, plY - 4, plWidth, plY + 6);
+      ctx.lineTo(0, plY + 4);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    ctx.fillStyle = '#88ccff';
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#88ccff';
+    ctx.beginPath();
+    ctx.moveTo(-4, -2);
+    ctx.lineTo(0, 5);
+    ctx.lineTo(4, -2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.arc(0, 0, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  createWritingStrokes();
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a2e');
+    gradient.addColorStop(1, '#0a0514');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    drawPaper(centerX - 220, centerY - 140, 440, 280);
+
+    strokes.forEach(stroke => {
+      stroke.update();
+      stroke.draw(ctx);
+
+      if (stroke.fadeProgress > 0 && stroke.fadeProgress < 0.5 && Math.random() < 0.1) {
+        const t = stroke.drawProgress;
+        const particleX = stroke.startX + (stroke.endX - stroke.startX) * t;
+        const particleY = stroke.startY + (stroke.endY - stroke.startY) * t;
+        fadeParticles.push(new FadeParticle(particleX, particleY, stroke.color));
+      }
+    });
+
+    for (let i = fadeParticles.length - 1; i >= 0; i--) {
+      fadeParticles[i].update();
+      fadeParticles[i].draw(ctx);
+
+      if (fadeParticles[i].isDead()) {
+        fadeParticles.splice(i, 1);
+      }
+    }
+
+    if (time < 150) {
+      const writeProgress = time / 150;
+      const totalStrokes = strokes.length;
+      const currentStrokeIndex = Math.floor(writeProgress * totalStrokes);
+      
+      if (currentStrokeIndex < totalStrokes) {
+        const currentStroke = strokes[currentStrokeIndex];
+        const strokeProgress = currentStroke.drawProgress;
+        
+        const quillX = currentStroke.startX + 
+          (currentStroke.endX - currentStroke.startX) * strokeProgress;
+        const quillY = currentStroke.startY + 
+          (currentStroke.endY - currentStroke.startY) * strokeProgress - 30;
+        
+        const quillAngle = Math.atan2(
+          currentStroke.endY - currentStroke.startY,
+          currentStroke.endX - currentStroke.startX
+        ) + Math.PI / 2;
+
+        drawQuill(quillX, quillY, quillAngle);
+
+        if (Math.random() < 0.3) {
+          ctx.save();
+          ctx.fillStyle = '#88ccff';
+          ctx.globalAlpha = 0.5;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = '#88ccff';
+          ctx.beginPath();
+          ctx.arc(quillX + (Math.random() - 0.5) * 10, quillY + 10, 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    if (time > 150 && time < 170) {
+      const glowProgress = (time - 150) / 20;
+      ctx.save();
+      ctx.globalAlpha = Math.sin(glowProgress * Math.PI) * 0.3;
+      
+      ctx.fillStyle = '#88ccff';
+      ctx.shadowBlur = 60;
+      ctx.shadowColor = '#88ccff';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 200, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    time++;
+
+    if (time >= cycleTime) {
+      time = 0;
+      createWritingStrokes();
+      fadeParticles.length = 0;
     }
 
     this.animationFrameId = requestAnimationFrame(animate);
