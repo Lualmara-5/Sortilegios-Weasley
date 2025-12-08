@@ -55,6 +55,14 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     animationType: 'canvas',
     componentName: 'portable-swamp',
     description: 'Un pantano mágico se expande con burbujas y plantas'
+  },
+
+    // 7. Sombreros acéfalos
+  7: {
+    id: 7,
+    animationType: 'canvas',
+    componentName: 'headless-hat',
+    description: 'El sombrero hace desaparecer la cabeza mágicamente'
   }
 };
 

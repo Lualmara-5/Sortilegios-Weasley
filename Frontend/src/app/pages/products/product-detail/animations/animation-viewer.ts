@@ -195,8 +195,10 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
       this.animateFireworksDeluxe(ctx, canvas);
     } else if (this.animation?.id === 5) {
       this.animateExtendableEars(ctx, canvas);
-    } else if (this.animation?.id === 6) {  
-      this.animatePortableSwamp(ctx, canvas);  
+    } else if (this.animation?.id === 6) {
+      this.animatePortableSwamp(ctx, canvas);
+    } else if (this.animation?.id === 7) {  // ⬅️ AGREGAR ESTA LÍNEA
+      this.animateHeadlessHat(ctx, canvas);  // ⬅️ Y ESTA
     }
   }
 
@@ -2600,6 +2602,462 @@ private animatePortableSwamp(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasEl
     if (phase === 1 && loopTime < 0.1) {
       plants.length = 0;
       bubbles.length = 0;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+// Animación de Sombreros Acéfalos (ID 7)
+private animateHeadlessHat(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  class MagicParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    size: number;
+    color: string;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1 + Math.random() * 2;
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed - 1;
+      this.life = 1;
+      this.size = 2 + Math.random() * 3;
+      this.color = ['#FFD700', '#FFA500', '#FFFF00'][Math.floor(Math.random() * 3)];
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy -= 0.03;
+      this.life -= 0.02;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (this.life <= 0) return;
+
+      ctx.save();
+      ctx.globalAlpha = this.life;
+      
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const particles: MagicParticle[] = [];
+  let time = 0;
+
+  const drawPerson = (ctx: CanvasRenderingContext2D, x: number, y: number, headVisible: boolean, headAlpha: number) => {
+    ctx.save();
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.beginPath();
+    ctx.ellipse(x, y + 160, 50, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    const bodyGrad = ctx.createLinearGradient(x - 40, y + 30, x + 40, y + 90);
+    bodyGrad.addColorStop(0, '#5B9BD5');
+    bodyGrad.addColorStop(0.5, '#4A90E2');
+    bodyGrad.addColorStop(1, '#3A7BC8');
+    
+    ctx.fillStyle = bodyGrad;
+    ctx.strokeStyle = '#2E5C8A';
+    ctx.lineWidth = 3;
+    
+    ctx.beginPath();
+    ctx.moveTo(x - 35, y + 30);
+    ctx.lineTo(x - 40, y + 85);
+    ctx.quadraticCurveTo(x, y + 95, x + 40, y + 85);
+    ctx.lineTo(x + 35, y + 30);
+    ctx.quadraticCurveTo(x, y + 20, x - 35, y + 30);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#FFD700';
+    ctx.strokeStyle = '#B8860B';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(x, y + 40 + i * 20, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+    
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    ctx.strokeStyle = '#4A90E2';
+    ctx.lineWidth = 18;
+    ctx.beginPath();
+    ctx.moveTo(x - 35, y + 35);
+    ctx.quadraticCurveTo(x - 50, y + 50, x - 45, y + 75);
+    ctx.stroke();
+    
+    ctx.fillStyle = '#FFE4B5';
+    ctx.strokeStyle = '#D4A574';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x - 45, y + 80, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.strokeStyle = '#4A90E2';
+    ctx.lineWidth = 18;
+    ctx.beginPath();
+    ctx.moveTo(x + 35, y + 35);
+    ctx.quadraticCurveTo(x + 50, y + 50, x + 45, y + 75);
+    ctx.stroke();
+    
+    ctx.fillStyle = '#FFE4B5';
+    ctx.strokeStyle = '#D4A574';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x + 45, y + 80, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    const pantsGrad = ctx.createLinearGradient(x - 35, y + 85, x + 35, y + 130);
+    pantsGrad.addColorStop(0, '#3A5A7A');
+    pantsGrad.addColorStop(1, '#2C4A6A');
+    
+    ctx.fillStyle = pantsGrad;
+    ctx.strokeStyle = '#1A3A5A';
+    ctx.lineWidth = 3;
+    
+    ctx.beginPath();
+    ctx.moveTo(x - 40, y + 85);
+    ctx.lineTo(x - 25, y + 130);
+    ctx.lineTo(x - 20, y + 130);
+    ctx.lineTo(x - 15, y + 85);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(x + 15, y + 85);
+    ctx.lineTo(x + 20, y + 130);
+    ctx.lineTo(x + 25, y + 130);
+    ctx.lineTo(x + 40, y + 85);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.strokeStyle = '#3A5A7A';
+    ctx.lineWidth = 16;
+    ctx.lineCap = 'round';
+    
+    ctx.beginPath();
+    ctx.moveTo(x - 22, y + 130);
+    ctx.lineTo(x - 20, y + 155);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(x + 22, y + 130);
+    ctx.lineTo(x + 20, y + 155);
+    ctx.stroke();
+    
+    ctx.fillStyle = '#2C2C2C';
+    ctx.strokeStyle = '#1A1A1A';
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.ellipse(x - 25, y + 158, 15, 8, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.ellipse(x + 25, y + 158, 15, 8, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#FFE4B5';
+    ctx.strokeStyle = '#D4A574';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x - 12, y + 25);
+    ctx.lineTo(x - 10, y + 35);
+    ctx.lineTo(x + 10, y + 35);
+    ctx.lineTo(x + 12, y + 25);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    if (headVisible) {
+      ctx.save();
+      ctx.globalAlpha = headAlpha;
+      
+      if (headAlpha < 1) {
+        const glowGrad = ctx.createRadialGradient(x, y - 5, 0, x, y - 5, 50);
+        glowGrad.addColorStop(0, `rgba(255, 215, 0, ${(1 - headAlpha) * 0.5})`);
+        glowGrad.addColorStop(1, 'rgba(255, 215, 0, 0)');
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(x, y - 5, 50, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      const headGrad = ctx.createRadialGradient(x - 8, y - 15, 0, x, y - 5, 32);
+      headGrad.addColorStop(0, '#FFECDB');
+      headGrad.addColorStop(1, '#FFE4B5');
+      
+      ctx.fillStyle = headGrad;
+      ctx.strokeStyle = '#D4A574';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(x, y - 5, 32, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.fillStyle = '#8B4513';
+      ctx.beginPath();
+      ctx.arc(x, y - 20, 32, Math.PI, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(x - 12, y - 10, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + 12, y - 10, 7, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#000000';
+      ctx.beginPath();
+      ctx.arc(x - 12, y - 9, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + 12, y - 9, 4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(x - 10, y - 11, 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + 14, y - 11, 2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.strokeStyle = '#654321';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x - 18, y - 18);
+      ctx.lineTo(x - 6, y - 16);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x + 6, y - 16);
+      ctx.lineTo(x + 18, y - 18);
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#654321';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(x, y + 5, 14, 0.2, Math.PI - 0.2);
+      ctx.stroke();
+      
+      ctx.fillStyle = 'rgba(255, 182, 193, 0.6)';
+      ctx.beginPath();
+      ctx.arc(x - 20, y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + 20, y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+    
+    ctx.restore();
+  };
+
+  const drawHat = (ctx: CanvasRenderingContext2D, x: number, y: number, scale: number = 1) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.beginPath();
+    ctx.ellipse(0, 15, 45, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    const brimGrad = ctx.createLinearGradient(-40, 0, 40, 0);
+    brimGrad.addColorStop(0, '#2C2C2C');
+    brimGrad.addColorStop(0.5, '#1A1A1A');
+    brimGrad.addColorStop(1, '#2C2C2C');
+    
+    ctx.fillStyle = brimGrad;
+    ctx.strokeStyle = '#0A0A0A';
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 45, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    const crownGrad = ctx.createLinearGradient(-25, -30, 25, 0);
+    crownGrad.addColorStop(0, '#3A3A3A');
+    crownGrad.addColorStop(0.5, '#1A1A1A');
+    crownGrad.addColorStop(1, '#2C2C2C');
+    
+    ctx.fillStyle = crownGrad;
+    ctx.strokeStyle = '#0A0A0A';
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.moveTo(-25, 0);
+    ctx.lineTo(-22, -35);
+    ctx.lineTo(22, -35);
+    ctx.lineTo(25, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#2C2C2C';
+    ctx.strokeStyle = '#0A0A0A';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, -35, 22, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#8B0000';
+    ctx.strokeStyle = '#5A0000';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(-25, -8, 50, 8);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.beginPath();
+    ctx.ellipse(-15, -2, 20, 6, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  };
+
+  const drawPoof = (ctx: CanvasRenderingContext2D, x: number, y: number, scale: number) => {
+    if (scale <= 0) return;
+    
+    ctx.save();
+    ctx.globalAlpha = 1 - scale;
+    
+    ctx.font = `bold ${30 * scale}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#FFD700';
+    ctx.strokeStyle = '#FFA500';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = '#FFD700';
+    ctx.shadowBlur = 15;
+    ctx.strokeText('POOF!', x, y);
+    ctx.fillText('POOF!', x, y);
+    
+    for (let i = 0; i < 4; i++) {
+      const angle = (i / 4) * Math.PI * 2;
+      const dist = 30 * scale;
+      const cloudX = x + Math.cos(angle) * dist;
+      const cloudY = y + Math.sin(angle) * dist;
+      
+      ctx.fillStyle = `rgba(255, 255, 255, ${(1 - scale) * 0.6})`;
+      ctx.beginPath();
+      ctx.arc(cloudX, cloudY, 15 * scale, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    ctx.restore();
+  };
+
+  const animate = () => {
+    ctx.fillStyle = 'rgba(20, 10, 30, 0.3)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    time += 0.016;
+
+    const loopTime = time % 4;
+    let phase = 0;
+    let phaseProgress = 0;
+
+    if (loopTime < 1) {
+      phase = 1;
+      phaseProgress = loopTime / 1;
+    } else if (loopTime < 1.8) {
+      phase = 2;
+      phaseProgress = (loopTime - 1) / 0.8;
+    } else if (loopTime < 2.3) {
+      phase = 3;
+      phaseProgress = (loopTime - 1.8) / 0.5;
+    } else {
+      phase = 4;
+      phaseProgress = (loopTime - 2.3) / 1.7;
+    }
+
+    const personX = canvas.width / 2;
+    const personY = canvas.height / 2 - 50;
+    const hatStartY = -80;
+    const hatEndY = personY - 50;
+
+    if (phase === 1) {
+      drawPerson(ctx, personX, personY, true, 1);
+    }
+
+    if (phase === 2) {
+      drawPerson(ctx, personX, personY, true, 1);
+      
+      const fallProgress = phaseProgress * phaseProgress;
+      const hatY = hatStartY + (hatEndY - hatStartY) * fallProgress;
+      
+      drawHat(ctx, personX, hatY);
+    }
+
+    if (phase === 3) {
+      const headAlpha = 1 - phaseProgress;
+      const poofScale = phaseProgress;
+      
+      drawHat(ctx, personX, hatEndY);
+      drawPerson(ctx, personX, personY, true, headAlpha);
+      drawPoof(ctx, personX, personY - 10, poofScale);
+      
+      if (Math.random() < 0.4) {
+        for (let i = 0; i < 2; i++) {
+          particles.push(new MagicParticle(personX + (Math.random() - 0.5) * 40, personY - 10));
+        }
+      }
+    }
+
+    if (phase === 4) {
+      drawHat(ctx, personX, hatEndY);
+      drawPerson(ctx, personX, personY, false, 0);
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      
+      if (particles[i].isDead()) {
+        particles.splice(i, 1);
+      }
+    }
+
+    if (phase === 1 && loopTime < 0.1) {
+      particles.length = 0;
     }
 
     this.animationFrameId = requestAnimationFrame(animate);
