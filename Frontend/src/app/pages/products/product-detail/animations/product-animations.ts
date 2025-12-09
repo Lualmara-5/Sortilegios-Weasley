@@ -163,7 +163,22 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     animationType: 'canvas',
     componentName: 'daydream-fantasy',
     description: 'Una fantasía mágica aparece en una nube de ensueño'
-  }
+  },
+  // 22. Marcas tenebrosas
+    22: {
+    id: 22,
+    animationType: 'canvas',
+    componentName: 'marcas-tenebrosas',
+    description: 'Dulces con forma de Marca Tenebrosa que enferman a quien los come'
+  },
+    // Ropa escudo mágica
+  23: {
+    id: 23,
+    animationType: 'canvas',
+    componentName: 'escudo-magico',
+    description: 'Rebotan maleficios leves a moderados. Usados incluso por el Ministerio de Magia'
+  },
+  
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

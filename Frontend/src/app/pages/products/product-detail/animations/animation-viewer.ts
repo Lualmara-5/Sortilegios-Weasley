@@ -227,6 +227,10 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateVaritasDelReves(ctx, canvas); 
     }else if (this.animation?.id === 21) { 
     this.animateDaydreamFantasy(ctx, canvas); 
+    }else if (this.animation?.id === 22) {
+    this.animateMarcasTenebrosas(ctx, canvas);
+    }else if (this.animation?.id === 23) {
+    this.animateEscudoMagico(ctx, canvas);
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -10128,5 +10132,1317 @@ private animateDaydreamFantasy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvas
 
   animate();
 }
+// Animación de Marcas Tenebrosas Comestibles (ID 22)
+private animateMarcasTenebrosas(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
 
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    stateProgress: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+    sickIntensity: number;
+
+    constructor() {
+      this.x = canvas.width / 2;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+      this.sickIntensity = 0;
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.stateProgress += 0.02;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'eating';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'eating') {
+        this.stateProgress += 0.04;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'cursed';
+          this.stateProgress = 0;
+          this.sickIntensity = 0;
+        }
+      } else if (this.state === 'cursed') {
+        this.stateProgress += 0.008;
+        
+        if (this.sickIntensity < 1) {
+          this.sickIntensity += 0.015;
+        }
+        
+        if (this.stateProgress >= 1) {
+          this.reset();
+        }
+      }
+
+      if (this.eyesOpen && this.state !== 'cursed') {
+        this.blinkTimer++;
+        if (this.blinkTimer > 80 && Math.random() < 0.03) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 100);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.sickIntensity = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#3B3B98';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#1F1F5C';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      bodyGradient.addColorStop(0, '#5A67D8');
+      bodyGradient.addColorStop(1, '#4C51BF');
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      if (this.state === 'eating') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-25, -10, -5, -15);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-5, -15, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (this.state === 'cursed') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-30, 35, -15, 45);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-15, 45, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.quadraticCurveTo(30, 35, 15, 45);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(15, 45, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.lineTo(-42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.lineTo(42, 60);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      if (this.state === 'cursed') {
+        const greenTint = this.sickIntensity * 0.5;
+        headGradient.addColorStop(0, `rgba(255, 235, 212, ${1 - greenTint})`);
+        headGradient.addColorStop(0, `rgba(200, 255, 200, ${greenTint})`);
+        headGradient.addColorStop(1, `rgba(255, 215, 186, ${1 - greenTint})`);
+        headGradient.addColorStop(1, `rgba(180, 240, 180, ${greenTint})`);
+      } else {
+        headGradient.addColorStop(0, '#FFEBD4');
+        headGradient.addColorStop(1, '#FFD7BA');
+      }
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = this.state === 'cursed' 
+        ? `rgba(180, 240, 180, ${0.6 + this.sickIntensity * 0.4})`
+        : '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'cursed') {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 2.5;
+        
+        for (let side of [-18, 18]) {
+          ctx.beginPath();
+          for (let i = 0; i < 15; i++) {
+            const angle = i * 0.5 + this.stateProgress * 5;
+            const radius = i * 0.6;
+            const x = side + Math.cos(angle) * radius;
+            const y = -23 + Math.sin(angle) * radius;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+      } else if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+        ctx.arc(20, -25, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#6B4423';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      if (this.state === 'cursed') {
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -38, -10, -36);
+        ctx.moveTo(10, -36);
+        ctx.quadraticCurveTo(18, -38, 28, -32);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-28, -32);
+        ctx.quadraticCurveTo(-18, -35, -10, -32);
+        ctx.moveTo(10, -32);
+        ctx.quadraticCurveTo(18, -35, 28, -32);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#2C1810';
+      ctx.beginPath();
+      ctx.ellipse(0, -48, 40, 20, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(0, -56, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFB6A3';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(-2, -15, 2.5, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'eating') {
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.arc(0, -3, 10, 0.2, Math.PI - 0.2);
+        ctx.fill();
+      } else if (this.state === 'cursed') {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-12, -3);
+        for (let i = 0; i <= 12; i++) {
+          const x = -12 + i * 2;
+          const y = -3 + Math.sin(i * 0.8 + this.stateProgress * 10) * 3;
+          ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+        ctx.stroke();
+      }
+
+      if (this.state === 'cursed') {
+        ctx.fillStyle = `rgba(150, 255, 150, ${0.3 + this.sickIntensity * 0.3})`;
+      } else {
+        ctx.fillStyle = 'rgba(255, 160, 160, 0.4)';
+      }
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class Candy {
+    x: number;
+    y: number;
+    visible: boolean;
+    eaten: boolean;
+    float: number;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    update() {
+      if (!this.eaten) {
+        this.float += 0.08;
+      }
+
+      if (this.character.state === 'eating' && !this.eaten) {
+        this.x += (this.character.x - 5 - this.x) * 0.15;
+        this.y += (this.character.y - 15 - this.y) * 0.15;
+
+        if (Math.abs(this.x - (this.character.x - 5)) < 8) {
+          this.visible = false;
+          this.eaten = true;
+        }
+      }
+
+      if (this.character.state === 'standing' && this.character.stateProgress < 0.1) {
+        this.reset();
+      }
+    }
+
+    reset() {
+      this.x = canvas.width / 2 + 120;
+      this.y = canvas.height / 2 - 40;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (!this.visible) return;
+
+      const floatOffset = Math.sin(this.float) * 5;
+
+      ctx.save();
+      ctx.translate(this.x, this.y + floatOffset);
+
+      const candyGradient = ctx.createRadialGradient(-3, -3, 2, 0, 0, 15);
+      candyGradient.addColorStop(0, '#1a1a1a');
+      candyGradient.addColorStop(0.5, '#0d0d0d');
+      candyGradient.addColorStop(1, '#000000');
+      ctx.fillStyle = candyGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, 0, 15, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(100, 255, 100, 0.6)';
+      ctx.lineWidth = 1.5;
+      
+      ctx.beginPath();
+      ctx.arc(0, 0, 8, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, -6);
+      ctx.quadraticCurveTo(3, -3, 0, 0);
+      ctx.quadraticCurveTo(-3, 3, 0, 6);
+      ctx.stroke();
+
+      ctx.strokeStyle = `rgba(100, 255, 100, ${0.3 + Math.sin(this.float * 2) * 0.2})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, 18 + Math.sin(this.float * 2) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+  }
+
+  class DarkMark {
+    x: number;
+    y: number;
+    size: number;
+    maxSize: number;
+    opacity: number;
+    rotation: number;
+    phase: string;
+    life: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.size = 0;
+      this.maxSize = 80;
+      this.opacity = 0;
+      this.rotation = 0;
+      this.phase = 'appearing';
+      this.life = 1;
+    }
+
+    update() {
+      this.rotation += 0.02;
+
+      if (this.phase === 'appearing') {
+        this.size += 2;
+        this.opacity += 0.03;
+        
+        if (this.size >= this.maxSize) {
+          this.phase = 'visible';
+        }
+      } else if (this.phase === 'visible') {
+        this.life -= 0.005;
+        
+        if (this.life <= 0.5) {
+          this.phase = 'fading';
+        }
+      } else if (this.phase === 'fading') {
+        this.opacity -= 0.02;
+        this.life -= 0.01;
+      }
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.globalAlpha = this.opacity * 0.8;
+
+      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size);
+      gradient.addColorStop(0, 'rgba(100, 255, 100, 0.8)');
+      gradient.addColorStop(0.5, 'rgba(50, 200, 50, 0.4)');
+      gradient.addColorStop(1, 'rgba(0, 150, 0, 0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(150, 255, 150, 1)';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = 'rgba(100, 255, 100, 0.8)';
+      ctx.shadowBlur = 10;
+
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size * 0.5, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        const x1 = Math.cos(angle) * this.size * 0.3;
+        const y1 = Math.sin(angle) * this.size * 0.3;
+        const x2 = Math.cos(angle) * this.size * 0.5;
+        const y2 = Math.sin(angle) * this.size * 0.5;
+        
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+      }
+      ctx.stroke();
+
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i <= 20; i++) {
+        const angle = (i / 20) * Math.PI * 2;
+        const radius = this.size * 0.3 + Math.sin(i * 2 + this.rotation * 5) * this.size * 0.08;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+  }
+
+  class CurseParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    alpha: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 2 + 1;
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed - 0.5;
+      this.size = Math.random() * 3 + 1;
+      this.life = 1;
+      this.alpha = Math.random() * 0.5 + 0.5;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vx *= 0.98;
+      this.vy += 0.05;
+      this.life -= 0.012;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life * this.alpha;
+      
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+      gradient.addColorStop(0, 'rgba(150, 255, 150, 1)');
+      gradient.addColorStop(0.5, 'rgba(100, 200, 100, 0.8)');
+      gradient.addColorStop(1, 'rgba(50, 150, 50, 0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+  }
+
+  class GlowWave {
+    x: number;
+    y: number;
+    radius: number;
+    maxRadius: number;
+    life: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.radius = 0;
+      this.maxRadius = 100;
+      this.life = 1;
+    }
+
+    update() {
+      this.radius += 2;
+      this.life = 1 - (this.radius / this.maxRadius);
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.5;
+      
+      ctx.strokeStyle = 'rgba(100, 255, 100, 0.8)';
+      ctx.lineWidth = 2;
+      ctx.shadowColor = 'rgba(100, 255, 100, 0.6)';
+      ctx.shadowBlur = 15;
+      
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const candy = new Candy(character);
+  const darkMarks: DarkMark[] = [];
+  const curseParticles: CurseParticle[] = [];
+  const glowWaves: GlowWave[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a33');
+    gradient.addColorStop(1, '#2d1b4e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 30; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (character.state === 'cursed' && character.sickIntensity > 0.3 && character.sickIntensity < 0.4) {
+      darkMarks.push(new DarkMark(character.x, character.y - 100));
+    }
+
+    if (character.state === 'cursed' && character.sickIntensity > 0.25 && character.sickIntensity < 0.35) {
+      glowWaves.push(new GlowWave(character.x, character.y - 100));
+    }
+
+    if (character.state === 'cursed' && character.sickIntensity > 0.2) {
+      if (Math.random() < 0.3) {
+        curseParticles.push(new CurseParticle(character.x, character.y - 100));
+      }
+    }
+
+    for (let i = glowWaves.length - 1; i >= 0; i--) {
+      const wave = glowWaves[i];
+      wave.update();
+      
+      if (wave.radius >= wave.maxRadius) {
+        glowWaves.splice(i, 1);
+      } else {
+        wave.draw(ctx);
+      }
+    }
+
+    for (let i = darkMarks.length - 1; i >= 0; i--) {
+      const mark = darkMarks[i];
+      mark.update();
+      
+      if (mark.phase === 'fading' && mark.opacity <= 0) {
+        darkMarks.splice(i, 1);
+      } else {
+        mark.draw(ctx);
+      }
+    }
+
+    for (let i = curseParticles.length - 1; i >= 0; i--) {
+      const particle = curseParticles[i];
+      particle.update();
+      
+      if (particle.life <= 0) {
+        curseParticles.splice(i, 1);
+      } else {
+        particle.draw(ctx);
+      }
+    }
+
+    candy.update();
+    character.update();
+
+    candy.draw(ctx);
+    character.draw(ctx);
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+// Animación de Sombreros, Capas y Guantes Escudo (ID 23)
+private animateEscudoMagico(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    stateProgress: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+    shieldActive: boolean;
+    shieldIntensity: number;
+
+    constructor() {
+      this.x = canvas.width / 2;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+      this.shieldActive = false;
+      this.shieldIntensity = 0;
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.stateProgress += 0.015;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'activating';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'activating') {
+        this.stateProgress += 0.03;
+        
+        if (this.shieldIntensity < 1) {
+          this.shieldIntensity += 0.04;
+        }
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'protected';
+          this.stateProgress = 0;
+          this.shieldActive = true;
+        }
+      } else if (this.state === 'protected') {
+        this.stateProgress += 0.008;
+        
+        if (this.stateProgress >= 1) {
+          this.reset();
+        }
+      }
+
+      if (this.eyesOpen) {
+        this.blinkTimer++;
+        if (this.blinkTimer > 80 && Math.random() < 0.03) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 100);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.shieldActive = false;
+      this.shieldIntensity = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#3B3B98';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#1F1F5C';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      if (this.shieldActive) {
+        bodyGradient.addColorStop(0, '#7C3AED');
+        bodyGradient.addColorStop(1, '#5B21B6');
+      } else {
+        bodyGradient.addColorStop(0, '#5A67D8');
+        bodyGradient.addColorStop(1, '#4C51BF');
+      }
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.shieldActive) {
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.6)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(-25, 30, 15, 0, Math.PI);
+        ctx.arc(25, 30, 15, 0, Math.PI);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      if (this.state === 'activating') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-40, -10, -20, -30);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-20, -30, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.quadraticCurveTo(40, -10, 20, -30);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(20, -30, 9, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (this.shieldIntensity > 0.3) {
+          ctx.fillStyle = `rgba(139, 92, 246, ${this.shieldIntensity * 0.5})`;
+          ctx.beginPath();
+          ctx.arc(-20, -30, 12, 0, Math.PI * 2);
+          ctx.arc(20, -30, 12, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.lineTo(-42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.lineTo(42, 60);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      headGradient.addColorStop(0, '#FFEBD4');
+      headGradient.addColorStop(1, '#FFD7BA');
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+        ctx.arc(20, -25, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#6B4423';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      ctx.beginPath();
+      ctx.moveTo(-28, -32);
+      ctx.quadraticCurveTo(-18, -35, -10, -32);
+      ctx.moveTo(10, -32);
+      ctx.quadraticCurveTo(18, -35, 28, -32);
+      ctx.stroke();
+
+      ctx.fillStyle = this.shieldActive ? '#5B21B6' : '#2C1810';
+      ctx.beginPath();
+      ctx.ellipse(0, -48, 40, 20, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(0, -56, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.shieldActive) {
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(0, -45, 42, 5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#FFB6A3';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(-2, -15, 2.5, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#8B4513';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      ctx.beginPath();
+      ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 160, 160, 0.4)';
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class Shield {
+    rotation: number;
+    runesRotation: number;
+    pulsePhase: number;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.rotation = 0;
+      this.runesRotation = 0;
+      this.pulsePhase = 0;
+    }
+
+    update() {
+      if (this.character.shieldActive) {
+        this.rotation += 0.01;
+        this.runesRotation += 0.02;
+        this.pulsePhase += 0.05;
+      }
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (this.character.shieldIntensity <= 0) return;
+
+      const x = this.character.x;
+      const y = this.character.y;
+      const intensity = this.character.shieldIntensity;
+      const radius = 80;
+
+      ctx.save();
+
+      const pulse = Math.sin(this.pulsePhase) * 0.15 + 0.85;
+      
+      const shieldGradient = ctx.createRadialGradient(x, y, 0, x, y, radius * pulse);
+      shieldGradient.addColorStop(0, `rgba(139, 92, 246, ${0.05 * intensity})`);
+      shieldGradient.addColorStop(0.7, `rgba(167, 139, 250, ${0.2 * intensity})`);
+      shieldGradient.addColorStop(1, `rgba(196, 181, 253, ${0.4 * intensity})`);
+      
+      ctx.fillStyle = shieldGradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius * pulse, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = `rgba(167, 139, 250, ${0.8 * intensity})`;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = 'rgba(139, 92, 246, 0.8)';
+      ctx.shadowBlur = 15;
+      ctx.beginPath();
+      ctx.arc(x, y, radius * pulse, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(this.runesRotation);
+
+      const numRunes = 8;
+      for (let i = 0; i < numRunes; i++) {
+        const angle = (i / numRunes) * Math.PI * 2;
+        const runeX = Math.cos(angle) * (radius * 0.85);
+        const runeY = Math.sin(angle) * (radius * 0.85);
+
+        ctx.save();
+        ctx.translate(runeX, runeY);
+        ctx.rotate(-this.runesRotation + angle);
+
+        ctx.globalAlpha = intensity * 0.8;
+        ctx.strokeStyle = '#A78BFA';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.lineTo(0, 6);
+        ctx.moveTo(-4, -3);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(4, -3);
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      ctx.restore();
+
+      for (let i = 0; i < 3; i++) {
+        const ringRadius = radius * (0.4 + i * 0.2);
+        const ringAlpha = intensity * (0.3 - i * 0.1);
+        const ringRotation = this.rotation * (1 + i * 0.5);
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(ringRotation);
+
+        ctx.strokeStyle = `rgba(167, 139, 250, ${ringAlpha})`;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([10, 10]);
+        ctx.beginPath();
+        ctx.arc(0, 0, ringRadius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+  }
+
+  class Spell {
+    x: number;
+    y: number;
+    targetX: number;
+    targetY: number;
+    speed: number;
+    angle: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    bounced: boolean;
+    color: string;
+    trail: Array<{x: number, y: number}>;
+
+    constructor(targetX: number, targetY: number) {
+      this.x = Math.random() < 0.5 ? -50 : canvas.width + 50;
+      this.y = Math.random() * canvas.height * 0.5 + canvas.height * 0.25;
+      this.targetX = targetX;
+      this.targetY = targetY;
+      this.speed = 4;
+      this.angle = Math.atan2(targetY - this.y, targetX - this.x);
+      this.vx = Math.cos(this.angle) * this.speed;
+      this.vy = Math.sin(this.angle) * this.speed;
+      this.size = 8;
+      this.life = 1;
+      this.bounced = false;
+      this.color = this.getRandomSpellColor();
+      this.trail = [];
+    }
+
+    getRandomSpellColor() {
+      const colors = ['#EF4444', '#F59E0B', '#10B981', '#3B82F6'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    update(character: Character) {
+      if (!this.bounced) {
+        this.trail.push({ x: this.x, y: this.y });
+        if (this.trail.length > 10) {
+          this.trail.shift();
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (character.shieldActive) {
+          const dx = this.x - character.x;
+          const dy = this.y - character.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 80 && !this.bounced) {
+            this.bounced = true;
+            const bounceAngle = Math.atan2(dy, dx);
+            this.vx = Math.cos(bounceAngle) * this.speed * 1.5;
+            this.vy = Math.sin(bounceAngle) * this.speed * 1.5;
+          }
+        }
+      } else {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= 0.02;
+      }
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      for (let i = 0; i < this.trail.length; i++) {
+        const t = this.trail[i];
+        const alpha = (i / this.trail.length) * 0.5 * this.life;
+        
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, this.size * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      ctx.save();
+      ctx.globalAlpha = this.life;
+
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+      gradient.addColorStop(0, this.color);
+      gradient.addColorStop(0.5, this.color);
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class ShieldFlash {
+    x: number;
+    y: number;
+    size: number;
+    maxSize: number;
+    life: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.size = 0;
+      this.maxSize = 40;
+      this.life = 1;
+    }
+
+    update() {
+      this.size += 3;
+      this.life = 1 - (this.size / this.maxSize);
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.8;
+
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      gradient.addColorStop(0.5, 'rgba(167, 139, 250, 0.8)');
+      gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class MagicParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 2 + 1;
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed;
+      this.size = Math.random() * 3 + 1;
+      this.life = 1;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= 0.015;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life;
+
+      ctx.fillStyle = '#A78BFA';
+      ctx.shadowColor = '#8B5CF6';
+      ctx.shadowBlur = 5;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const shield = new Shield(character);
+  const spells: Spell[] = [];
+  const shieldFlashes: ShieldFlash[] = [];
+  const magicParticles: MagicParticle[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a33');
+    gradient.addColorStop(1, '#2d1b4e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 30; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (character.state === 'protected' && Math.random() < 0.03) {
+      spells.push(new Spell(character.x, character.y));
+    }
+
+    if (character.shieldActive && Math.random() < 0.2) {
+      magicParticles.push(new MagicParticle(
+        character.x + (Math.random() - 0.5) * 80,
+        character.y + (Math.random() - 0.5) * 80
+      ));
+    }
+
+    for (let i = spells.length - 1; i >= 0; i--) {
+      const spell = spells[i];
+      const wasBounced = spell.bounced;
+      
+      spell.update(character);
+
+      if (!wasBounced && spell.bounced) {
+        shieldFlashes.push(new ShieldFlash(spell.x, spell.y));
+        
+        for (let j = 0; j < 8; j++) {
+          magicParticles.push(new MagicParticle(spell.x, spell.y));
+        }
+      }
+
+      if (spell.life <= 0 || spell.x < -100 || spell.x > canvas.width + 100 || 
+          spell.y < -100 || spell.y > canvas.height + 100) {
+        spells.splice(i, 1);
+      } else {
+        spell.draw(ctx);
+      }
+    }
+
+    for (let i = shieldFlashes.length - 1; i >= 0; i--) {
+      const flash = shieldFlashes[i];
+      flash.update();
+      
+      if (flash.size >= flash.maxSize) {
+        shieldFlashes.splice(i, 1);
+      } else {
+        flash.draw(ctx);
+      }
+    }
+
+    for (let i = magicParticles.length - 1; i >= 0; i--) {
+      const particle = magicParticles[i];
+      particle.update();
+      
+      if (particle.life <= 0) {
+        magicParticles.splice(i, 1);
+      } else {
+        particle.draw(ctx);
+      }
+    }
+
+    shield.update();
+    character.update();
+
+    shield.draw(ctx);
+    character.draw(ctx);
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
 }
