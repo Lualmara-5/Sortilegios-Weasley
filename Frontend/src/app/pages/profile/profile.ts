@@ -16,9 +16,10 @@ import { UserService } from '../../services/user.service';
 })
 export class ProfileComponent implements OnInit {
 
-  // 🔮 Datos mágicos del usuario
-  aliasMagico = 'Mago Anónimo';
-  direccionMagica = 'Callejón Diagon Nº93';
+  // 🔮 Datos del usuario
+  aliasMagico: string = 'Mago Anónimo';
+  mailMagico: string = 'email@dominio.com';
+  direccionMagica: string = 'Callejón Diagon Nº93';
 
   // 📦 Pedidos de ejemplo
   pedidos = [
@@ -26,12 +27,12 @@ export class ProfileComponent implements OnInit {
     { fecha: '07/11/2025', producto: 'Libro Mordedor', estado: 'En camino' }
   ];
 
-  // 💫 Lista de deseos y usuario
+  // 💫 Lista de deseos
   listaDeseos: Deseo[] = [];
-  usuarioActual: any = null;
-
-  // 👇 NUEVA propiedad usada en el HTML (para evitar TS2339)
   wishlist: Deseo[] = [];
+
+  // Usuario actual
+  usuarioActual: any = null;
 
   constructor(
     private cauldronService: CauldronService,
@@ -41,29 +42,33 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // 🔹 Obtener usuario logueado desde 'currentUser'
+    // 🔹 Leer usuario logueado desde localStorage
     const currentUserJSON = localStorage.getItem('currentUser');
     if (!currentUserJSON) {
-      // 🚨 Si no hay usuario, redirigir al login
       this.router.navigate(['/login']);
       return;
     }
 
     this.usuarioActual = JSON.parse(currentUserJSON);
-    console.log('Usuario logueado:', this.usuarioActual.username);
+    console.log('Usuario actual cargado:', this.usuarioActual);
 
-    // Inicializar alias y dirección
-    this.aliasMagico = this.usuarioActual.alias || this.aliasMagico;
-    this.direccionMagica = this.usuarioActual.direccion || this.direccionMagica;
+    const userDetails = this.usuarioActual.usuario;
 
-    // 💖 Escuchar cambios en la lista de deseos (desde el servicio)
+    // Inicializar datos visibles en el perfil
+    this.aliasMagico = userDetails.nickname || this.aliasMagico;
+    console.log('Alias mágico:', this.aliasMagico);
+    this.mailMagico = userDetails.mail || this.mailMagico;
+    this.direccionMagica = userDetails.direccion || this.direccionMagica;
+
+    console.log('Usuario logueado:', this.usuarioActual);
+
+    // Escuchar cambios en la lista de deseos
     this.wishlistService.deseos$.subscribe((items: Deseo[]) => {
-      console.log('📜 Deseos cargados en el perfil:', items);
       this.listaDeseos = items;
-      this.wishlist = items; // 🔹 Asegura que el HTML también reciba los datos
+      this.wishlist = items;
     });
 
-    // Si hay deseos guardados en localStorage, cargarlos al iniciar
+    // Cargar deseos guardados en localStorage
     const guardado = localStorage.getItem('wishlist');
     if (guardado) {
       const data = JSON.parse(guardado);
@@ -73,11 +78,11 @@ export class ProfileComponent implements OnInit {
   }
 
   editarInfo() {
-    alert(`Alias: ${this.aliasMagico}\nDirección: ${this.direccionMagica}`);
-    // Aquí podrías guardar los cambios en el storage si quieres persistencia
+    alert(`Alias: ${this.aliasMagico}\nMail: ${this.mailMagico}\nDirección: ${this.direccionMagica}`);
   }
 
   salir() {
+    localStorage.removeItem('currentUser');
     this.userService.clearUser();
     alert('Has salido del perfil mágico.');
     this.router.navigate(['/login']);

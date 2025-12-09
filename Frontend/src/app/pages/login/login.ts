@@ -73,7 +73,8 @@ export class Login {
     this.authService.login(this.mail, this.password).subscribe({
       next: user => {
         console.log('Usuario logueado:', user);
-        this.router.navigate(['/home']);
+        this.router.navigate(['/profile']);
+        localStorage.setItem('currentUser', JSON.stringify(user));
       },
       error: err => {
         console.error(err);
