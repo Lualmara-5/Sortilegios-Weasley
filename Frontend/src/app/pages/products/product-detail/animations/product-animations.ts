@@ -143,6 +143,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'invisible-ink-quill',
     description: '¡La tinta desaparece a los 10 minutos! Perfecta para mensajes temporales.'
   },
+    // 19. Spray aumenta todo - Efecto de agrandamiento
+  19: {
+    id: 19,
+    animationType: 'canvas',
+    componentName: 'enlarging-spray',
+    description: '¡Rocía y agranda cualquier objeto! Efecto de hasta tres días.'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

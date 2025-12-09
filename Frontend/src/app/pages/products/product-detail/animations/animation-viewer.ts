@@ -221,7 +221,9 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animatePergaminoInservible(ctx, canvas);
     }else if (this.animation?.id === 18) {  
     this.animatePlumaInvisible(ctx, canvas);  
-    }
+    } else if (this.animation?.id === 19) {
+    this.animateSprayAumentaTodo(ctx, canvas);
+  }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
   private animateTongueCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -8742,4 +8744,375 @@ private animatePlumaInvisible(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
   animate();
 }
 
+// Animación del Spray Aumenta Todo (ID 19)
+private animateSprayAumentaTodo(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+  const cycleTime = 200;
+
+  const sprayParticles: any[] = [];
+
+  class SprayParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    alpha: number;
+    color: string;
+    rotation: number;
+    rotationSpeed: number;
+
+    constructor(x: number, y: number, angle: number) {
+      this.x = x;
+      this.y = y;
+      const spreadAngle = angle + (Math.random() - 0.5) * 0.5;
+      const speed = Math.random() * 3 + 2;
+      this.vx = Math.cos(spreadAngle) * speed;
+      this.vy = Math.sin(spreadAngle) * speed;
+      this.life = 60;
+      this.maxLife = 60;
+      this.size = Math.random() * 8 + 4;
+      this.alpha = 1;
+      this.color = ['#9b59b6', '#8e44ad', '#bb8fce', '#d7bde2'][Math.floor(Math.random() * 4)];
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.08;
+      this.vx *= 0.98;
+      this.rotation += this.rotationSpeed;
+      this.life--;
+      this.alpha = this.life / this.maxLife;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      context.save();
+      context.translate(this.x, this.y);
+      context.rotate(this.rotation);
+      context.globalAlpha = this.alpha * 0.8;
+
+      context.fillStyle = this.color;
+      context.shadowBlur = 15;
+      context.shadowColor = this.color;
+      context.beginPath();
+      context.arc(0, 0, this.size, 0, Math.PI * 2);
+      context.fill();
+
+      context.fillStyle = '#ffffff';
+      context.shadowBlur = 10;
+      context.beginPath();
+      context.arc(0, 0, this.size * 0.3, 0, Math.PI * 2);
+      context.fill();
+
+      context.globalAlpha = 1;
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const expandGlowParticles: any[] = [];
+
+  class ExpandGlow {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 2 + 1;
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed;
+      this.life = 40;
+      this.maxLife = 40;
+      this.size = Math.random() * 4 + 2;
+      this.color = ['#9b59b6', '#e74c3c', '#f39c12', '#fff'][Math.floor(Math.random() * 4)];
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vx *= 0.95;
+      this.vy *= 0.95;
+      this.life--;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      context.save();
+      context.globalAlpha = alpha;
+      context.fillStyle = this.color;
+      context.shadowBlur = 12;
+      context.shadowColor = this.color;
+      context.beginPath();
+      context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const drawSprayBottle = (x: number, y: number, angle: number, pressing: boolean) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    const pressOffset = pressing ? 3 : 0;
+
+    const bottleGradient = ctx.createLinearGradient(-15, 0, 15, 60);
+    bottleGradient.addColorStop(0, '#9b59b6');
+    bottleGradient.addColorStop(0.5, '#8e44ad');
+    bottleGradient.addColorStop(1, '#6c3483');
+
+    ctx.fillStyle = bottleGradient;
+    ctx.fillRect(-15, 10, 30, 50);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.fillRect(-12, 15, 8, 40);
+
+    ctx.fillStyle = '#6c3483';
+    ctx.fillRect(-15, 60, 30, 5);
+
+    ctx.fillStyle = '#34495e';
+    ctx.fillRect(-12, 0, 24, 10);
+
+    ctx.fillStyle = pressing ? '#e74c3c' : '#2c3e50';
+    ctx.fillRect(-8, -10 + pressOffset, 16, 10);
+
+    ctx.fillStyle = '#7f8c8d';
+    ctx.fillRect(-2, -15 + pressOffset, 4, 5);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.fillRect(-10, 30, 20, 15);
+
+    ctx.fillStyle = '#8e44ad';
+    ctx.font = 'bold 8px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('SIZE', 0, 38);
+    ctx.fillText('UP!', 0, 44);
+
+    if (pressing) {
+      ctx.fillStyle = 'rgba(155, 89, 182, 0.6)';
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = '#9b59b6';
+      ctx.beginPath();
+      ctx.arc(-5, 30, 3, 0, Math.PI * 2);
+      ctx.arc(5, 45, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  };
+
+  const drawTargetObject = (x: number, y: number, scale: number, type: string) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+
+    if (type === 'apple') {
+      const appleGradient = ctx.createRadialGradient(-5, -5, 5, 0, 0, 25);
+      appleGradient.addColorStop(0, '#ff6b6b');
+      appleGradient.addColorStop(0.7, '#ee5a52');
+      appleGradient.addColorStop(1, '#c0392b');
+
+      ctx.fillStyle = appleGradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, 25, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#c0392b';
+      ctx.beginPath();
+      ctx.ellipse(0, -15, 8, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#8b4513';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(0, -20);
+      ctx.quadraticCurveTo(-5, -30, -3, -35);
+      ctx.stroke();
+
+      ctx.fillStyle = '#27ae60';
+      ctx.beginPath();
+      ctx.ellipse(-8, -32, 8, 5, -0.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(-8, -8, 10, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  };
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a2e');
+    gradient.addColorStop(1, '#0a0514');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const sprayingPhase = time >= 30 && time < 80;
+    const expandingPhase = time >= 80 && time < 140;
+    const holdPhase = time >= 140 && time < 160;
+    const resetPhase = time >= 160;
+
+    let objectScale = 1;
+    if (expandingPhase) {
+      const expandProgress = (time - 80) / 60;
+      const elasticProgress = expandProgress < 0.5 
+        ? 2 * expandProgress * expandProgress
+        : 1 - Math.pow(-2 * expandProgress + 2, 2) / 2;
+      objectScale = 1 + elasticProgress * 1.5;
+    } else if (holdPhase) {
+      objectScale = 2.5;
+    } else if (resetPhase) {
+      const resetProgress = (time - 160) / 40;
+      objectScale = 2.5 - resetProgress * 1.5;
+    }
+
+    const objectX = centerX + 80;
+    const objectY = centerY;
+    
+    const sprayX = centerX - 120;
+    const sprayY = centerY + 20;
+    const sprayAngle = -0.3;
+    const sprayPressing = sprayingPhase;
+
+    if (sprayingPhase && Math.random() < 0.5) {
+      const nozzleX = sprayX + Math.cos(sprayAngle - Math.PI / 2) * 15;
+      const nozzleY = sprayY + Math.sin(sprayAngle - Math.PI / 2) * 15;
+      const angleToApple = Math.atan2(objectY - nozzleY, objectX - nozzleX);
+      sprayParticles.push(new SprayParticle(nozzleX, nozzleY, angleToApple));
+    }
+
+    for (let i = sprayParticles.length - 1; i >= 0; i--) {
+      sprayParticles[i].update();
+      sprayParticles[i].draw(ctx);
+
+      if (sprayParticles[i].isDead()) {
+        sprayParticles.splice(i, 1);
+      }
+    }
+
+    drawTargetObject(objectX, objectY, objectScale, 'apple');
+
+    if (expandingPhase && Math.random() < 0.3) {
+      expandGlowParticles.push(new ExpandGlow(objectX, objectY));
+    }
+
+    for (let i = expandGlowParticles.length - 1; i >= 0; i--) {
+      expandGlowParticles[i].update();
+      expandGlowParticles[i].draw(ctx);
+
+      if (expandGlowParticles[i].isDead()) {
+        expandGlowParticles.splice(i, 1);
+      }
+    }
+
+    if (expandingPhase) {
+      const expandProgress = (time - 80) / 60;
+      ctx.save();
+      ctx.strokeStyle = '#9b59b6';
+      ctx.lineWidth = 3;
+      ctx.globalAlpha = 1 - expandProgress;
+
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.arc(objectX, objectY, 40 + expandProgress * 80 + i * 20, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    drawSprayBottle(sprayX, sprayY, sprayAngle, sprayPressing);
+
+    if (sprayingPhase) {
+      const sprayCloudProgress = (time - 30) / 50;
+      ctx.save();
+      ctx.globalAlpha = 0.4 * (1 - sprayCloudProgress);
+      
+      const cloudGradient = ctx.createRadialGradient(
+        centerX - 20, centerY, 10,
+        centerX - 20, centerY, 80
+      );
+      cloudGradient.addColorStop(0, '#9b59b6');
+      cloudGradient.addColorStop(0.5, '#8e44ad');
+      cloudGradient.addColorStop(1, 'rgba(155, 89, 182, 0)');
+      
+      ctx.fillStyle = cloudGradient;
+      ctx.beginPath();
+      ctx.arc(centerX - 20, centerY, 80, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Texto indicador eliminado
+
+    if (expandingPhase || holdPhase) {
+      ctx.save();
+      ctx.strokeStyle = '#e74c3c';
+      ctx.fillStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.globalAlpha = 0.8;
+
+      ctx.beginPath();
+      ctx.moveTo(objectX, objectY - 60);
+      ctx.lineTo(objectX, objectY - 80);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(objectX, objectY - 80);
+      ctx.lineTo(objectX - 5, objectY - 75);
+      ctx.lineTo(objectX + 5, objectY - 75);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(objectX + 50, objectY);
+      ctx.lineTo(objectX + 70, objectY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(objectX + 70, objectY);
+      ctx.lineTo(objectX + 65, objectY - 5);
+      ctx.lineTo(objectX + 65, objectY + 5);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    time++;
+
+    if (time >= cycleTime) {
+      time = 0;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
 }
