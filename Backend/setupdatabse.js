@@ -1,27 +1,30 @@
+// Backend/setup-database.js (versión mejorada con reseñas del JSON)
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import pool from './db.js';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 
-// ==================================================
-// SCRIPT PARA CREAR TABLAS E INGESTAR DATOS
-// ==================================================
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function setupDatabase() {
   console.log('🚀 Iniciando setup de la base de datos...\n');
 
   try {
-
     // 1. ELIMINAR TABLAS EXISTENTES (en orden correcto)
-    console.log('Limpiando tablas existentes...');
+    console.log('🗑️  Limpiando tablas existentes...');
     await pool.query('DROP TABLE IF EXISTS resena');
     await pool.query('DROP TABLE IF EXISTS pedido');
     await pool.query('DROP TABLE IF EXISTS catalogo');
     await pool.query('DROP TABLE IF EXISTS usuario');
-    console.log('Tablas eliminadas\n');
+    console.log('✅ Tablas eliminadas\n');
 
     // 2. CREAR TABLA USUARIO
-    console.log('Creando tabla usuario...');
+    console.log('👤 Creando tabla usuario...');
     await pool.query(`
       CREATE TABLE usuario (
         id_usuario INT AUTO_INCREMENT PRIMARY KEY,
@@ -40,10 +43,10 @@ async function setupDatabase() {
         INDEX idx_nickname (nickname)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
-    console.log('Tabla usuario creada\n');
+    console.log('✅ Tabla usuario creada\n');
 
     // 3. CREAR TABLA CATALOGO
-    console.log('Creando tabla catalogo...');
+    console.log('📚 Creando tabla catalogo...');
     await pool.query(`
       CREATE TABLE catalogo (
         id_producto INT AUTO_INCREMENT PRIMARY KEY,
@@ -59,10 +62,10 @@ async function setupDatabase() {
         INDEX idx_nombre (nombre)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
-    console.log('Tabla catalogo creada\n');
+    console.log('✅ Tabla catalogo creada\n');
 
     // 4. CREAR TABLA PEDIDO
-    console.log('Creando tabla pedido...');
+    console.log('🛒 Creando tabla pedido...');
     await pool.query(`
       CREATE TABLE pedido (
         id_pedido INT AUTO_INCREMENT PRIMARY KEY,
@@ -85,10 +88,10 @@ async function setupDatabase() {
         INDEX idx_estado (estado)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
-    console.log('Tabla pedido creada\n');
+    console.log('✅ Tabla pedido creada\n');
 
     // 5. CREAR TABLA RESENA
-    console.log('Creando tabla resena...');
+    console.log('⭐ Creando tabla resena...');
     await pool.query(`
       CREATE TABLE resena (
         id_resena INT AUTO_INCREMENT PRIMARY KEY,
@@ -107,17 +110,25 @@ async function setupDatabase() {
         UNIQUE KEY unique_user_product_review (id_usuario, id_producto)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
-    console.log('Tabla resena creada\n');
+    console.log('✅ Tabla resena creada\n');
 
     // 6. INSERTAR DATOS DE EJEMPLO
-    console.log('Insertando datos de ejemplo...\n');
+    console.log('📝 Insertando datos de ejemplo...\n');
 
-    // Usuarios
-    console.log('Insertando usuarios...');
+    // Usuarios (más usuarios para más reseñas variadas)
+    console.log('👥 Insertando usuarios...');
+    // Hash de la contraseña "1234" (calcula una vez)
+    const hashedPassword = await bcrypt.hash('1234', 10);
+
     const usuarios = [
-      ['harry_potter', 'harry@hogwarts.com', '$2a$10$abcdefghijklmnopqrstuv', 'https://i.pravatar.cc/150?img=1', 'Privet Drive 4', 'Little Whinging', 'Surrey', 'Debajo de la escalera', 'KT12 8PE'],
-      ['hermione_g', 'hermione@hogwarts.com', '$2a$10$abcdefghijklmnopqrstuv', 'https://i.pravatar.cc/150?img=2', 'Willow Lane 27', 'Londres', 'Inglaterra', 'Casa muggle', 'SW1A 1AA'],
-      ['ron_weasley', 'ron@hogwarts.com', '$2a$10$abcdefghijklmnopqrstuv', 'https://i.pravatar.cc/150?img=3', 'La Madriguera', 'Ottery St Catchpole', 'Devon', 'Casa de 7 pisos', 'EX11 1AA']
+      ['harry_potter', 'harry@hogwarts.com', hashedPassword, 'https://i.pravatar.cc/150?img=1', 'Privet Drive 4', 'Little Whinging', 'Surrey', 'Debajo de la escalera', 'KT12 8PE'],
+      ['hermione_g', 'hermione@hogwarts.com', hashedPassword, 'https://i.pravatar.cc/150?img=2', 'Willow Lane 27', 'Londres', 'Inglaterra', 'Casa muggle', 'SW1A 1AA'],
+      ['ron_weasley', 'ron@hogwarts.com', hashedPassword, 'https://i.pravatar.cc/150?img=3', 'La Madriguera', 'Ottery St Catchpole', 'Devon', 'Casa de 7 pisos', 'EX11 1AA'],
+      ['luna_lovegood', 'luna@hogwarts.com', hashedPassword, 'https://i.pravatar.cc/150?img=4', 'La Torre', 'Ottery St Catchpole', 'Devon', 'Casa con jardín mágico', 'EX11 2BB'],
+      ['neville_l', 'neville@hogwarts.com', hashedPassword, 'https://i.pravatar.cc/150?img=5', 'Casa Longbottom', 'Londres', 'Inglaterra', 'Cerca del Caldero Chorreante', 'SW1A 2AA'],
+      ['ginny_weasley', 'ginny@hogwarts.com', hashedPassword, 'https://i.pravatar.cc/150?img=6', 'La Madriguera', 'Ottery St Catchpole', 'Devon', 'Casa de 7 pisos', 'EX11 1AA'],
+      ['fred_weasley', 'fred@weasley.com', hashedPassword, 'https://i.pravatar.cc/150?img=7', 'Sobre la tienda', 'Callejón Diagon', 'Londres', 'Sortilegios Weasley', 'WC2H 0AA'],
+      ['george_weasley', 'george@weasley.com', hashedPassword, 'https://i.pravatar.cc/150?img=8', 'Sobre la tienda', 'Callejón Diagon', 'Londres', 'Sortilegios Weasley', 'WC2H 0AA']
     ];
 
     for (const usuario of usuarios) {
@@ -126,10 +137,10 @@ async function setupDatabase() {
         usuario
       );
     }
-    console.log(`${usuarios.length} usuarios insertados\n`);
+    console.log(`✅ ${usuarios.length} usuarios insertados\n`);
 
     // Productos del catálogo
-    console.log('Insertando productos...');
+    console.log('🎁 Insertando productos...');
     const productos = [
       ['Caramelo longuilinguo', 5, 'Inocentes caramelos que hacen que, al comerlos, la lengua se alargue diez veces más de su estado normal.', 'Caramelos', 'https://res.cloudinary.com/delqfztgg/image/upload/v1765245996/longuilinguo_fd5lvz.png', 10],
       ['Galletas de canarios', 7, 'Parecen galletas normales, pero quien las come se convierte en un enorme canario por un rato.', 'Galletas', 'https://res.cloudinary.com/delqfztgg/image/upload/v1765245990/galletas-canario_zbokdj.png', 10],
@@ -161,17 +172,16 @@ async function setupDatabase() {
       ['Lord Kakadura', 3, 'Producto de broma que causa estreñimiento. Sátira contra el Señor Tenebroso.', 'Bromas', 'https://res.cloudinary.com/delqfztgg/image/upload/v1765245994/lord-kakadura_y3sfrh.png', 5]
     ];
 
-
     for (const producto of productos) {
       await pool.query(
         'INSERT INTO catalogo (nombre, precio, descripcion, categoria, imagen, stock) VALUES (?, ?, ?, ?, ?, ?)',
         producto
       );
     }
-    console.log(`${productos.length} productos insertados\n`);
+    console.log(`✅ ${productos.length} productos insertados\n`);
 
     // Pedidos
-    console.log('Insertando pedidos...');
+    console.log('📦 Insertando pedidos...');
     const pedidos = [
       [1, 'pagado', 'tarjeta', 815.97, 'Privet Drive 4', 'Little Whinging', 'Surrey', 'Debajo de la escalera', 'KT12 8PE', 'Entrega urgente por favor'],
       [2, 'enviado', 'paypal', 529.98, 'Willow Lane 27', 'Londres', 'Inglaterra', 'Casa muggle', 'SW1A 1AA', 'Dejar con el vecino si no estoy'],
@@ -184,52 +194,71 @@ async function setupDatabase() {
         pedido
       );
     }
-    console.log(`${pedidos.length} pedidos insertados\n`);
+    console.log(`✅ ${pedidos.length} pedidos insertados\n`);
 
-    // Reseñas
-    console.log('Insertando reseñas...');
-    const resenas = [
-      [5, '¡La varita es increíble! Funciona perfectamente con cualquier hechizo.', 1, 1],
-      [5, 'La escoba más rápida que he probado. Perfecta para partidos profesionales.', 1, 2],
-      [4, 'Buen caldero, aunque se calienta un poco rápido. Cumple su función.', 2, 3],
-      [5, 'El mapa es exactamente como lo describe. ¡Juro solemnemente que mis intenciones no son buenas!', 1, 4],
-      [5, 'Increíble capa, nadie me ve cuando la uso. Vale cada galeón.', 3, 5],
-      [4, 'La snitch es genial para entrenar, aunque es muy rápida.', 3, 6],
-      [5, 'Felix Felicis cambió mi vida por un día. ¡Experiencia única!', 2, 7],
-      [5, 'El sombrero me seleccionó correctamente. ¡Gryffindor!', 2, 8]
-    ];
+    // 7. INSERTAR RESEÑAS DESDE JSON
+    console.log('💬 Insertando reseñas desde JSON...');
+    try {
+      const jsonPath = path.join(__dirname, 'reviews.json');
+      const jsonData = fs.readFileSync(jsonPath, 'utf8');
+      const reviewsByProduct = JSON.parse(jsonData);
 
-    for (const resena of resenas) {
-      await pool.query(
-        'INSERT INTO resena (calificacion, comentario, id_usuario, id_producto) VALUES (?, ?, ?, ?)',
-        resena
-      );
+      let totalReviews = 0;
+      const [usersList] = await pool.query('SELECT id_usuario FROM usuario');
+      const userIds = usersList.map(u => u.id_usuario);
+
+      for (const [productIdStr, reviews] of Object.entries(reviewsByProduct)) {
+        const productId = parseInt(productIdStr);
+        
+        for (let i = 0; i < reviews.length && i < userIds.length; i++) {
+          const review = reviews[i];
+          const userId = userIds[i % userIds.length]; // Rotar usuarios
+          
+          try {
+            await pool.query(
+              'INSERT INTO resena (calificacion, comentario, fecha, id_usuario, id_producto) VALUES (?, ?, ?, ?, ?)',
+              [review.rating, review.text, new Date(review.createdAt), userId, productId]
+            );
+            totalReviews++;
+          } catch (err) {
+            // Saltar duplicados
+            if (err.code !== 'ER_DUP_ENTRY') {
+              console.error(`Error al insertar reseña: ${err.message}`);
+            }
+          }
+        }
+      }
+      
+      console.log(`✅ ${totalReviews} reseñas insertadas desde JSON\n`);
+    } catch (error) {
+      console.warn(`⚠️  No se pudo cargar reviews.json: ${error.message}`);
+      console.log('   Continuando sin reseñas del JSON...\n');
     }
-    console.log(`${resenas.length} reseñas insertadas\n`);
 
-    // 7. VERIFICAR CREACIÓN
-    console.log('Verificando tablas creadas...');
+    // 8. VERIFICAR CREACIÓN
+    console.log('🔍 Verificando tablas creadas...');
     const [tables] = await pool.query('SHOW TABLES');
-    console.log('Tablas en la base de datos:');
+    console.log('📋 Tablas en la base de datos:');
     tables.forEach(table => {
       console.log(`   - ${Object.values(table)[0]}`);
     });
 
-    console.log('\nSetup completado exitosamente!\n');
+    console.log('\n✅ Setup completado exitosamente!\n');
 
-    // 8. MOSTRAR ESTADÍSTICAS
+    // 9. MOSTRAR ESTADÍSTICAS
     const [countUsuarios] = await pool.query('SELECT COUNT(*) as total FROM usuario');
     const [countProductos] = await pool.query('SELECT COUNT(*) as total FROM catalogo');
     const [countPedidos] = await pool.query('SELECT COUNT(*) as total FROM pedido');
     const [countResenas] = await pool.query('SELECT COUNT(*) as total FROM resena');
 
-    console.log('Estadísticas de datos:');
-    console.log(`Usuarios: ${countUsuarios[0].total}`);
-    console.log(`Productos: ${countProductos[0].total}`);
-    console.log(`Pedidos: ${countPedidos[0].total}`);
-    console.log(`Reseñas: ${countResenas[0].total}`);
+    console.log('📊 Estadísticas de datos:');
+    console.log(`   👥 Usuarios: ${countUsuarios[0].total}`);
+    console.log(`   📦 Productos: ${countProductos[0].total}`);
+    console.log(`   🛒 Pedidos: ${countPedidos[0].total}`);
+    console.log(`   ⭐ Reseñas: ${countResenas[0].total}`);
+
   } catch (error) {
-    console.error('Error durante el setup:', error.message);
+    console.error('❌ Error durante el setup:', error.message);
     throw error;
   } finally {
     await pool.end();
@@ -238,3 +267,11 @@ async function setupDatabase() {
 
 // Ejecutar el setup
 setupDatabase()
+  .then(() => {
+    console.log('\n🎉 Base de datos lista para usar!');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('\n💥 Error fatal:', error);
+    process.exit(1);
+  });

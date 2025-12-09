@@ -1,106 +1,71 @@
 // src/app/services/reviews.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, filter, switchMap, take } from 'rxjs';
+import { Observable, BehaviorSubject, shareReplay, tap } from 'rxjs';
 
 export interface Review {
-  author: string;
-  text: string;
-  rating: number; // 1..5
-  avatar?: string;
-  createdAt: string; // ISO date
+  id_resena?: number;       // ID real que devuelve tu backend
+  id_usuario: number;
+  id_producto: number;
+  calificacion: number;
+  fecha?: string;
+  comentario: string;
 }
-
-type ReviewMap = Record<number, Review[]>;
-
-const LS_KEY = 'weasley-reviews';
-const SEED_URL = 'assets/data/reviews.seed.json';
 
 @Injectable({ providedIn: 'root' })
 export class ReviewsService {
   private http = inject(HttpClient);
 
-  private cache: ReviewMap = {};
-  private subjects = new Map<number, BehaviorSubject<Review[]>>();
+  private API_URL = 'http://localhost:3000/api/resenas';
 
-  private ready$ = new BehaviorSubject<boolean>(false);
+  private cache = new Map<number, BehaviorSubject<Review[]>>();
 
-  constructor() {
-    this.init();
-  }
-
-  private init() {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-
-      // Si no hay datos → cargar seed
-      if (!raw || raw.trim() === '' || raw.trim() === '{}') {
-        this.http.get<ReviewMap>(SEED_URL).subscribe({
-          next: (data) => {
-            this.cache = data || {};
-            this.persist();
-            this.notifyAll();
-            this.ready$.next(true);
-          },
-          error: () => {
-            this.cache = {};
-            this.persist();
-            this.ready$.next(true);
-          }
-        });
-      } else {
-        this.cache = JSON.parse(raw) as ReviewMap;
-        this.ready$.next(true);
-      }
-    } catch {
-      this.cache = {};
-      this.persist();
-      this.ready$.next(true);
-    }
-  }
-
-  private ensureReady(): Observable<boolean> {
-    return this.ready$.pipe(filter(Boolean), take(1));
-  }
-
-  private notifyAll() {
-    for (const [pid, subj] of this.subjects) {
-      subj.next([...(this.cache[pid] ?? [])]);
-    }
-  }
-
-  /** Obtener reseñas por producto como observable */
+  /** Obtener reseñas de un producto */
   getReviews(productId: number): Observable<Review[]> {
-    if (!this.subjects.has(productId)) {
-      const initial = this.cache[productId] ?? [];
-      this.subjects.set(productId, new BehaviorSubject<Review[]>([...initial]));
-    }
-    const subj = this.subjects.get(productId)!;
+    if (!this.cache.has(productId)) {
+      this.cache.set(productId, new BehaviorSubject<Review[]>([]));
 
-    return this.ensureReady().pipe(
-      switchMap(() => {
-        subj.next([...(this.cache[productId] ?? [])]);
-        return subj.asObservable();
-      })
-    );
+      this.http
+        .get<Review[]>(`${this.API_URL}/producto/${productId}`)
+        .subscribe(list => {
+          this.cache.get(productId)!.next(list);
+        });
+    }
+
+    return this.cache.get(productId)!.asObservable().pipe(shareReplay(1));
   }
 
-  /** Agregar reseña */
-  addReview(productId: number, review: Omit<Review, 'createdAt'>): void {
-    const withDate: Review = {
-      ...review,
-      createdAt: new Date().toISOString()
+  /** Obtener promedio de calificación */
+  getAverage(productId: number): Observable<number> {
+    return this.http.get<number>(`${this.API_URL}/producto/${productId}/promedio`);
+  }
+
+  /** Crear nueva reseña */
+  addReview(review: {
+    rating: number;       // calificación
+    text: string;         // comentario
+    id_producto: number;  
+    id_usuario: number;  
+  }): Observable<any> {
+
+    // Adaptar al formato que tu backend espera
+    const body = {
+      id_usuario: review.id_usuario,
+      id_producto: review.id_producto,
+      calificacion: review.rating,
+      comentario: review.text
     };
 
-    const list = this.cache[productId] ?? [];
-    this.cache[productId] = [withDate, ...list]; // nueva primero
-    this.persist();
-
-    const subj = this.subjects.get(productId);
-    if (subj) subj.next([...(this.cache[productId] ?? [])]);
-  }
-
-  private persist() {
-    localStorage.setItem(LS_KEY, JSON.stringify(this.cache));
+    return this.http.post(this.API_URL, body).pipe(
+      tap(() => {
+        // Refrescar cache con la ruta correcta
+        const subject = this.cache.get(review.id_producto);
+        if (subject) {
+          this.http
+            .get<Review[]>(`${this.API_URL}/producto/${review.id_producto}`)
+            .subscribe(list => subject.next(list));
+        }
+      })
+    );
   }
 }

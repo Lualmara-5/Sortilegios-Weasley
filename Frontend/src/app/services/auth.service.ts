@@ -98,6 +98,11 @@ export class AuthService {
 
   // Login
   login(mail: string, password: string): Observable<User> {
+    console.log("📤 Enviando al backend:", {
+      email: mail,
+      password: password
+    });
+
     return this.http.post<User>(`${this.API_URL}/login`, { mail, password })
       .pipe(
         tap(user => {

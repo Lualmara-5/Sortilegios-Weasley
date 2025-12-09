@@ -30,14 +30,14 @@
     <!-- Formulario -->
     <form class="login-form" (ngSubmit)="onLogin()" #form="ngForm">
       <div class="form-group">
-        <label for="username">Ingresa tu alias mágico muggle</label>
+        <label for="username">Ingresa tu email mágico muggle</label>
         <input 
           type="text" 
           id="username" 
           class="magic-input" 
           placeholder="Ejemplo: HarryPotter_007"
-          [(ngModel)]="username"
-          name="username"
+          [(ngModel)]="mail"
+          name="mail"
           required
         />
       </div>

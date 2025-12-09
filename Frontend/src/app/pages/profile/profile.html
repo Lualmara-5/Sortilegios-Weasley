@@ -7,11 +7,11 @@
     </div>
 
     <div class="info-usuario">
-      <p><strong>Nombre:</strong> {{ usuarioActual.username }}</p>
+      <p><strong>Nombre:</strong> {{ usuarioActual.usuario.username }}</p>
       <p><strong>Alias:</strong> {{ aliasMagico }}</p>
       <p><strong>Dirección:</strong> {{ direccionMagica }}</p>
-      <p *ngIf="usuarioActual.email"><strong>Email:</strong> {{ usuarioActual.email }}</p>
-      <p *ngIf="usuarioActual.telefono"><strong>Teléfono:</strong> {{ usuarioActual.telefono }}</p>
+      <p *ngIf="usuarioActual.usuario.mail"><strong>Email:</strong> {{ usuarioActual.usuario.mail }}</p>
+      <p *ngIf="usuarioActual.usuario.telefono"><strong>Teléfono:</strong> {{ usuarioActual.usuario.telefono }}</p>
     </div>
 
     <div class="input-group">
@@ -25,7 +25,8 @@
     </div>
 
     <div class="acciones">
-      <button type="button" class="btn-primario" (click)="editarInfo()">Editar información</button>
+      <!-- 🔥 Cambiado a guardarCambios() -->
+      <button type="button" class="btn-primario" (click)="guardarCambios()">Guardar cambios</button>
       <button type="button" class="btn-salir" (click)="salir()">Salir</button>
     </div>
   </section>

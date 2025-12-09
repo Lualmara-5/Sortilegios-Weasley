@@ -1,18 +1,27 @@
-<!-- Cargando (muy breve la primera vez) -->
+<!-- =============================================== -->
+<!--            Cargando producto                    -->
+<!-- =============================================== -->
 <section class="pd-wrap" *ngIf="(product$ | async) === undefined">
-  <div class="pd-card"><p>Cargando producto…</p></div>
+  <div class="pd-card">
+    <p>Cargando producto…</p>
+  </div>
 </section>
 
-<!-- Producto encontrado -->
+<!-- =============================================== -->
+<!--            Producto encontrado                  -->
+<!-- =============================================== -->
 <section class="pd-wrap" *ngIf="product$ | async as p">
   <div class="pd-card">
+
     <h1 class="pd-title">{{ p.name }}</h1>
 
     <div class="pd-content">
+      <!-- Imagen -->
       <figure class="pd-media">
         <img class="pd-img" [src]="p.image" [alt]="p.name" />
       </figure>
 
+      <!-- Info del producto -->
       <div class="pd-info">
         <p class="pd-desc">{{ p.description }}</p>
 
@@ -26,23 +35,35 @@
           <button class="btn btn-primary" type="button" (click)="addToWishlist(p)">
             Añadir a lista de deseos
           </button>
-        </div>
-        <!-- ===== DEMOSTRACIÓN DE EFECTOS MÁGICOS ===== -->
-        <app-animation-viewer *ngIf="hasAnimation(p.id)" [productId]="p.id"> </app-animation-viewer>
+          <button class="btn btn-primary" type="button" (click)="agregarAlCaldero(p)">
+            Añadir al caldero
+        </button>
 
-        <section class="pd-reviews">
+        </div>
+
+        <!-- Animación mágica -->
+        <app-animation-viewer *ngIf="hasAnimation(p.id)" [productId]="p.id"></app-animation-viewer>
+
+        <!-- =========================================== -->
+        <!--               Reseñas                       -->
+        <!-- =========================================== -->
+        <section class="pd-reviews" *ngIf="reviews$ | async as reviews">
+
           <h3 class="rv-title">Opiniones y Reseñas Muggle</h3>
 
-          <!-- Resumen -->
-          <div class="rv-summary" *ngIf="reviews$ | async as reviews">
+          <!-- Resumen de calificación -->
+          <div class="rv-summary" *ngIf="avgRating$ | async as avg">
+
             <div class="rv-score">
-              <div class="rv-score-number">{{ (avgRating$ | async)?.toFixed(1) }}</div>
+              <div class="rv-score-number">
+                {{ avg && typeof avg === 'number' ? (avg | number : '1.1-1') : '0.0' }}
+              </div>
 
               <div class="rv-stars">
                 <span
-                  *ngFor="let s of [1, 2, 3, 4, 5]"
+                  *ngFor="let s of [1,2,3,4,5]"
                   class="star"
-                  [class.filled]="s <= Math.round((avgRating$ | async) || 0)"
+                  [class.filled]="s <= Math.round(avg)"
                 >
                   ★
                 </span>
@@ -53,29 +74,30 @@
 
             <!-- Lista corta -->
             <div class="rv-list">
-              <article class="rv-item" *ngFor="let r of reviews | slice : 0 : 2">
+              <article class="rv-item" *ngFor="let r of reviews | slice:0:2">
                 <img
                   class="rv-avatar"
-                  [src]="r?.avatar || 'assets/img/avatars/default.png'"
-                  [alt]="r?.author"
+                  src="assets/img/avatars/default.png"
+                  alt="Avatar"
                 />
+
                 <div class="rv-content">
                   <div class="rv-head">
-                    <strong class="rv-author">{{ r?.author }}</strong>
+                    <strong class="rv-author">Usuario {{ r.id_usuario }}</strong>
 
                     <span class="rv-stars-line">
                       <span
-                        *ngFor="let s of [1, 2, 3, 2, 1]"
+                        *ngFor="let s of [1,2,3,4,5]"
                         class="star"
-                        [class.filled]="s <= (r?.rating || 0)"
+                        [class.filled]="s <= r.calificacion"
                       >
                         ★
                       </span>
                     </span>
                   </div>
 
-                  <p class="rv-text">{{ r?.text }}</p>
-                  <small class="rv-date">{{ r?.createdAt | date : 'medium' }}</small>
+                  <p class="rv-text">{{ r.comentario }}</p>
+                  <small class="rv-date">{{ r.fecha | date:'medium' }}</small>
                 </div>
               </article>
             </div>
@@ -91,19 +113,14 @@
               </button>
             </div>
 
-            <!-- Formulario -->
+            <!-- Formulario de reseña -->
             <form class="rv-form" *ngIf="showForm" (ngSubmit)="submitReview(p.id)">
               <div class="rv-form-row">
-                <input
-                  class="rv-input"
-                  [(ngModel)]="form.author"
-                  name="author"
-                  placeholder="Tu nombre..."
-                  required
-                />
 
                 <select class="rv-input" [(ngModel)]="form.rating" name="rating">
-                  <option *ngFor="let s of [5, 4, 3, 2, 1]" [value]="s">{{ s }} ★</option>
+                  <option *ngFor="let s of [5,4,3,2,1]" [value]="s">
+                    {{ s }} ★
+                  </option>
                 </select>
               </div>
 
@@ -117,26 +134,35 @@
               ></textarea>
 
               <div class="rv-actions">
-                <button class="btn btn-primary" type="submit">Publicar reseña</button>
+                <button class="btn btn-primary" type="submit">
+                  Publicar reseña
+                </button>
               </div>
             </form>
+
           </div>
         </section>
+
       </div>
     </div>
 
     <p class="pd-disclaimer">
-      Sortilegios Weasley no se hace responsable por triángulos amorosos, corazones rotos ni
-      compromisos mágicos forzados. Compra bajo tu propio riesgo.
+      Sortilegios Weasley no se hace responsable por triángulos amorosos,
+      corazones rotos ni compromisos mágicos forzados. Compra bajo tu propio riesgo.
     </p>
+
   </div>
 
   <div class="glow-row">
-    <span class="glow"></span><span class="glow"></span><span class="glow"></span>
+    <span class="glow"></span>
+    <span class="glow"></span>
+    <span class="glow"></span>
   </div>
 </section>
 
-<!-- Producto no encontrado -->
+<!-- =============================================== -->
+<!--            Producto no encontrado               -->
+<!-- =============================================== -->
 <section class="pd-wrap" *ngIf="(product$ | async) === null">
   <div class="pd-card">
     <h2>Producto no encontrado</h2>
