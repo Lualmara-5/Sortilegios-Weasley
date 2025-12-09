@@ -231,6 +231,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateMarcasTenebrosas(ctx, canvas);
     }else if (this.animation?.id === 23) {
     this.animateEscudoMagico(ctx, canvas);
+    }else if (this.animation?.id === 24) {
+    this.animatePeruvianDarknessPowder(ctx, canvas); 
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -11445,4 +11447,653 @@ private animateEscudoMagico(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasEle
 
   animate();
 }
+
+// Animación de Polvo Peruano de Oscuridad Instantánea (ID 24)
+private animatePeruvianDarknessPowder(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    stateProgress: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+
+    constructor() {
+      this.x = canvas.width / 2 - 80;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.stateProgress += 0.015;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'shaking';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'shaking') {
+        this.stateProgress += 0.04;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'throwing';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'throwing') {
+        this.stateProgress += 0.05;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'waiting';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'waiting') {
+        this.stateProgress += 0.008;
+        
+        if (this.stateProgress >= 1) {
+          this.reset();
+        }
+      }
+
+      if (this.eyesOpen) {
+        this.blinkTimer++;
+        if (this.blinkTimer > 80 && Math.random() < 0.03) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 100);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#3B3B98';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#1F1F5C';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      bodyGradient.addColorStop(0, '#5A67D8');
+      bodyGradient.addColorStop(1, '#4C51BF');
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 35, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(-35, 20);
+      ctx.lineTo(-42, 60);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#FFD7BA';
+      ctx.beginPath();
+      ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      let armShake = 0;
+      if (this.state === 'shaking') {
+        armShake = Math.sin(this.stateProgress * Math.PI * 10) * 5;
+      }
+
+      if (this.state === 'throwing') {
+        const throwAngle = -0.8 * this.stateProgress;
+        const handX = 35 + Math.cos(throwAngle) * 50;
+        const handY = 20 + Math.sin(throwAngle) * 50;
+        
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.lineTo(handX, handY);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(handX, handY, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(35, 20);
+        ctx.lineTo(30 + armShake, 0);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(30 + armShake, 0, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      headGradient.addColorStop(0, '#FFEBD4');
+      headGradient.addColorStop(1, '#FFD7BA');
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+        ctx.arc(20, -25, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#6B4423';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      ctx.beginPath();
+      ctx.moveTo(-28, -32);
+      ctx.quadraticCurveTo(-18, -35, -10, -32);
+      ctx.moveTo(10, -32);
+      ctx.quadraticCurveTo(18, -35, 28, -32);
+      ctx.stroke();
+
+      ctx.fillStyle = '#2C1810';
+      ctx.beginPath();
+      ctx.ellipse(0, -48, 40, 20, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(20, -44, 15, 0, Math.PI * 2);
+      ctx.arc(0, -56, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFB6A3';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(-2, -15, 2.5, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#8B4513';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      ctx.beginPath();
+      ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 160, 160, 0.4)';
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class Bottle {
+    x: number;
+    y: number;
+    visible: boolean;
+    thrown: boolean;
+    throwProgress: number;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.x = character.x + 30;
+      this.y = character.y;
+      this.visible = true;
+      this.thrown = false;
+      this.throwProgress = 0;
+    }
+
+    update() {
+      if (this.character.state === 'shaking') {
+        const shake = Math.sin(this.character.stateProgress * Math.PI * 10) * 5;
+        this.x = this.character.x + 30 + shake;
+        this.y = this.character.y;
+      }
+
+      if (this.character.state === 'throwing' && !this.thrown) {
+        this.throwProgress = this.character.stateProgress;
+        
+        const startX = this.character.x + 30;
+        const startY = this.character.y;
+        const targetX = canvas.width / 2 + 100;
+        const targetY = canvas.height / 2 + 20;
+        
+        this.x = startX + (targetX - startX) * this.throwProgress;
+        this.y = startY + (targetY - startY) * this.throwProgress - Math.sin(this.throwProgress * Math.PI) * 50;
+
+        if (this.throwProgress >= 0.9) {
+          this.visible = false;
+          this.thrown = true;
+        }
+      }
+
+      if (this.character.state === 'standing' && this.character.stateProgress < 0.1) {
+        this.reset();
+      }
+    }
+
+    reset() {
+      this.x = this.character.x + 30;
+      this.y = this.character.y;
+      this.visible = true;
+      this.thrown = false;
+      this.throwProgress = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (!this.visible) return;
+
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      
+      const rotation = this.throwProgress * Math.PI * 2;
+      ctx.rotate(rotation);
+
+      const bottleGradient = ctx.createLinearGradient(-8, -15, 8, 15);
+      bottleGradient.addColorStop(0, 'rgba(200, 220, 255, 0.8)');
+      bottleGradient.addColorStop(0.5, 'rgba(150, 180, 230, 0.6)');
+      bottleGradient.addColorStop(1, 'rgba(100, 140, 200, 0.5)');
+      ctx.fillStyle = bottleGradient;
+      
+      ctx.beginPath();
+      ctx.moveTo(-8, -10);
+      ctx.lineTo(-8, 10);
+      ctx.quadraticCurveTo(-8, 15, -3, 15);
+      ctx.lineTo(3, 15);
+      ctx.quadraticCurveTo(8, 15, 8, 10);
+      ctx.lineTo(8, -10);
+      ctx.quadraticCurveTo(8, -15, 3, -15);
+      ctx.lineTo(-3, -15);
+      ctx.quadraticCurveTo(-8, -15, -8, -10);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(20, 10, 30, 0.9)';
+      ctx.fillRect(-6, -5, 12, 18);
+
+      ctx.fillStyle = '#8B4513';
+      ctx.fillRect(-4, -18, 8, 6);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.fillRect(-6, -8, 3, 10);
+
+      ctx.fillStyle = 'rgba(160, 120, 255, 0.6)';
+      ctx.fillRect(-7, 0, 14, 8);
+
+      ctx.restore();
+    }
+  }
+
+  class DarknessCloud {
+    centerX: number;
+    centerY: number;
+    radius: number;
+    maxRadius: number;
+    opacity: number;
+    phase: string;
+    pulsePhase: number;
+    swirls: Array<{angle: number, distance: number, rotation: number}>;
+
+    constructor(x: number, y: number) {
+      this.centerX = x;
+      this.centerY = y;
+      this.radius = 0;
+      this.maxRadius = 200;
+      this.opacity = 0;
+      this.phase = 'expanding';
+      this.pulsePhase = 0;
+      this.swirls = [];
+      
+      for (let i = 0; i < 6; i++) {
+        this.swirls.push({
+          angle: (i / 6) * Math.PI * 2,
+          distance: 0,
+          rotation: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    update() {
+      this.pulsePhase += 0.03;
+
+      if (this.phase === 'expanding') {
+        this.radius += 3;
+        this.opacity += 0.02;
+        
+        for (const swirl of this.swirls) {
+          swirl.distance += 2;
+          swirl.rotation += 0.05;
+        }
+        
+        if (this.radius >= this.maxRadius) {
+          this.phase = 'pulsing';
+          this.opacity = 0.95;
+        }
+      } else if (this.phase === 'pulsing') {
+        for (const swirl of this.swirls) {
+          swirl.rotation += 0.02;
+        }
+      } else if (this.phase === 'contracting') {
+        this.radius -= 3;
+        this.opacity -= 0.02;
+        
+        for (const swirl of this.swirls) {
+          swirl.distance -= 2;
+        }
+      }
+    }
+
+    startContracting() {
+      this.phase = 'contracting';
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+
+      const pulse = Math.sin(this.pulsePhase) * 10;
+      
+      for (let layer = 0; layer < 3; layer++) {
+        const layerRadius = this.radius * (1 - layer * 0.15) + pulse * (1 - layer * 0.3);
+        const layerOpacity = this.opacity * (0.4 - layer * 0.1);
+        
+        const gradient = ctx.createRadialGradient(
+          this.centerX, this.centerY, 0,
+          this.centerX, this.centerY, layerRadius
+        );
+        gradient.addColorStop(0, `rgba(10, 5, 20, ${layerOpacity})`);
+        gradient.addColorStop(0.5, `rgba(20, 10, 30, ${layerOpacity * 0.8})`);
+        gradient.addColorStop(1, `rgba(30, 15, 40, 0)`);
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.centerX, this.centerY, layerRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      for (const swirl of this.swirls) {
+        ctx.save();
+        ctx.translate(this.centerX, this.centerY);
+        ctx.rotate(swirl.angle + swirl.rotation);
+        
+        ctx.globalAlpha = this.opacity * 0.4;
+        ctx.strokeStyle = 'rgba(40, 20, 60, 0.6)';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        for (let i = 0; i < 20; i++) {
+          const t = i / 20;
+          const angle = t * Math.PI * 2;
+          const distance = swirl.distance * t;
+          const x = Math.cos(angle) * distance;
+          const y = Math.sin(angle) * distance;
+          
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+  }
+
+  class VioletMote {
+    x: number;
+    y: number;
+    baseX: number;
+    baseY: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    twinklePhase: number;
+    twinkleSpeed: number;
+    orbitAngle: number;
+    orbitSpeed: number;
+    orbitRadius: number;
+
+    constructor(cloudX: number, cloudY: number, cloudRadius: number) {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * cloudRadius;
+      
+      this.x = cloudX + Math.cos(angle) * distance;
+      this.y = cloudY + Math.sin(angle) * distance;
+      this.baseX = this.x;
+      this.baseY = this.y;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+      this.size = Math.random() * 3 + 1;
+      this.life = 1;
+      this.twinklePhase = Math.random() * Math.PI * 2;
+      this.twinkleSpeed = Math.random() * 0.1 + 0.05;
+      this.orbitAngle = angle;
+      this.orbitSpeed = (Math.random() - 0.5) * 0.02;
+      this.orbitRadius = distance;
+    }
+
+    update(cloudX: number, cloudY: number) {
+      this.orbitAngle += this.orbitSpeed;
+      this.twinklePhase += this.twinkleSpeed;
+      
+      this.x = cloudX + Math.cos(this.orbitAngle) * this.orbitRadius + this.vx;
+      this.y = cloudY + Math.sin(this.orbitAngle) * this.orbitRadius + this.vy;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      
+      const twinkle = Math.sin(this.twinklePhase) * 0.5 + 0.5;
+      ctx.globalAlpha = this.life * twinkle;
+
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+      gradient.addColorStop(0, 'rgba(200, 140, 255, 1)');
+      gradient.addColorStop(0.5, 'rgba(160, 100, 230, 0.8)');
+      gradient.addColorStop(1, 'rgba(120, 60, 200, 0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 200, 255, 1)';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class ImpactEffect {
+    x: number;
+    y: number;
+    size: number;
+    maxSize: number;
+    life: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.size = 0;
+      this.maxSize = 50;
+      this.life = 1;
+    }
+
+    update() {
+      this.size += 4;
+      this.life = 1 - (this.size / this.maxSize);
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life;
+
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+      gradient.addColorStop(0, 'rgba(100, 50, 150, 0.8)');
+      gradient.addColorStop(0.5, 'rgba(60, 30, 100, 0.4)');
+      gradient.addColorStop(1, 'rgba(20, 10, 40, 0)');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const bottle = new Bottle(character);
+  const darknessClouds: DarknessCloud[] = [];
+  const violetMotes: VioletMote[] = [];
+  const impactEffects: ImpactEffect[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a33');
+    gradient.addColorStop(1, '#2d1b4e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 30; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (bottle.thrown && bottle.throwProgress >= 0.9 && darknessClouds.length === 0) {
+      const cloud = new DarknessCloud(bottle.x, bottle.y);
+      darknessClouds.push(cloud);
+      impactEffects.push(new ImpactEffect(bottle.x, bottle.y));
+    }
+
+    if (darknessClouds.length > 0) {
+      const cloud = darknessClouds[0];
+      if (cloud.phase === 'expanding' && Math.random() < 0.3) {
+        violetMotes.push(new VioletMote(cloud.centerX, cloud.centerY, cloud.radius));
+      } else if (cloud.phase === 'pulsing' && violetMotes.length < 40 && Math.random() < 0.15) {
+        violetMotes.push(new VioletMote(cloud.centerX, cloud.centerY, cloud.radius));
+      }
+    }
+
+    if (character.state === 'standing' && character.stateProgress < 0.1 && darknessClouds.length > 0) {
+      for (const cloud of darknessClouds) {
+        cloud.startContracting();
+      }
+    }
+
+    for (let i = darknessClouds.length - 1; i >= 0; i--) {
+      const cloud = darknessClouds[i];
+      cloud.update();
+      
+      if (cloud.radius <= 0 && cloud.phase === 'contracting') {
+        darknessClouds.splice(i, 1);
+        violetMotes.length = 0;
+      } else {
+        cloud.draw(ctx);
+      }
+    }
+
+    for (let i = impactEffects.length - 1; i >= 0; i--) {
+      const effect = impactEffects[i];
+      effect.update();
+      
+      if (effect.size >= effect.maxSize) {
+        impactEffects.splice(i, 1);
+      } else {
+        effect.draw(ctx);
+      }
+    }
+
+    for (let i = violetMotes.length - 1; i >= 0; i--) {
+      const mote = violetMotes[i];
+      
+      if (darknessClouds.length > 0) {
+        mote.update(darknessClouds[0].centerX, darknessClouds[0].centerY);
+        mote.draw(ctx);
+      } else {
+        violetMotes.splice(i, 1);
+      }
+    }
+
+    bottle.update();
+    character.update();
+
+    character.draw(ctx);
+    bottle.draw(ctx);
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
 }

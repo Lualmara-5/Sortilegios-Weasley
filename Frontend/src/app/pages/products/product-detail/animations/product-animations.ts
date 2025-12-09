@@ -178,7 +178,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'escudo-magico',
     description: 'Rebotan maleficios leves a moderados. Usados incluso por el Ministerio de Magia'
   },
-  
+    // 24. Polvo peruano de oscuridad instantánea - Nube de oscuridad
+  24: {
+    id: 24,
+    animationType: 'canvas',
+    componentName: 'peruvian-darkness-powder',
+    description: '¡Oscuridad total al instante con motas mágicas!'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {
