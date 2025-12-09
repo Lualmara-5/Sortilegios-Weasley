@@ -1,5 +1,5 @@
 import express from "express";
-import * as pedidoController from "../controllers/pedidoController.js";
+import * as pedidoController from "../controllers/pedido.js";
 
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-import { pool } from "../db.js";
+import pool from "../db.js";
 
 // Obtener todas las reseñas
 export const obtenerResenas = async (req, res) => {

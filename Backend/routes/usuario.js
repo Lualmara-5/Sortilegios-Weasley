@@ -1,5 +1,6 @@
 import express from "express";
-import * as usuarioController from "../controllers/usuarioController.js";
+import * as usuarioController from "../controllers/usuario.js";
+import pool from "../db.js";
 
 const router = express.Router();
 

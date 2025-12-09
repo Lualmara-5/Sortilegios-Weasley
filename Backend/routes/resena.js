@@ -1,5 +1,5 @@
 import express from "express";
-import * as resenaController from "../controllers/resenaController.js";
+import * as resenaController from "../controllers/resena.js";
 
 const router = express.Router();
 

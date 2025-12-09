@@ -1,4 +1,4 @@
-import { pool } from "../db.js";
+import pool from "../db.js";
 
 // Obtener todos los pedidos
 export const obtenerPedidos = async (req, res) => {
