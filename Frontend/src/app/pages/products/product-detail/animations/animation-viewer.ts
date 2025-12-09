@@ -225,6 +225,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateSprayAumentaTodo(ctx, canvas);
     }else if (this.animation?.id === 20) {  
     this.animateVaritasDelReves(ctx, canvas); 
+    }else if (this.animation?.id === 21) { 
+    this.animateDaydreamFantasy(ctx, canvas); 
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -9689,6 +9691,436 @@ private animateVaritasDelReves(ctx: CanvasRenderingContext2D, canvas: HTMLCanvas
     if (time >= cycleTime) {
       time = 0;
       spellBeam = null;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+
+// Animación de Fantasías Patentadas (ID 21)
+private animateDaydreamFantasy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  class Sparkle {
+    x: number;
+    y: number;
+    size: number;
+    life: number;
+    vy: number;
+    vx: number;
+    twinkle: number;
+    color: string;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.size = 2 + Math.random() * 4;
+      this.life = 1;
+      this.vy = -0.3 - Math.random() * 0.5;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.twinkle = Math.random() * Math.PI * 2;
+      this.color = ['#E1F5FE', '#F3E5F5', '#FFF9C4', '#E8EAF6'][Math.floor(Math.random() * 4)];
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= 0.01;
+      this.twinkle += 0.1;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (this.life <= 0) return;
+
+      ctx.save();
+      ctx.globalAlpha = this.life * (0.5 + Math.sin(this.twinkle) * 0.5);
+      
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  class DreamParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    color: string;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 0.5 + Math.random() * 1;
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed - 0.5;
+      this.size = 3 + Math.random() * 5;
+      this.life = 1;
+      this.color = ['#B39DDB', '#90CAF9', '#CE93D8', '#80DEEA'][Math.floor(Math.random() * 4)];
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vx *= 0.98;
+      this.vy *= 0.98;
+      this.life -= 0.015;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (this.life <= 0) return;
+
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.6;
+      
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+      gradient.addColorStop(0, this.color);
+      gradient.addColorStop(1, 'rgba(179, 157, 219, 0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const sparkles: Sparkle[] = [];
+  const dreamParticles: DreamParticle[] = [];
+  let time = 0;
+
+  const drawVial = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    const vialGlow = ctx.createRadialGradient(0, 0, 0, 0, 0, 50);
+    vialGlow.addColorStop(0, 'rgba(179, 157, 219, 0.3)');
+    vialGlow.addColorStop(1, 'rgba(179, 157, 219, 0)');
+    ctx.fillStyle = vialGlow;
+    ctx.beginPath();
+    ctx.arc(0, 0, 50, 0, Math.PI * 2);
+    ctx.fill();
+    
+    const glassGrad = ctx.createLinearGradient(-25, -40, 25, 40);
+    glassGrad.addColorStop(0, 'rgba(200, 230, 255, 0.3)');
+    glassGrad.addColorStop(0.5, 'rgba(220, 240, 255, 0.5)');
+    glassGrad.addColorStop(1, 'rgba(200, 230, 255, 0.3)');
+    
+    ctx.fillStyle = glassGrad;
+    ctx.strokeStyle = '#7986CB';
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.moveTo(-25, 30);
+    ctx.lineTo(-25, -25);
+    ctx.quadraticCurveTo(-25, -35, -15, -35);
+    ctx.lineTo(15, -35);
+    ctx.quadraticCurveTo(25, -35, 25, -25);
+    ctx.lineTo(25, 30);
+    ctx.quadraticCurveTo(25, 40, 0, 40);
+    ctx.quadraticCurveTo(-25, 40, -25, 30);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    const liquidGrad = ctx.createLinearGradient(0, -10, 0, 35);
+    liquidGrad.addColorStop(0, 'rgba(179, 157, 219, 0.4)');
+    liquidGrad.addColorStop(0.5, 'rgba(156, 39, 176, 0.3)');
+    liquidGrad.addColorStop(1, 'rgba(179, 157, 219, 0.5)');
+    
+    ctx.fillStyle = liquidGrad;
+    ctx.beginPath();
+    ctx.moveTo(-23, 30);
+    ctx.lineTo(-23, -10);
+    ctx.quadraticCurveTo(0, -8, 23, -10);
+    ctx.lineTo(23, 30);
+    ctx.quadraticCurveTo(23, 38, 0, 38);
+    ctx.quadraticCurveTo(-23, 38, -23, 30);
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.fillStyle = glassGrad;
+    ctx.strokeStyle = '#7986CB';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.rect(-12, -50, 24, 15);
+    ctx.fill();
+    ctx.stroke();
+    
+    const stopperGrad = ctx.createLinearGradient(-10, -65, 10, -50);
+    stopperGrad.addColorStop(0, '#9FA8DA');
+    stopperGrad.addColorStop(1, '#7986CB');
+    
+    ctx.fillStyle = stopperGrad;
+    ctx.strokeStyle = '#5C6BC0';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-10, -50);
+    ctx.lineTo(-8, -62);
+    ctx.lineTo(8, -62);
+    ctx.lineTo(10, -50);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#9FA8DA';
+    ctx.strokeStyle = '#5C6BC0';
+    ctx.beginPath();
+    ctx.ellipse(0, -62, 8, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.strokeStyle = '#9575CD';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(-18, 0, 36, 20);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#673AB7';
+    ctx.font = 'italic 9px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Daydream', 0, 10);
+    ctx.fillText('Fantasy', 0, 18);
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.beginPath();
+    ctx.ellipse(-12, -15, 10, 20, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  };
+
+  const drawDreamCloud = (ctx: CanvasRenderingContext2D, x: number, y: number, scale: number, alpha: number) => {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    
+    const cloudColors = [
+      { color: 'rgba(179, 157, 219, 0.3)', size: 60 },
+      { color: 'rgba(156, 39, 176, 0.2)', size: 50 },
+      { color: 'rgba(206, 147, 216, 0.25)', size: 55 }
+    ];
+    
+    cloudColors.forEach(({ color, size }) => {
+      ctx.fillStyle = color;
+      ctx.filter = 'blur(8px)';
+      
+      ctx.beginPath();
+      ctx.arc(-30, 0, size * 0.6, 0, Math.PI * 2);
+      ctx.arc(30, 0, size * 0.6, 0, Math.PI * 2);
+      ctx.arc(0, -20, size * 0.7, 0, Math.PI * 2);
+      ctx.arc(-15, 15, size * 0.5, 0, Math.PI * 2);
+      ctx.arc(15, 15, size * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    
+    ctx.filter = 'none';
+    ctx.restore();
+  };
+
+  const drawDreamScene = (ctx: CanvasRenderingContext2D, x: number, y: number, scale: number, alpha: number) => {
+    if (scale <= 0.1) return;
+    
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    
+    const castleGrad = ctx.createLinearGradient(0, -50, 0, 20);
+    castleGrad.addColorStop(0, '#E1BEE7');
+    castleGrad.addColorStop(1, '#CE93D8');
+    
+    ctx.fillStyle = castleGrad;
+    ctx.strokeStyle = '#AB47BC';
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.rect(-15, -30, 30, 50);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#BA68C8';
+    ctx.beginPath();
+    ctx.moveTo(-20, -30);
+    ctx.lineTo(0, -55);
+    ctx.lineTo(20, -30);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = castleGrad;
+    ctx.beginPath();
+    ctx.rect(-35, -10, 15, 30);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.rect(20, -10, 15, 30);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#BA68C8';
+    ctx.beginPath();
+    ctx.moveTo(-40, -10);
+    ctx.lineTo(-27.5, -25);
+    ctx.lineTo(-15, -10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(20, -10);
+    ctx.lineTo(27.5, -25);
+    ctx.lineTo(35, -10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#FFF59D';
+    ctx.shadowColor = '#FFEB3B';
+    ctx.shadowBlur = 10;
+    
+    ctx.fillRect(-8, -15, 6, 8);
+    ctx.fillRect(2, -15, 6, 8);
+    ctx.fillRect(-30, 0, 5, 6);
+    ctx.fillRect(25, 0, 5, 6);
+    
+    ctx.shadowBlur = 5;
+    ctx.fillStyle = '#FFD54F';
+    for (let i = 0; i < 5; i++) {
+      const starX = -50 + Math.random() * 100;
+      const starY = -60 + Math.random() * 30;
+      const starSize = 2 + Math.random() * 3;
+      
+      ctx.save();
+      ctx.translate(starX, starY);
+      ctx.rotate(time * 2 + i);
+      ctx.fillRect(-starSize / 2, -starSize / 2, starSize, starSize);
+      ctx.restore();
+    }
+    
+    ctx.restore();
+  };
+
+  const animate = () => {
+    ctx.fillStyle = 'rgba(20, 10, 30, 0.25)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    time += 0.016;
+
+    const loopTime = time % 6;
+    let phase = 0;
+    let phaseProgress = 0;
+
+    if (loopTime < 1) {
+      phase = 1;
+      phaseProgress = loopTime / 1;
+    } else if (loopTime < 2.5) {
+      phase = 2;
+      phaseProgress = (loopTime - 1) / 1.5;
+    } else if (loopTime < 5) {
+      phase = 3;
+      phaseProgress = (loopTime - 2.5) / 2.5;
+    } else {
+      phase = 4;
+      phaseProgress = (loopTime - 5) / 1;
+    }
+
+    const vialX = canvas.width / 2 - 150;
+    const vialY = canvas.height / 2 + 50;
+    const cloudX = canvas.width / 2 + 80;
+    const cloudY = canvas.height / 2 - 80;
+
+    drawVial(ctx, vialX, vialY);
+
+    if (phase === 1) {
+      if (Math.random() < 0.1) {
+        sparkles.push(new Sparkle(vialX + (Math.random() - 0.5) * 40, vialY + (Math.random() - 0.5) * 40));
+      }
+    }
+
+    if (phase === 2) {
+      const cloudScale = phaseProgress < 0.5 
+        ? 2 * phaseProgress * phaseProgress 
+        : 1 - Math.pow(-2 * phaseProgress + 2, 2) / 2;
+      const cloudAlpha = cloudScale;
+      
+      drawDreamCloud(ctx, cloudX, cloudY, cloudScale, cloudAlpha);
+      
+      if (Math.random() < 0.4) {
+        dreamParticles.push(new DreamParticle(vialX, vialY - 50));
+      }
+      
+      if (Math.random() < 0.3) {
+        sparkles.push(new Sparkle(cloudX + (Math.random() - 0.5) * 80, cloudY + (Math.random() - 0.5) * 60));
+      }
+    }
+
+    if (phase === 3) {
+      drawDreamCloud(ctx, cloudX, cloudY, 1, 0.9);
+      
+      const sceneScale = 0.7 + Math.sin(phaseProgress * Math.PI * 2) * 0.1;
+      drawDreamScene(ctx, cloudX, cloudY, sceneScale, 0.9);
+      
+      if (Math.random() < 0.2) {
+        sparkles.push(new Sparkle(cloudX + (Math.random() - 0.5) * 100, cloudY + (Math.random() - 0.5) * 80));
+      }
+      
+      if (Math.random() < 0.15) {
+        dreamParticles.push(new DreamParticle(vialX, vialY - 50));
+      }
+    }
+
+    if (phase === 4) {
+      const fadeAlpha = 1 - phaseProgress;
+      const fadeScale = 1 - phaseProgress * 0.3;
+      
+      drawDreamCloud(ctx, cloudX, cloudY, fadeScale, fadeAlpha * 0.9);
+      drawDreamScene(ctx, cloudX, cloudY, fadeScale, fadeAlpha * 0.9);
+    }
+
+    for (let i = sparkles.length - 1; i >= 0; i--) {
+      sparkles[i].update();
+      sparkles[i].draw(ctx);
+      
+      if (sparkles[i].isDead()) {
+        sparkles.splice(i, 1);
+      }
+    }
+
+    for (let i = dreamParticles.length - 1; i >= 0; i--) {
+      dreamParticles[i].update();
+      dreamParticles[i].draw(ctx);
+      
+      if (dreamParticles[i].isDead()) {
+        dreamParticles.splice(i, 1);
+      }
+    }
+
+    if (phase === 1 && loopTime < 0.1) {
+      sparkles.length = 0;
+      dreamParticles.length = 0;
     }
 
     this.animationFrameId = requestAnimationFrame(animate);

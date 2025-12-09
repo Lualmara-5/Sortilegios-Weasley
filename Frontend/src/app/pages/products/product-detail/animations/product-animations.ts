@@ -157,6 +157,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'reverse-wand',
     description: '¡Lanzan el contrahechizo del conjuro que realmente se quiere usar!'
   },
+    // 21. Fantasías patentadas
+  21: {
+    id: 21,
+    animationType: 'canvas',
+    componentName: 'daydream-fantasy',
+    description: 'Una fantasía mágica aparece en una nube de ensueño'
+  }
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {
