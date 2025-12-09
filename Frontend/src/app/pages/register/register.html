@@ -32,12 +32,27 @@
           id="alias" 
           class="magic-input" 
           placeholder="Ejemplo: Bruja_123"
-          [(ngModel)]="alias"
-          name="alias"
+          [(ngModel)]="nickname"
+          name="nickname"
           required
         />
         <span class="input-hint">Solo letras, entre 3 y 30 caracteres</span>
       </div>
+
+      <div class="form-group">
+        <label for="mail">Tu correo mágico</label>
+        <input
+          type="mail"
+          id="mail"
+          class="magic-input"
+          placeholder="Ejemplo: hechizo@hogwarts.com"
+          [(ngModel)]="mail"
+          name="mail"
+          required
+        />
+        <span class="input-hint">Debe ser un correo válido</span>
+      </div>
+
 
       <div class="form-group">
         <label for="password-register">Inventa un hechizo secreto</label>
