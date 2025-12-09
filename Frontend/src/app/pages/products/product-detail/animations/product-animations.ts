@@ -150,6 +150,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'enlarging-spray',
     description: '¡Rocía y agranda cualquier objeto! Efecto de hasta tres días.'
   },
+    // 20. Varitas del revés - Contrahechizo boomerang
+  20: {
+    id: 20,
+    animationType: 'canvas',
+    componentName: 'reverse-wand',
+    description: '¡Lanzan el contrahechizo del conjuro que realmente se quiere usar!'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

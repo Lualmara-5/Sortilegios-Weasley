@@ -223,7 +223,9 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animatePlumaInvisible(ctx, canvas);  
     } else if (this.animation?.id === 19) {
     this.animateSprayAumentaTodo(ctx, canvas);
-  }
+    }else if (this.animation?.id === 20) {  
+    this.animateVaritasDelReves(ctx, canvas); 
+    }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
   private animateTongueCandy(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -9115,4 +9117,584 @@ private animateSprayAumentaTodo(ctx: CanvasRenderingContext2D, canvas: HTMLCanva
 
   animate();
 }
+
+// Animación de las Varitas del Revés (ID 20)
+private animateVaritasDelReves(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+  const cycleTime = 220;
+  const spellParticles: any[] = [];
+
+  class SpellParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+    rotation: number;
+    rotationSpeed: number;
+
+    constructor(x: number, y: number, vx: number, vy: number, color: string) {
+      this.x = x;
+      this.y = y;
+      this.vx = vx;
+      this.vy = vy;
+      this.life = 40;
+      this.maxLife = 40;
+      this.size = Math.random() * 4 + 2;
+      this.color = color;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vx *= 0.98;
+      this.vy *= 0.98;
+      this.rotation += this.rotationSpeed;
+      this.life--;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      context.save();
+      context.translate(this.x, this.y);
+      context.rotate(this.rotation);
+      context.globalAlpha = alpha;
+
+      context.fillStyle = this.color;
+      context.shadowBlur = 12;
+      context.shadowColor = this.color;
+      context.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        const radius = i % 2 === 0 ? this.size : this.size / 2;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        if (i === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      }
+      context.closePath();
+      context.fill();
+
+      context.globalAlpha = 1;
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  class SpellBeam {
+    startX: number;
+    startY: number;
+    targetX: number;
+    targetY: number;
+    progress: number;
+    returning: boolean;
+    currentX: number;
+    currentY: number;
+    color: string;
+
+    constructor(startX: number, startY: number, targetX: number, targetY: number) {
+      this.startX = startX;
+      this.startY = startY;
+      this.targetX = targetX;
+      this.targetY = targetY;
+      this.progress = 0;
+      this.returning = false;
+      this.currentX = startX;
+      this.currentY = startY;
+      this.color = '#00ffff';
+    }
+
+    update() {
+      if (!this.returning) {
+        this.progress += 0.04;
+        if (this.progress >= 1) {
+          this.progress = 1;
+          this.returning = true;
+        }
+      } else {
+        this.progress -= 0.05;
+        if (this.progress <= 0) {
+          this.progress = 0;
+        }
+      }
+
+      const t = this.progress;
+      const curveHeight = 50;
+      
+      this.currentX = this.startX + (this.targetX - this.startX) * t;
+      this.currentY = this.startY + (this.targetY - this.startY) * t - Math.sin(t * Math.PI) * curveHeight;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      context.save();
+      context.strokeStyle = this.color;
+      context.lineWidth = 4;
+      context.shadowBlur = 20;
+      context.shadowColor = this.color;
+      context.lineCap = 'round';
+
+      context.beginPath();
+      const segments = 20;
+      for (let i = 0; i <= segments; i++) {
+        const t = (i / segments) * this.progress;
+        const x = this.startX + (this.targetX - this.startX) * t;
+        const y = this.startY + (this.targetY - this.startY) * t - Math.sin(t * Math.PI) * 50;
+        
+        if (i === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      }
+      context.stroke();
+
+      context.fillStyle = '#ffffff';
+      context.shadowBlur = 30;
+      context.beginPath();
+      context.arc(this.currentX, this.currentY, 6, 0, Math.PI * 2);
+      context.fill();
+
+      if (Math.random() < 0.3) {
+        spellParticles.push(new SpellParticle(
+          this.currentX,
+          this.currentY,
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 2,
+          this.color
+        ));
+      }
+
+      context.restore();
+    }
+
+    isComplete() {
+      return this.returning && this.progress <= 0;
+    }
+  }
+
+  let spellBeam: SpellBeam | null = null;
+
+  const drawWizard = (x: number, y: number, surprised: boolean, hitBySpell: boolean, armAngle: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+
+    const scale = hitBySpell ? 1.35 + Math.sin(time * 0.5) * 0.15 : 1.5;
+    ctx.scale(scale, scale);
+
+    const robeGradient = ctx.createLinearGradient(-25, 0, 25, 80);
+    robeGradient.addColorStop(0, '#5b2c8a');
+    robeGradient.addColorStop(0.5, '#4a148c');
+    robeGradient.addColorStop(1, '#38006b');
+    ctx.fillStyle = robeGradient;
+    ctx.beginPath();
+    ctx.moveTo(-25, 10);
+    ctx.quadraticCurveTo(-30, 40, -28, 80);
+    ctx.lineTo(28, 80);
+    ctx.quadraticCurveTo(30, 40, 25, 10);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.beginPath();
+    ctx.moveTo(-10, 20);
+    ctx.quadraticCurveTo(-15, 50, -12, 80);
+    ctx.lineTo(-5, 80);
+    ctx.quadraticCurveTo(-8, 50, -5, 20);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#ffe4c4';
+    ctx.fillRect(-8, 8, 16, 8);
+
+    ctx.fillStyle = '#ffd700';
+    ctx.fillRect(-25, 30, 50, 6);
+    ctx.fillStyle = '#d4af37';
+    ctx.fillRect(-6, 28, 12, 10);
+    ctx.fillStyle = '#ffd700';
+    ctx.fillRect(-4, 30, 8, 6);
+
+    ctx.fillStyle = '#6a1b9a';
+    ctx.beginPath();
+    ctx.arc(0, 10, 12, 0, Math.PI);
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(-20, 18);
+    ctx.fillStyle = '#4a148c';
+    ctx.beginPath();
+    ctx.arc(0, 0, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#5b2c8a';
+    ctx.fillRect(-5, 0, 10, 25);
+    ctx.beginPath();
+    ctx.arc(0, 25, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(-4, 25, 8, 20);
+    ctx.fillStyle = '#ffe4c4';
+    ctx.beginPath();
+    ctx.arc(0, 48, 6, 0, Math.PI * 2);
+    ctx.fill();
+    for (let i = -1; i <= 1; i++) {
+      ctx.fillRect(i * 3 - 1.5, 48, 3, 8);
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(20, 18);
+    ctx.rotate(armAngle);
+    ctx.fillStyle = '#4a148c';
+    ctx.beginPath();
+    ctx.arc(0, 0, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#5b2c8a';
+    ctx.fillRect(-5, 0, 10, 25);
+    ctx.beginPath();
+    ctx.arc(0, 25, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(-4, 25, 8, 20);
+    ctx.fillStyle = '#ffe4c4';
+    ctx.beginPath();
+    ctx.arc(0, 48, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(-6, 46, 3, 6);
+    ctx.fillRect(-2, 48, 4, 8);
+    ctx.fillRect(2, 50, 3, 6);
+    ctx.restore();
+
+    const headGradient = ctx.createRadialGradient(-8, -25, 8, 0, -20, 25);
+    headGradient.addColorStop(0, '#ffe4c4');
+    headGradient.addColorStop(0.7, '#ffd4a3');
+    headGradient.addColorStop(1, '#e6b88a');
+    ctx.fillStyle = headGradient;
+    ctx.beginPath();
+    ctx.arc(0, -20, 25, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#ffd4a3';
+    ctx.beginPath();
+    ctx.ellipse(-22, -20, 8, 12, 0.3, 0, Math.PI * 2);
+    ctx.ellipse(22, -20, 8, 12, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#4a148c';
+    ctx.beginPath();
+    ctx.moveTo(-28, -35);
+    ctx.quadraticCurveTo(-5, -75, 0, -80);
+    ctx.quadraticCurveTo(5, -75, 28, -35);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-15, -38);
+    ctx.quadraticCurveTo(-8, -60, -5, -70);
+    ctx.stroke();
+
+    ctx.fillStyle = '#5b2c8a';
+    ctx.beginPath();
+    ctx.ellipse(0, -35, 32, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(0, -55);
+    ctx.rotate(time * 0.05);
+    ctx.fillStyle = '#ffd700';
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#ffd700';
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+      const radius = i % 2 === 0 ? 8 : 4;
+      const starX = Math.cos(angle) * radius;
+      const starY = Math.sin(angle) * radius;
+      if (i === 0) ctx.moveTo(starX, starY);
+      else ctx.lineTo(starX, starY);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+
+    if (surprised) {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(-10, -22, 7, 0, Math.PI * 2);
+      ctx.arc(10, -22, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#4a90e2';
+      ctx.beginPath();
+      ctx.arc(-10, -22, 5, 0, Math.PI * 2);
+      ctx.arc(10, -22, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(-10, -22, 3, 0, Math.PI * 2);
+      ctx.arc(10, -22, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(-11, -24, 2, 0, Math.PI * 2);
+      ctx.arc(9, -24, 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.ellipse(-10, -22, 6, 7, 0, 0, Math.PI * 2);
+      ctx.ellipse(10, -22, 6, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#4a90e2';
+      ctx.beginPath();
+      ctx.arc(-10, -22, 4, 0, Math.PI * 2);
+      ctx.arc(10, -22, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(-10, -22, 2.5, 0, Math.PI * 2);
+      ctx.arc(10, -22, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(-11, -24, 1.5, 0, Math.PI * 2);
+      ctx.arc(9, -24, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.strokeStyle = '#8b4513';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    if (surprised) {
+      ctx.beginPath();
+      ctx.moveTo(-16, -30);
+      ctx.quadraticCurveTo(-10, -33, -4, -30);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(16, -30);
+      ctx.quadraticCurveTo(10, -33, 4, -30);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(-16, -28);
+      ctx.quadraticCurveTo(-10, -30, -4, -28);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(16, -28);
+      ctx.quadraticCurveTo(10, -30, 4, -28);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-1, -18);
+    ctx.lineTo(-3, -10);
+    ctx.quadraticCurveTo(-3, -8, -1, -8);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (surprised || hitBySpell) {
+      ctx.arc(0, -8, 8, 0, Math.PI * 2);
+    } else {
+      ctx.arc(0, -8, 8, 0, Math.PI);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = '#8b4513';
+    ctx.beginPath();
+    ctx.moveTo(-8, -2);
+    ctx.quadraticCurveTo(0, 5, 8, -2);
+    ctx.quadraticCurveTo(5, 8, 0, 10);
+    ctx.quadraticCurveTo(-5, 8, -8, -2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  const drawWand = (x: number, y: number, angle: number, glowing: boolean) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    const wandGradient = ctx.createLinearGradient(0, 0, 40, 0);
+    wandGradient.addColorStop(0, '#8b4513');
+    wandGradient.addColorStop(0.5, '#a0522d');
+    wandGradient.addColorStop(1, '#654321');
+    ctx.fillStyle = wandGradient;
+    
+    ctx.beginPath();
+    ctx.moveTo(0, -2.5);
+    ctx.lineTo(40, -1.5);
+    ctx.lineTo(40, 1.5);
+    ctx.lineTo(0, 2.5);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#654321';
+    ctx.fillRect(0, -3, 8, 6);
+
+    if (glowing) {
+      ctx.fillStyle = '#00ffff';
+      ctx.shadowBlur = 30;
+      ctx.shadowColor = '#00ffff';
+      ctx.beginPath();
+      ctx.arc(40, 0, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(40, 0, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (let i = 0; i < 4; i++) {
+        const starAngle = (time * 0.1 + i * (Math.PI * 2 / 4));
+        const starDist = 15;
+        const starX = 40 + Math.cos(starAngle) * starDist;
+        const starY = Math.sin(starAngle) * starDist;
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(starX, starY, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      ctx.fillStyle = '#d4a574';
+      ctx.shadowBlur = 5;
+      ctx.beginPath();
+      ctx.arc(40, 0, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  };
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a2e');
+    gradient.addColorStop(1, '#0a0514');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const castPhase = time >= 40 && time < 50;
+    const flyPhase = time >= 50 && time < 120;
+    const returnPhase = time >= 120 && time < 180;
+    const hitPhase = time >= 180 && time < 200;
+
+    const wizardX = centerX - 100;
+    const wizardY = centerY + 80;
+    const wizardSurprised = returnPhase || hitPhase;
+    const wizardHit = hitPhase;
+
+    let armAngle = wizardSurprised ? -0.5 : 0.3;
+
+    const handX = wizardX + 20 + Math.cos(armAngle) * 48;
+    const handY = wizardY + 18 + Math.sin(armAngle) * 48;
+
+    drawWizard(wizardX, wizardY, wizardSurprised, wizardHit, armAngle);
+
+    const wandGlowing = castPhase || flyPhase;
+
+    drawWand(handX, handY, armAngle, wandGlowing);
+
+    if (castPhase && !spellBeam) {
+      const wandTipX = handX + Math.cos(armAngle) * 40;
+      const wandTipY = handY + Math.sin(armAngle) * 40;
+      const targetX = centerX + 150;
+      const targetY = centerY - 20;
+      spellBeam = new SpellBeam(wandTipX, wandTipY, targetX, targetY);
+    }
+
+    if (spellBeam) {
+      spellBeam.update();
+      spellBeam.draw(ctx);
+
+      if (spellBeam.isComplete()) {
+        spellBeam = null;
+      }
+    }
+
+    for (let i = spellParticles.length - 1; i >= 0; i--) {
+      spellParticles[i].update();
+      spellParticles[i].draw(ctx);
+
+      if (spellParticles[i].isDead()) {
+        spellParticles.splice(i, 1);
+      }
+    }
+
+    if (hitPhase) {
+      const hitProgress = (time - 180) / 20;
+      ctx.save();
+      ctx.strokeStyle = '#00ffff';
+      ctx.lineWidth = 3;
+      ctx.globalAlpha = 1 - hitProgress;
+
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.arc(wizardX, wizardY, 30 + hitProgress * 50 + i * 15, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+
+      for (let i = 0; i < 3; i++) {
+        const starAngle = (time * 0.2 + i * (Math.PI * 2 / 3));
+        const starDist = 50;
+        const starX = wizardX + Math.cos(starAngle) * starDist;
+        const starY = wizardY - 80 + Math.sin(starAngle) * starDist;
+        
+        ctx.save();
+        ctx.fillStyle = '#ffd700';
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = '#ffd700';
+        ctx.translate(starX, starY);
+        ctx.rotate(time * 0.1);
+        
+        ctx.beginPath();
+        for (let j = 0; j < 5; j++) {
+          const angle = (j * 4 * Math.PI) / 5 - Math.PI / 2;
+          const radius = j % 2 === 0 ? 6 : 3;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          if (j === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    time++;
+
+    if (time >= cycleTime) {
+      time = 0;
+      spellBeam = null;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
 }
