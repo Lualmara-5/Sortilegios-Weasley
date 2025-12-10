@@ -206,7 +206,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'love-potion',
     description: '¡Efecto de enamoramiento instantáneo con corazones brillantes!'
   },
-  
+    // 28. Lord Kakadura - Efecto de estreñimiento
+  28: {
+    id: 28,
+    animationType: 'canvas',
+    componentName: 'lord-kakadura',
+    description: '¡La píldora que causa estreñimiento mágico!'
+  }
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {

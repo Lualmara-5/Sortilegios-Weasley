@@ -239,6 +239,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animatePuffskeinsPigmeos(ctx, canvas); 
     } else if (this.animation?.id === 27) {
     this.animateLovePotion(ctx, canvas); 
+    }else if (this.animation?.id === 28) {
+    this.animateLordKakadura(ctx, canvas);
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -13422,4 +13424,553 @@ private animateLovePotion(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasEleme
   animate();
 }
 
+// Animación de Lord Kakadura (ID 28)
+private animateLordKakadura(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+
+  class Character {
+    x: number;
+    y: number;
+    state: string;
+    stateProgress: number;
+    eyesOpen: boolean;
+    blinkTimer: number;
+    bodyInflation: number;
+    faceColor: number;
+    sweatDrops: Array<{x: number, y: number, vy: number, life: number}>;
+    struggle: number;
+    shake: number;
+
+    constructor() {
+      this.x = canvas.width / 2 - 80;
+      this.y = canvas.height / 2;
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.blinkTimer = 0;
+      this.bodyInflation = 0;
+      this.faceColor = 0;
+      this.sweatDrops = [];
+      this.struggle = 0;
+      this.shake = 0;
+    }
+
+    update() {
+      if (this.state === 'standing') {
+        this.stateProgress += 0.012;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'eating';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'eating') {
+        this.stateProgress += 0.025;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'digesting';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'digesting') {
+        this.stateProgress += 0.015;
+        
+        if (this.stateProgress >= 1) {
+          this.state = 'constipated';
+          this.stateProgress = 0;
+        }
+      } else if (this.state === 'constipated') {
+        this.stateProgress += 0.008;
+        this.bodyInflation = Math.min(this.stateProgress * 1.5, 1);
+        this.faceColor = Math.min(this.stateProgress * 2, 1);
+        this.struggle = Math.sin(this.stateProgress * Math.PI * 8) * 3;
+        this.shake = Math.sin(time * 0.5) * 2;
+        
+        if (Math.random() < 0.1 && this.bodyInflation > 0.3) {
+          this.sweatDrops.push({
+            x: this.x + (Math.random() > 0.5 ? 25 : -25),
+            y: this.y - 30,
+            vy: 0,
+            life: 1
+          });
+        }
+        
+        if (this.stateProgress >= 1) {
+          this.reset();
+        }
+      }
+
+      for (let i = this.sweatDrops.length - 1; i >= 0; i--) {
+        const drop = this.sweatDrops[i];
+        drop.vy += 0.3;
+        drop.y += drop.vy;
+        drop.life -= 0.02;
+        
+        if (drop.life <= 0 || drop.y > canvas.height) {
+          this.sweatDrops.splice(i, 1);
+        }
+      }
+
+      if (this.eyesOpen && this.state !== 'constipated') {
+        this.blinkTimer++;
+        if (this.blinkTimer > 80 && Math.random() < 0.03) {
+          this.eyesOpen = false;
+          setTimeout(() => { this.eyesOpen = true; }, 100);
+          this.blinkTimer = 0;
+        }
+      }
+    }
+
+    reset() {
+      this.state = 'standing';
+      this.stateProgress = 0;
+      this.eyesOpen = true;
+      this.bodyInflation = 0;
+      this.faceColor = 0;
+      this.sweatDrops = [];
+      this.struggle = 0;
+      this.shake = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.translate(this.x + this.shake, this.y + this.struggle);
+
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(0, 110, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#6B4E3D';
+      ctx.beginPath();
+      ctx.ellipse(-12, 85, 10, 25, -0.1, 0, Math.PI * 2);
+      ctx.ellipse(12, 85, 10, 25, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#3D2817';
+      ctx.beginPath();
+      ctx.ellipse(-12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(12, 105, 12, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const bodyScale = 1 + this.bodyInflation * 0.4;
+      const bodyGradient = ctx.createLinearGradient(0, 0, 0, 100);
+      bodyGradient.addColorStop(0, '#9B6B47');
+      bodyGradient.addColorStop(1, '#7D5635');
+      ctx.fillStyle = bodyGradient;
+      
+      ctx.save();
+      ctx.scale(bodyScale, bodyScale);
+      ctx.beginPath();
+      ctx.ellipse(0, 35 / bodyScale, 38, 55, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      if (this.bodyInflation > 0.5) {
+        ctx.strokeStyle = 'rgba(139, 69, 19, 0.4)';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 3; i++) {
+          ctx.beginPath();
+          ctx.arc(0, 35, 25 + i * 8, 0.3, Math.PI - 0.3);
+          ctx.stroke();
+        }
+      }
+
+      ctx.strokeStyle = '#FFD7BA';
+      ctx.lineWidth = 16;
+      ctx.lineCap = 'round';
+
+      if (this.state === 'eating') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-25, -10, -5, -15);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-5, -15, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (this.state === 'constipated') {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.quadraticCurveTo(-25, 30, -15, 35);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-15, 35, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(-35, 20);
+        ctx.lineTo(-42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(-42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.beginPath();
+      if (this.state === 'constipated') {
+        ctx.moveTo(35, 20);
+        ctx.quadraticCurveTo(25, 30, 15, 35);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(15, 35, 9, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.moveTo(35, 20);
+        ctx.lineTo(42, 60);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#FFD7BA';
+        ctx.beginPath();
+        ctx.arc(42, 60, 9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const faceR = 255 - (50 * this.faceColor);
+      const faceG = 235 - (80 * this.faceColor);
+      const faceB = 212 - (100 * this.faceColor);
+      
+      const headGradient = ctx.createRadialGradient(-8, -28, 5, 0, -20, 45);
+      headGradient.addColorStop(0, `rgb(${faceR + 20}, ${faceG + 20}, ${faceB + 20})`);
+      headGradient.addColorStop(1, `rgb(${faceR}, ${faceG}, ${faceB})`);
+      ctx.fillStyle = headGradient;
+      
+      ctx.beginPath();
+      ctx.arc(0, -20, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#8B4513';
+      ctx.beginPath();
+      ctx.ellipse(0, -42, 40, 25, 0, 0, Math.PI, true);
+      ctx.fill();
+      
+      ctx.beginPath();
+      ctx.arc(-20, -38, 15, 0, Math.PI * 2);
+      ctx.arc(20, -38, 15, 0, Math.PI * 2);
+      ctx.arc(0, -50, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(-40, -20, 8, 12, -0.2, 0, Math.PI * 2);
+      ctx.ellipse(40, -20, 8, 12, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'constipated') {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+        
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 2; i++) {
+          ctx.beginPath();
+          ctx.moveTo(-28, -28 - i * 4);
+          ctx.lineTo(-24, -26 - i * 4);
+          ctx.moveTo(24, -26 - i * 4);
+          ctx.lineTo(28, -28 - i * 4);
+          ctx.stroke();
+        }
+      } else if (this.eyesOpen) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.ellipse(-18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.ellipse(18, -23, 11, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#2C1810';
+        ctx.beginPath();
+        ctx.arc(-18, -22, 6, 0, Math.PI * 2);
+        ctx.arc(18, -22, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(-16, -25, 3, 0, Math.PI * 2);
+        ctx.arc(20, -25, 3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = '#2C1810';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-24, -23);
+        ctx.lineTo(-12, -23);
+        ctx.moveTo(12, -23);
+        ctx.lineTo(24, -23);
+        ctx.stroke();
+      }
+
+      const eyebrowRaise = this.state === 'constipated' ? this.bodyInflation * 8 : 0;
+      ctx.strokeStyle = '#6B4423';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      
+      ctx.beginPath();
+      ctx.moveTo(-28, -32 - eyebrowRaise);
+      ctx.quadraticCurveTo(-18, -35 - eyebrowRaise, -10, -32 - eyebrowRaise);
+      ctx.moveTo(10, -32 - eyebrowRaise);
+      ctx.quadraticCurveTo(18, -35 - eyebrowRaise, 28, -32 - eyebrowRaise);
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFCDB0';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (this.state === 'eating') {
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath();
+        ctx.arc(0, -3, 10, 0.2, Math.PI - 0.2);
+        ctx.fill();
+      } else if (this.state === 'constipated') {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(-12, -5);
+        ctx.lineTo(12, -5);
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        
+        ctx.beginPath();
+        ctx.arc(0, -5, 14, 0.3, Math.PI - 0.3);
+        ctx.stroke();
+      }
+
+      const cheekAlpha = 0.4 + this.faceColor * 0.3;
+      ctx.fillStyle = `rgba(255, 100, 100, ${cheekAlpha})`;
+      ctx.beginPath();
+      ctx.arc(-28, -12, 10, 0, Math.PI * 2);
+      ctx.arc(28, -12, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (const drop of this.sweatDrops) {
+        ctx.save();
+        ctx.globalAlpha = drop.life;
+        
+        const dropGradient = ctx.createRadialGradient(drop.x - this.x, drop.y - this.y, 0, drop.x - this.x, drop.y - this.y, 4);
+        dropGradient.addColorStop(0, 'rgba(180, 220, 255, 1)');
+        dropGradient.addColorStop(1, 'rgba(100, 180, 230, 0.6)');
+        ctx.fillStyle = dropGradient;
+        
+        ctx.beginPath();
+        ctx.arc(drop.x - this.x, drop.y - this.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+      }
+
+      ctx.restore();
+    }
+  }
+
+  class Pill {
+    x: number;
+    y: number;
+    visible: boolean;
+    eaten: boolean;
+    float: number;
+    rotation: number;
+    character: Character;
+
+    constructor(character: Character) {
+      this.character = character;
+      this.x = canvas.width / 2 + 100;
+      this.y = canvas.height / 2 - 30;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+      this.rotation = 0;
+    }
+
+    update() {
+      if (!this.eaten) {
+        this.float += 0.08;
+        this.rotation += 0.05;
+      }
+
+      if (this.character.state === 'eating' && !this.eaten) {
+        this.x += (this.character.x - 5 - this.x) * 0.12;
+        this.y += (this.character.y - 15 - this.y) * 0.12;
+
+        if (Math.abs(this.x - (this.character.x - 5)) < 10) {
+          this.visible = false;
+          this.eaten = true;
+        }
+      }
+
+      if (this.character.state === 'standing' && this.character.stateProgress < 0.1) {
+        this.reset();
+      }
+    }
+
+    reset() {
+      this.x = canvas.width / 2 + 100;
+      this.y = canvas.height / 2 - 30;
+      this.visible = true;
+      this.eaten = false;
+      this.float = 0;
+      this.rotation = 0;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      if (!this.visible) return;
+
+      const floatOffset = Math.sin(this.float) * 6;
+
+      ctx.save();
+      ctx.translate(this.x, this.y + floatOffset);
+      ctx.rotate(this.rotation);
+
+      const auraGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 30);
+      auraGradient.addColorStop(0, 'rgba(155, 89, 182, 0.4)');
+      auraGradient.addColorStop(0.5, 'rgba(255, 215, 0, 0.2)');
+      auraGradient.addColorStop(1, 'rgba(155, 89, 182, 0)');
+      ctx.fillStyle = auraGradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, 30, 0, Math.PI * 2);
+      ctx.fill();
+
+      const pillGradient = ctx.createRadialGradient(-3, -3, 0, 0, 0, 15);
+      pillGradient.addColorStop(0, '#A0522D');
+      pillGradient.addColorStop(0.7, '#8B4513');
+      pillGradient.addColorStop(1, '#654321');
+      
+      ctx.fillStyle = pillGradient;
+      ctx.strokeStyle = '#654321';
+      ctx.lineWidth = 2;
+      
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 15, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.beginPath();
+      ctx.ellipse(-5, -5, 5, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  class MagicParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    life: number;
+    fadeSpeed: number;
+    twinkle: number;
+    color: string;
+
+    constructor() {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 80 + Math.random() * 60;
+      
+      this.x = canvas.width / 2 + Math.cos(angle) * radius;
+      this.y = canvas.height / 2 + Math.sin(angle) * radius;
+      this.vx = (Math.random() - 0.5) * 1;
+      this.vy = (Math.random() - 0.5) * 1;
+      this.size = Math.random() * 4 + 2;
+      this.life = 1;
+      this.fadeSpeed = 0.008;
+      this.twinkle = Math.random() * Math.PI * 2;
+      
+      const colors = ['#8B4513', '#9B59B6', '#FFD700'];
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= this.fadeSpeed;
+      this.twinkle += 0.1;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      const alpha = this.life * (Math.sin(this.twinkle) * 0.3 + 0.7);
+      
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
+      gradient.addColorStop(0, this.color);
+      gradient.addColorStop(1, this.color + '00');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  const character = new Character();
+  const pill = new Pill(character);
+  const particles: MagicParticle[] = [];
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#2C1B47');
+    gradient.addColorStop(1, '#1a0a33');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
+    for (let i = 0; i < 30; i++) {
+      const sx = (i * 197) % canvas.width;
+      const sy = (i * 137) % canvas.height;
+      const size = ((i * 73) % 3) + 1;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (Math.random() < 0.15) {
+      particles.push(new MagicParticle());
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      
+      if (particles[i].life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+
+    pill.update();
+    character.update();
+
+    pill.draw(ctx);
+    character.draw(ctx);
+
+    time++;
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
 }
