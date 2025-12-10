@@ -199,6 +199,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'pygmy-puffs',
     description: '¡Adorables puffskeins en miniatura, perfectos como mascotas mágicas!'
   },
+  // 27. Pociones de amor - Efecto de enamoramiento con zoom
+  27: {
+    id: 27,
+    animationType: 'canvas',
+    componentName: 'love-potion',
+    description: '¡Efecto de enamoramiento instantáneo con corazones brillantes!'
+  },
   
 };
 
