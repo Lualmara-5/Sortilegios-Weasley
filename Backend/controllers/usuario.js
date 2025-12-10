@@ -1,134 +1,179 @@
-import pool from "../db.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+// Backend/controllers/usuario.js
+import pool from '../db.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
+const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
+const JWT_EXPIRES_IN = '8h';
 
-// Obtener todos los usuarios
-export const obtenerUsuarios = async (req, res) => {
+// Obtener todos los usuarios (sin contraseña)
+export async function obtenerUsuarios(req, res) {
   try {
-    const [usuarios] = await pool.query(
-      "SELECT id_usuario, nickname, mail, foto, direccion, ciudad, estado, codigo_postal, cf_pedidos, creado_en FROM usuario"
+    const [rows] = await pool.query(
+      'SELECT id_usuario, nickname, mail, rol AS role, creado_en FROM usuario'
     );
+
+    // Normalizar: si no hay rol, dejar "user"
+    const usuarios = rows.map(u => ({
+      ...u,
+      role: u.role || 'user'
+    }));
+
     res.json(usuarios);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al obtener usuarios:', error);
+    res.status(500).json({ message: 'Error al obtener usuarios' });
   }
-};
+}
 
-// Obtener un usuario por ID
-export const obtenerUsuarioPorId = async (req, res) => {
+// Obtener usuario por id
+export async function obtenerUsuarioPorId(req, res) {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    const [usuarios] = await pool.query(
-      "SELECT id_usuario, nickname, mail, foto, direccion, ciudad, estado, codigo_postal, cf_pedidos, creado_en FROM usuario WHERE id_usuario = ?",
+    const [rows] = await pool.query(
+      'SELECT id_usuario, nickname, mail, rol AS role, creado_en FROM usuario WHERE id_usuario = ?',
       [id]
     );
-    
-    if (usuarios.length === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-    
-    res.json(usuarios[0]);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
-// Crear usuario o registro
-export const crearUsuario = async (req, res) => {
-  try {
-    const { nickname, mail, password, foto, direccion, ciudad, estado, punto_referencia, codigo_postal } = req.body;
+    const user = rows[0];
+    const role = user.role || 'user';
 
-    // Encriptar contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const [result] = await pool.query(
-      "INSERT INTO usuario (nickname, mail, password, foto, direccion, ciudad, estado, punto_referencia, codigo_postal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [nickname, mail, hashedPassword, foto, direccion, ciudad, estado, punto_referencia, codigo_postal]
-    );
-    
-    res.status(201).json({ 
-      id_usuario: result.insertId,
-      mensaje: "Usuario creado exitosamente" 
+    res.json({
+      ...user,
+      role
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al obtener usuario:', error);
+    res.status(500).json({ message: 'Error al obtener usuario' });
   }
-};
+}
 
-// Actualizar usuario
-export const actualizarUsuario = async (req, res) => {
+// Crear usuario
+export async function crearUsuario(req, res) {
   try {
-    const { id } = req.params;
-    const { nickname, mail, foto, direccion, ciudad, estado, punto_referencia, codigo_postal } = req.body;
-    
-    const [result] = await pool.query(
-      "UPDATE usuario SET nickname = ?, mail = ?, foto = ?, direccion = ?, ciudad = ?, estado = ?, punto_referencia = ?, codigo_postal = ? WHERE id_usuario = ?",
-      [nickname, mail, foto, direccion, ciudad, estado, punto_referencia, codigo_postal, id]
-    );
-    
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
-    }
-    
-    res.json({ mensaje: "Usuario actualizado exitosamente" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+    const { nickname, mail, password, rol } = req.body;
 
-// Eliminar usuario
-export const eliminarUsuario = async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const [result] = await pool.query(
-      "DELETE FROM usuario WHERE id_usuario = ?",
-      [id]
-    );
-    
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+    if (!nickname || !mail || !password) {
+      return res.status(400).json({ message: 'nickname, mail y password son obligatorios' });
     }
-    
-    res.json({ mensaje: "Usuario eliminado exitosamente" });
+
+    // Verificar si ya existe el mail
+    const [existentes] = await pool.query(
+      'SELECT id_usuario FROM usuario WHERE mail = ?',
+      [mail]
+    );
+    if (existentes.length > 0) {
+      return res.status(409).json({ message: 'El mail ya está registrado' });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+    const roleValue = rol || 'user';
+
+    const [result] = await pool.query(
+      'INSERT INTO usuario (nickname, mail, password, rol) VALUES (?, ?, ?, ?)',
+      [nickname, mail, hashed, roleValue]
+    );
+
+    res.status(201).json({
+      id_usuario: result.insertId,
+      nickname,
+      mail,
+      role: roleValue
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al crear usuario:', error);
+    res.status(500).json({ message: 'Error al crear usuario' });
   }
-};
+}
 
 // Login de usuario
-export const loginUsuario = async (req, res) => {
+export async function loginUsuario(req, res) {
   try {
     const { mail, password } = req.body;
 
-    // Buscar usuario por email
-    const [usuarios] = await pool.query(
-      "SELECT id_usuario, nickname, mail, password FROM usuario WHERE mail = ?",
+    if (!mail || !password) {
+      return res.status(400).json({ message: 'mail y password son obligatorios' });
+    }
+
+    const [rows] = await pool.query(
+      'SELECT id_usuario, nickname, mail, password, rol FROM usuario WHERE mail = ?',
       [mail]
     );
 
-    if (usuarios.length === 0) {
-      return res.status(401).json({ error: "Email o contraseña incorrectos" });
+    if (rows.length === 0) {
+      return res.status(401).json({ message: 'Credenciales incorrectas' });
     }
 
-    const usuario = usuarios[0];
+    const user = rows[0];
+    const passwordOk = await bcrypt.compare(password, user.password);
 
-    // Comparar contraseña
-    const isMatch = await bcrypt.compare(password, usuario.password);
-    if (!isMatch) {
-      return res.status(401).json({ error: "Email o contraseña incorrectos" });
+    if (!passwordOk) {
+      return res.status(401).json({ message: 'Credenciales incorrectas' });
     }
 
-    // Generar token JWT
-    const token = jwt.sign(
-      { id_usuario: usuario.id_usuario, nickname: usuario.nickname },
-      process.env.JWT_SECRET || "mi_clave_secreta",
-      { expiresIn: "1d" }
+    const role = user.rol || 'user';
+
+    const payload = {
+      id_usuario: user.id_usuario,
+      nickname: user.nickname,
+      mail: user.mail,
+      role
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+    res.json({
+      ...payload,
+      token
+    });
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.status(500).json({ message: 'Error en login' });
+  }
+}
+
+// Actualizar usuario (simplificado)
+export async function actualizarUsuario(req, res) {
+  const { id } = req.params;
+  const { nickname, mail, rol } = req.body;
+
+  try {
+    const [rows] = await pool.query(
+      'UPDATE usuario SET nickname = COALESCE(?, nickname), mail = COALESCE(?, mail), rol = COALESCE(?, rol) WHERE id_usuario = ?',
+      [nickname, mail, rol, id]
     );
 
-    res.json({ token, usuario: { id_usuario: usuario.id_usuario, nickname: usuario.nickname, mail: usuario.mail } });
+    if (rows.affectedRows === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.json({ message: 'Usuario actualizado' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al actualizar usuario:', error);
+    res.status(500).json({ message: 'Error al actualizar usuario' });
   }
-};
+}
+
+// Eliminar usuario
+export async function eliminarUsuario(req, res) {
+  const { id } = req.params;
+  try {
+    const [rows] = await pool.query(
+      'DELETE FROM usuario WHERE id_usuario = ?',
+      [id]
+    );
+
+    if (rows.affectedRows === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.json({ message: 'Usuario eliminado' });
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error);
+    res.status(500).json({ message: 'Error al eliminar usuario' });
+  }
+}
