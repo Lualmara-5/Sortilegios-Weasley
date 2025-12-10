@@ -233,6 +233,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animateEscudoMagico(ctx, canvas);
     }else if (this.animation?.id === 24) {
     this.animatePeruvianDarknessPowder(ctx, canvas); 
+    } else if (this.animation?.id === 25) {  
+    this.animateDetonadoresTrampa(ctx, canvas); 
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -12095,5 +12097,388 @@ private animatePeruvianDarknessPowder(ctx: CanvasRenderingContext2D, canvas: HTM
 
   animate();
 }
+// Animación de los Detonadores Trampa (ID 25)
+private animateDetonadoresTrampa(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+  const cycleTime = 180;
 
+  const explosionParticles: any[] = [];
+
+  class ExplosionParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+    rotation: number;
+    rotationSpeed: number;
+
+    constructor(x: number, y: number, angle: number, speed: number) {
+      this.x = x;
+      this.y = y;
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed;
+      this.life = 60;
+      this.maxLife = 60;
+      this.size = Math.random() * 8 + 4;
+      this.color = ['#ff6b00', '#ffd700', '#ff0000', '#ffaa00', '#fff'][Math.floor(Math.random() * 5)];
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.3;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.15;
+      this.vx *= 0.98;
+      this.rotation += this.rotationSpeed;
+      this.life--;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      context.save();
+      context.translate(this.x, this.y);
+      context.rotate(this.rotation);
+      context.globalAlpha = alpha;
+
+      context.fillStyle = this.color;
+      context.shadowBlur = 15;
+      context.shadowColor = this.color;
+      context.beginPath();
+      context.arc(0, 0, this.size, 0, Math.PI * 2);
+      context.fill();
+
+      if (this.life > this.maxLife * 0.5) {
+        context.fillStyle = '#fff';
+        context.shadowBlur = 20;
+        context.beginPath();
+        context.arc(0, 0, this.size * 0.4, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      context.globalAlpha = 1;
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const soundWaves: any[] = [];
+
+  class SoundWave {
+    x: number;
+    y: number;
+    radius: number;
+    maxRadius: number;
+    life: number;
+    maxLife: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.radius = 0;
+      this.maxRadius = 120;
+      this.life = 40;
+      this.maxLife = 40;
+    }
+
+    update() {
+      this.radius += 4;
+      this.life--;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      context.save();
+      context.strokeStyle = '#ffd700';
+      context.lineWidth = 3;
+      context.globalAlpha = alpha;
+      context.shadowBlur = 10;
+      context.shadowColor = '#ffd700';
+
+      context.beginPath();
+      context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      context.stroke();
+
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const drawDetonator = (x: number, y: number, vibrating: boolean, scale: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+
+    if (vibrating) {
+      const shake = Math.sin(time * 0.8) * 3;
+      ctx.translate(shake, Math.cos(time * 1.2) * 2);
+    }
+
+    const hornGradient = ctx.createLinearGradient(-30, 0, 30, 0);
+    hornGradient.addColorStop(0, '#ff6b00');
+    hornGradient.addColorStop(0.5, '#ff8c00');
+    hornGradient.addColorStop(1, '#ff4500');
+
+    ctx.fillStyle = hornGradient;
+    ctx.beginPath();
+    ctx.moveTo(-40, -25);
+    ctx.quadraticCurveTo(-50, 0, -40, 25);
+    ctx.lineTo(-10, 15);
+    ctx.lineTo(-10, -15);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = '#d94d00';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255, 200, 100, 0.4)';
+    ctx.beginPath();
+    ctx.moveTo(-35, -20);
+    ctx.quadraticCurveTo(-42, -5, -35, 10);
+    ctx.lineTo(-15, 5);
+    ctx.lineTo(-15, -10);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#ff6b00';
+    ctx.fillRect(-10, -12, 30, 24);
+
+    ctx.strokeStyle = '#d94d00';
+    ctx.lineWidth = 1.5;
+    for (let i = -5; i < 20; i += 8) {
+      ctx.beginPath();
+      ctx.moveTo(i, -12);
+      ctx.lineTo(i, 12);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = '#8b4513';
+    ctx.fillRect(20, -8, 15, 16);
+
+    ctx.strokeStyle = '#654321';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(22 + i * 4, -8);
+      ctx.lineTo(22 + i * 4, 8);
+      ctx.stroke();
+    }
+
+    const buttonY = vibrating ? 2 : 0;
+    ctx.fillStyle = '#ff0000';
+    ctx.shadowBlur = vibrating ? 15 : 5;
+    ctx.shadowColor = '#ff0000';
+    ctx.beginPath();
+    ctx.arc(27, buttonY, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.arc(25, buttonY - 2, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-5, -18);
+    ctx.lineTo(0, -23);
+    ctx.lineTo(5, -18);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(-5, 18);
+    ctx.lineTo(0, 23);
+    ctx.lineTo(5, 18);
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 8px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('BOOM', 5, 3);
+
+    ctx.restore();
+  };
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a2e');
+    gradient.addColorStop(1, '#0a0514');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const idlePhase = time < 40;
+    const vibratingPhase = time >= 40 && time < 70;
+    const explosionPhase = time >= 70 && time < 90;
+    const cloudPhase = time >= 90 && time < 140;
+    const fadePhase = time >= 140;
+
+    let detonatorVisible = !explosionPhase && !cloudPhase && !fadePhase;
+    let detonatorVibrating = vibratingPhase;
+    let detonatorScale = 1;
+
+    if (vibratingPhase) {
+      const vibrateProgress = (time - 40) / 30;
+      detonatorScale = 1 + Math.sin(vibrateProgress * Math.PI * 8) * 0.1;
+    }
+
+    if (detonatorVisible) {
+      drawDetonator(centerX, centerY, detonatorVibrating, detonatorScale);
+    }
+
+    if (time === 70) {
+      for (let i = 0; i < 40; i++) {
+        const angle = (i / 40) * Math.PI * 2;
+        const speed = Math.random() * 5 + 3;
+        explosionParticles.push(new ExplosionParticle(centerX, centerY, angle, speed));
+      }
+
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          soundWaves.push(new SoundWave(centerX, centerY));
+        }, i * 100);
+      }
+    }
+
+    for (let i = explosionParticles.length - 1; i >= 0; i--) {
+      explosionParticles[i].update();
+      explosionParticles[i].draw(ctx);
+
+      if (explosionParticles[i].isDead()) {
+        explosionParticles.splice(i, 1);
+      }
+    }
+
+    for (let i = soundWaves.length - 1; i >= 0; i--) {
+      soundWaves[i].update();
+      soundWaves[i].draw(ctx);
+
+      if (soundWaves[i].isDead()) {
+        soundWaves.splice(i, 1);
+      }
+    }
+
+    if (explosionPhase) {
+      const flashProgress = (time - 70) / 20;
+      ctx.save();
+      ctx.globalAlpha = 1 - flashProgress;
+      
+      const flashGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 150);
+      flashGradient.addColorStop(0, '#ffffff');
+      flashGradient.addColorStop(0.3, '#ffd700');
+      flashGradient.addColorStop(0.6, '#ff6b00');
+      flashGradient.addColorStop(1, 'rgba(255, 107, 0, 0)');
+      
+      ctx.fillStyle = flashGradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 150, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      if (time >= 72 && time < 85) {
+        const textProgress = (time - 72) / 13;
+        const textScale = 1 + textProgress * 0.5;
+        const textAlpha = 1 - textProgress;
+
+        ctx.save();
+        ctx.translate(centerX, centerY - 20);
+        ctx.scale(textScale, textScale);
+        ctx.globalAlpha = textAlpha;
+
+        ctx.font = 'bold 60px Arial';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 6;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText('BOOM!', 0, 0);
+
+        ctx.fillStyle = '#ffd700';
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#ff6b00';
+        ctx.fillText('BOOM!', 0, 0);
+
+        ctx.restore();
+      }
+    }
+
+    if (explosionPhase) {
+      const impactProgress = (time - 70) / 20;
+      ctx.save();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 4;
+      ctx.globalAlpha = 1 - impactProgress;
+
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2;
+        const length = 60 + impactProgress * 80;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(
+          centerX + Math.cos(angle) * length,
+          centerY + Math.sin(angle) * length
+        );
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    if (cloudPhase || fadePhase) {
+      const cloudProgress = fadePhase ? 1 : (time - 90) / 50;
+      const cloudAlpha = fadePhase ? 1 - (time - 140) / 40 : 0.6;
+
+      ctx.save();
+      ctx.globalAlpha = cloudAlpha;
+      ctx.fillStyle = '#666';
+
+      const cloudCircles = [
+        { x: 0, y: -10, r: 35 },
+        { x: -20, y: 10, r: 30 },
+        { x: 20, y: 10, r: 30 },
+        { x: -10, y: 25, r: 25 },
+        { x: 10, y: 25, r: 25 },
+      ];
+
+      cloudCircles.forEach(circle => {
+        ctx.beginPath();
+        ctx.arc(
+          centerX + circle.x,
+          centerY + circle.y - cloudProgress * 20,
+          circle.r,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      });
+
+      ctx.restore();
+    }
+
+    time++;
+
+    if (time >= cycleTime) {
+      time = 0;
+      explosionParticles.length = 0;
+      soundWaves.length = 0;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
 }

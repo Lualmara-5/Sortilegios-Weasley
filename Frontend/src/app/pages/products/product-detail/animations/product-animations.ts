@@ -185,6 +185,13 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'peruvian-darkness-powder',
     description: '¡Oscuridad total al instante con motas mágicas!'
   },
+    // 25. Detonadores trampa - Explosión cómica
+  25: {
+    id: 25,
+    animationType: 'canvas',
+    componentName: 'decoy-detonator',
+    description: '¡Objetos con forma de bocina que explotan con un fuerte ruido para crear distracciones!'
+  },
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {
