@@ -85,8 +85,12 @@
     </div>
 
     <div class="co-actions">
-      <button type="button" class="co-btn co-btn-outline" routerLink="/caldero-magico">Cancelar</button>
-      <button type="button" class="co-btn co-btn-primary" (click)="scrollToPay()">Completar Compra</button>
+      <button type="button" class="co-btn co-btn-outline" routerLink="/caldero-magico">
+        Cancelar
+      </button>
+      <button type="button" class="co-btn co-btn-primary" (click)="scrollToPay()">
+        Completar Compra
+      </button>
     </div>
   </div>
 
@@ -100,22 +104,24 @@
         <img class="co-sum-thumb" [src]="it.image" [alt]="it.name" />
         <div class="co-sum-info">
           <div class="co-sum-name">{{ it.name }}</div>
-          <div class="co-sum-meta"><span>Cantidad</span><span>{{ it.qty }}</span></div>
+          <div class="co-sum-meta">
+            <span>Cantidad</span><span>{{ it.qty }}</span>
+          </div>
           <div class="co-sum-meta">
             <span>Precio Total</span>
-            <span>{{ (priceToUSD(it.price) * it.qty) | currency : 'USD' : 'symbol' }}</span>
+            <span>{{
+              cauldronService.priceStringToCOP(it.price) | currency : 'COP' : 'symbol'
+            }}</span>
           </div>
         </div>
       </li>
     </ul>
 
     <div class="co-totals">
-      <div class="co-total-row">
-        <span>Envío</span><strong>12</strong>
-      </div>
+      <div class="co-total-row"><span>Envío</span><strong>COP 12.000</strong></div>
       <div class="co-total-row co-total-strong">
         <span>Total pago</span>
-        <strong>\${{ totalUSD$ | async | number:'1.0-0' }}</strong>
+        <p>{{ cauldronService.getTotalCOP() + 12000 | currency : 'COP' : 'symbol' }}</p>
       </div>
     </div>
 

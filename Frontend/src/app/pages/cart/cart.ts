@@ -30,9 +30,13 @@ export class Cart {
   }
   clear() {
     this.cauldronService.clearCauldron();
+    localStorage.removeItem('weasley-cart');
+    localStorage.removeItem('weasley-totalCOP');
   }
 
+
   /** Guarda snapshot del carrito en localStorage y navega a /checkout */
+    /** Guarda snapshot del carrito en localStorage y navega a /checkout */
   goCheckout() {
     this.items$.pipe(take(1)).subscribe(items => {
       // Adaptamos el shape a lo que espera Checkout
@@ -44,8 +48,16 @@ export class Cart {
         qty: it.quantity,
         image: it.product.image
       }));
+
+      // total en COP usando el service (fuente de verdad)
+      const totalCOP = this.cauldronService.getTotalCOP();
+
+      // Guardar snapshot y total por separado (checkout los leerá)
       localStorage.setItem('weasley-cart', JSON.stringify(snapshot));
+      localStorage.setItem('weasley-totalCOP', String(totalCOP));
+
       this.router.navigate(['/checkout']);
     });
   }
+
 }

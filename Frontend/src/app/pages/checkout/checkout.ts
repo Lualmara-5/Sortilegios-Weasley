@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Observable, of, map } from 'rxjs';
+import { Observable, of, map, startWith, Subscription } from 'rxjs';
+import { CauldronService, CartItem } from '../../services/cualdron.service';
 
 type SnapshotItem = {
   id: number;
@@ -19,7 +20,7 @@ type SnapshotItem = {
   templateUrl: './checkout.html',
   styleUrls: ['./checkout.css'],
 })
-export class Checkout implements OnInit, AfterViewInit {
+export class Checkout implements OnInit, AfterViewInit, OnDestroy {
 
   /** Items como observable para plantillas con | async */
   items$!: Observable<SnapshotItem[]>;
@@ -32,33 +33,67 @@ export class Checkout implements OnInit, AfterViewInit {
   private totalCOP = 0;
   private totalUSD = 0;
 
+  /** Suscripción para mantener totales sincronizados */
+  private sub: Subscription | null = null;
+
   /** Tasas DEMO (ajusta si tu equipo definió otras) */
   private USD_TO_COP = 5000;      // 1 USD ≈ 5000 COP
   private GALLEON_TO_USD = 7;     // 1 galeón ≈ 7 USD
   private SICKLE_TO_USD = 0.5;    // 1 sickle ≈ 0.5 USD
 
+  // INYECTAR EL SERVICE (public para usarlo en la plantilla si quieres)
+  constructor(public cauldronService: CauldronService) {}
+
   ngOnInit() {
-    const items = this.readSnapshot();
-    this.items$ = of(items);
+    // Leemos snapshot para fallback si se recarga la página
+    const snapshotItems = this.readSnapshot();
 
-    // Streams de totales
-    this.totalCOP$ = this.items$.pipe(
-      map(list => list.reduce((acc, it) => acc + this.priceToCOP(it.price) * (it.qty || 0), 0))
-    );
-    this.totalUSD$ = this.items$.pipe(
-      map(list => list.reduce((acc, it) => acc + this.priceToUSD(it.price) * (it.qty || 0), 0))
-    );
+    // Preferimos la fuente reactiva del service; si está vacía usamos el snapshot con startWith
+    this.items$ = this.cauldronService.items$.pipe(
+    map((cartItems: CartItem[]) => cartItems.map(ci => ({
+      id: Number(ci.product.id) || 0,
+      name: String(ci.product.name || ''),
+      price: String(ci.product.price || ''),
+      unit: String(ci.product.unit || ''),
+      qty: Number(ci.quantity || 0),
+      image: String(ci.product.image || '')
+    } as SnapshotItem))),
+  // si el service aún no tiene items (p. ej. recarga), mostramos el snapshot
+    startWith(snapshotItems)
+);
 
-    // Mantener totales sincronizados
-    this.totalCOP$.subscribe(v => this.totalCOP = v);
-    this.totalUSD$.subscribe(v => this.totalUSD = parseFloat(v.toFixed(2)));
+    // Inicializar totales usando el service (fuente de verdad)
+    this.recalculateTotals();
+
+    // Mantener totales sincronizados cada vez que cambien los items en el service
+    this.sub = this.cauldronService.items$.subscribe(() => {
+      this.recalculateTotals();
+    });
   }
 
   ngAfterViewInit() {
-    this.initPayPalButton();
+    // aseguramos que PayPal se renderice después de que ngOnInit haya calculado totalUSD
+    setTimeout(() => this.initPayPalButton(), 0);
   }
 
-  /** Lee snapshot del carrito desde localStorage */
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
+
+  /** Recalcula totalCOP / totalUSD y actualiza los Observables usados en plantilla */
+  private recalculateTotals() {
+    // usa la función del service (source of truth)
+    this.totalCOP = this.cauldronService.getTotalCOP();
+
+    // total USD (incluye / no incluye envío según quieras; aquí sin envío)
+    this.totalUSD = Math.round((this.totalCOP / this.USD_TO_COP) * 100) / 100;
+
+    // Exponer para plantillas que usan async pipe
+    this.totalCOP$ = of(this.totalCOP);
+    this.totalUSD$ = of(this.totalUSD);
+  }
+
+  /** Lee snapshot del carrito desde localStorage (fallback visual) */
   private readSnapshot(): SnapshotItem[] {
     try {
       const raw = localStorage.getItem('weasley-cart');
@@ -81,7 +116,6 @@ export class Checkout implements OnInit, AfterViewInit {
   /** Convierte string de precio a USD numérico */
   priceToUSD(price: string): number {
     const p = (price || '').toLowerCase().trim();
-
     if (p.includes('usd') || p.includes('$')) {
       const num = parseFloat(p.replace(/[^\d.]/g, ''));
       return isNaN(num) ? 0 : num;
@@ -98,7 +132,6 @@ export class Checkout implements OnInit, AfterViewInit {
       const s = parseFloat(p.replace(/[^\d.]/g, ''));
       return isNaN(s) ? 0 : s * this.SICKLE_TO_USD;
     }
-
     const fallback = parseFloat(p.replace(/[^\d.]/g, ''));
     return isNaN(fallback) ? 0 : fallback / this.USD_TO_COP;
   }
@@ -106,7 +139,6 @@ export class Checkout implements OnInit, AfterViewInit {
   /** Convierte string de precio a COP numérico */
   priceToCOP(price: string): number {
     const p = (price || '').toLowerCase().trim();
-
     if (p.includes('cop')) {
       const cop = parseFloat(p.replace(/[^\d.]/g, ''));
       return isNaN(cop) ? 0 : cop;
@@ -123,7 +155,6 @@ export class Checkout implements OnInit, AfterViewInit {
       const s = parseFloat(p.replace(/[^\d.]/g, ''));
       return isNaN(s) ? 0 : s * this.SICKLE_TO_USD * this.USD_TO_COP;
     }
-
     const fallback = parseFloat(p.replace(/[^\d.]/g, ''));
     return isNaN(fallback) ? 0 : fallback;
   }
@@ -155,7 +186,10 @@ export class Checkout implements OnInit, AfterViewInit {
       onApprove: (_: any, actions: any) =>
         actions.order.capture().then((details: any) => {
           alert(`✨ Gracias, ${details.payer?.name?.given_name || 'mago'}! Tu pedido ha sido confirmado.`);
-          // localStorage.removeItem('weasley-cart');
+          localStorage.removeItem('weasley-cart');
+          localStorage.removeItem('weasley-totalCOP');
+          // opcional: limpiar service o redirigir
+          this.cauldronService.clearCauldron();
         }),
     }).render('#paypal-button-container');
   }

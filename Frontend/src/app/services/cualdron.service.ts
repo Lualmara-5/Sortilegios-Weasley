@@ -74,6 +74,12 @@ export class CauldronService {
 
     return amount * (rates[type.toLowerCase()] || 0);
   }
+    // --- añadir en CauldronService ---
+  /** Conversión pública: cadena de precio -> valor en COP (reusa la lógica privada) */
+  public priceStringToCOP(price: string): number {
+    return this.convertPriceToCOP(price);
+  }
+
 
   // 💰 Total final en COP
   getTotalCOP(): number {
