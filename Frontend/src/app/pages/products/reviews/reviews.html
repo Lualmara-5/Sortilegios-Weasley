@@ -6,29 +6,35 @@
 
     <div class="rv-list">
       <article class="rv-item" *ngFor="let r of reviews">
+        
+        <!-- FOTO DEL USUARIO -->
         <img
           class="rv-avatar"
-          [src]="r?.avatar || 'assets/img/avatars/user.png'"
-          [alt]="r?.author"
+          [src]="r?.foto || 'assets/img/avatars/user.png'"
+          [alt]="r?.nickname"
         />
+
         <div class="rv-content">
           <div class="rv-head">
-            <strong class="rv-author">{{ r?.author }}</strong>
 
-            <!-- Wrapper de estrellas: clase homogénea 'rv-stars' -->
-            <span class="rv-stars" aria-label="Calificación: {{ r?.rating || 0 }}">
+            <!-- AUTOR -->
+            <strong class="rv-author">{{ r?.nickname || 'Usuario' }}</strong>
+
+            <!-- ESTRELLAS -->
+            <span class="rv-stars" aria-label="Calificación: {{ r?.calificacion || 0 }}">
               <span
                 *ngFor="let s of [1, 2, 3, 4, 5]"
                 class="star"
-                [class.filled]="s <= (r?.rating || 0)"
-                >★</span
-              >
+                [class.filled]="s <= (r?.calificacion || 0)"
+                >★</span>
             </span>
 
-            <small class="rv-date">{{ r?.createdAt | date : 'medium' }}</small>
+            <!-- FECHA -->
+            <small class="rv-date">{{ r?.fecha | date : 'medium' }}</small>
           </div>
 
-          <p class="rv-text">{{ r?.text }}</p>
+          <!-- COMENTARIO -->
+          <p class="rv-text">{{ r?.comentario }}</p>
         </div>
       </article>
     </div>

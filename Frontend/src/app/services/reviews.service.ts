@@ -10,6 +10,11 @@ export interface Review {
   calificacion: number;
   fecha?: string;
   comentario: string;
+
+  // Campos adicionales devueltos por tu backend
+  nickname?: string;
+  foto?: string;
+
 }
 
 @Injectable({ providedIn: 'root' })
