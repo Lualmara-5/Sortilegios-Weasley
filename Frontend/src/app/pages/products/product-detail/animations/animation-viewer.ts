@@ -235,6 +235,8 @@ export class AnimationViewerComponent implements OnInit, OnDestroy {
     this.animatePeruvianDarknessPowder(ctx, canvas); 
     } else if (this.animation?.id === 25) {  
     this.animateDetonadoresTrampa(ctx, canvas); 
+    }else if (this.animation?.id === 26) {  
+    this.animatePuffskeinsPigmeos(ctx, canvas); 
     }
   }
   // Animación del Caramelo Longuilinguo (ID 1)
@@ -12481,4 +12483,324 @@ private animateDetonadoresTrampa(ctx: CanvasRenderingContext2D, canvas: HTMLCanv
 
   animate();
 }
+// Animación de los Puffskeins Pigmeos (ID 26)
+private animatePuffskeinsPigmeos(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+  let time = 0;
+  const cycleTime = 240;
+
+  const heartParticles: any[] = [];
+
+  class HeartParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+    rotation: number;
+    rotationSpeed: number;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 1;
+      this.vy = -Math.random() * 2 - 1;
+      this.life = 60;
+      this.maxLife = 60;
+      this.size = Math.random() * 8 + 4;
+      this.color = ['#ffb3d9', '#ffc9e5', '#ffe0f0', '#ffd1dc'][Math.floor(Math.random() * 4)];
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.rotation += this.rotationSpeed;
+      this.life--;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      context.save();
+      context.translate(this.x, this.y);
+      context.rotate(this.rotation);
+      context.globalAlpha = alpha;
+
+      context.fillStyle = this.color;
+      context.shadowBlur = 10;
+      context.shadowColor = this.color;
+      context.beginPath();
+      context.moveTo(0, this.size * 0.3);
+      context.bezierCurveTo(-this.size, -this.size * 0.3, -this.size * 0.5, -this.size, 0, -this.size * 0.2);
+      context.bezierCurveTo(this.size * 0.5, -this.size, this.size, -this.size * 0.3, 0, this.size * 0.3);
+      context.fill();
+
+      context.globalAlpha = 1;
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const sparkleParticles: any[] = [];
+
+  class SparkleParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    maxLife: number;
+    size: number;
+    color: string;
+
+    constructor(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+      this.life = 30;
+      this.maxLife = 30;
+      this.size = Math.random() * 3 + 1;
+      this.color = ['#fff9e6', '#fffacd', '#fff', '#ffefdb'][Math.floor(Math.random() * 4)];
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life--;
+    }
+
+    draw(context: CanvasRenderingContext2D) {
+      const alpha = this.life / this.maxLife;
+      context.save();
+      context.globalAlpha = alpha;
+      context.fillStyle = this.color;
+      context.shadowBlur = 8;
+      context.shadowColor = this.color;
+      context.beginPath();
+      context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    }
+
+    isDead() {
+      return this.life <= 0;
+    }
+  }
+
+  const drawPuffskein = (x: number, y: number, bounceOffset: number, color: any, size: number) => {
+    ctx.save();
+    ctx.translate(x, y + bounceOffset);
+
+    const baseSize = size;
+
+    const furGradient = ctx.createRadialGradient(-5, -5, baseSize * 0.3, 0, 0, baseSize);
+    furGradient.addColorStop(0, color.light);
+    furGradient.addColorStop(0.7, color.base);
+    furGradient.addColorStop(1, color.dark);
+
+    ctx.fillStyle = furGradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, baseSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = color.dark;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 30; i++) {
+      const angle = (i / 30) * Math.PI * 2;
+      const startDist = baseSize * 0.7;
+      const endDist = baseSize + Math.random() * 5;
+      const startX = Math.cos(angle) * startDist;
+      const startY = Math.sin(angle) * startDist;
+      const endX = Math.cos(angle) * endDist;
+      const endY = Math.sin(angle) * endDist;
+      
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.beginPath();
+    ctx.ellipse(0, baseSize * 0.8, baseSize * 0.8, baseSize * 0.3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    const eyeY = -baseSize * 0.2;
+    const eyeSize = baseSize * 0.25;
+
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(-baseSize * 0.3, eyeY, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(-baseSize * 0.3 - eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(-baseSize * 0.3 + eyeSize * 0.2, eyeY + eyeSize * 0.2, eyeSize * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(baseSize * 0.3, eyeY, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(baseSize * 0.3 - eyeSize * 0.3, eyeY - eyeSize * 0.3, eyeSize * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(baseSize * 0.3 + eyeSize * 0.2, eyeY + eyeSize * 0.2, eyeSize * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#ff9999';
+    ctx.beginPath();
+    ctx.arc(0, eyeY + baseSize * 0.15, baseSize * 0.08, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255, 182, 193, 0.4)';
+    ctx.beginPath();
+    ctx.ellipse(-baseSize * 0.5, eyeY + baseSize * 0.3, baseSize * 0.2, baseSize * 0.15, 0, 0, Math.PI * 2);
+    ctx.ellipse(baseSize * 0.5, eyeY + baseSize * 0.3, baseSize * 0.2, baseSize * 0.15, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (Math.random() < 0.1) {
+      ctx.fillStyle = '#ffb6c1';
+      ctx.beginPath();
+      ctx.ellipse(0, eyeY + baseSize * 0.35, baseSize * 0.15, baseSize * 0.1, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = color.dark;
+    ctx.beginPath();
+    ctx.ellipse(-baseSize * 0.4, baseSize * 0.7, baseSize * 0.15, baseSize * 0.2, 0.3, 0, Math.PI * 2);
+    ctx.ellipse(baseSize * 0.4, baseSize * 0.7, baseSize * 0.15, baseSize * 0.2, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  const animate = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1a0a2e');
+    gradient.addColorStop(1, '#0a0514');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const puffskeins = [
+      {
+        x: centerX - 120,
+        y: centerY,
+        color: {
+          light: '#fff4e6',
+          base: '#ffe4b3',
+          dark: '#f5d199'
+        },
+        size: 35,
+        bounceDelay: 0
+      },
+      {
+        x: centerX,
+        y: centerY - 20,
+        color: {
+          light: '#ffe6f7',
+          base: '#ffccf0',
+          dark: '#f5b3e0'
+        },
+        size: 40,
+        bounceDelay: 20
+      },
+      {
+        x: centerX + 120,
+        y: centerY,
+        color: {
+          light: '#e6f3ff',
+          base: '#cce6ff',
+          dark: '#b3d9ff'
+        },
+        size: 35,
+        bounceDelay: 40
+      }
+    ];
+
+    puffskeins.forEach((puff, index) => {
+      const jumpCycle = (time + puff.bounceDelay) % 80;
+      let bounceOffset = 0;
+
+      if (jumpCycle < 20) {
+        bounceOffset = -Math.sin((jumpCycle / 20) * Math.PI) * 30;
+      }
+
+      drawPuffskein(puff.x, puff.y, bounceOffset, puff.color, puff.size);
+
+      if (jumpCycle > 5 && jumpCycle < 15 && Math.random() < 0.3) {
+        sparkleParticles.push(new SparkleParticle(puff.x, puff.y + bounceOffset));
+      }
+
+      if (Math.random() < 0.02) {
+        heartParticles.push(new HeartParticle(puff.x, puff.y));
+      }
+    });
+
+    for (let i = heartParticles.length - 1; i >= 0; i--) {
+      heartParticles[i].update();
+      heartParticles[i].draw(ctx);
+
+      if (heartParticles[i].isDead()) {
+        heartParticles.splice(i, 1);
+      }
+    }
+
+    for (let i = sparkleParticles.length - 1; i >= 0; i--) {
+      sparkleParticles[i].update();
+      sparkleParticles[i].draw(ctx);
+
+      if (sparkleParticles[i].isDead()) {
+        sparkleParticles.splice(i, 1);
+      }
+    }
+
+    if (time % 60 === 0) {
+      const noteX = centerX + (Math.random() - 0.5) * 200;
+      const noteY = centerY - 80;
+      
+      ctx.save();
+      ctx.fillStyle = '#ffd700';
+      ctx.font = '20px Arial';
+      ctx.globalAlpha = 0.7;
+      ctx.fillText('♪', noteX, noteY);
+      ctx.fillText('♫', noteX + 30, noteY - 20);
+      ctx.restore();
+    }
+
+    // Texto eliminado
+
+    time++;
+
+    if (time >= cycleTime) {
+      time = 0;
+    }
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+}
+
+
 }

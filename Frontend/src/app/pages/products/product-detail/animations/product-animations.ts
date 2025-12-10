@@ -192,6 +192,14 @@ export const PRODUCT_ANIMATIONS: Record<number, ProductAnimation> = {
     componentName: 'decoy-detonator',
     description: '¡Objetos con forma de bocina que explotan con un fuerte ruido para crear distracciones!'
   },
+    // 26. Puffskeins pigmeos - Criaturas adorables
+  26: {
+    id: 26,
+    animationType: 'canvas',
+    componentName: 'pygmy-puffs',
+    description: '¡Adorables puffskeins en miniatura, perfectos como mascotas mágicas!'
+  },
+  
 };
 
 export function getProductAnimation(productId: number): ProductAnimation | null {
